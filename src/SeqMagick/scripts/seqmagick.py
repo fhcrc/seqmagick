@@ -179,10 +179,12 @@ See 'seqmagick.py help ACTION' for more information on a specific action.
         # Ugly, but it seems there is no clean way to put 'positional' arguments 
         # at the beginning of the usage section.
         help_text = parser.format_help()
-        help_text = help_text.replace('[-h]', action + '')
         # Get rid of the action placeholder positional argument.
         help_text = help_text.replace('action source_file', 'source_file')
         help_text = help_text.replace('  action\n', '')
+        # Remove --help when an action is specified.
+        help_text = help_text.replace('[-h]', action + '')
+        help_text = help_text.replace('  -h, --help        show this help message and exit\n', '')
         help_text = help_text.replace('optional arguments', 'optional arguments for the ' + action + ' action')
         print help_text
 
