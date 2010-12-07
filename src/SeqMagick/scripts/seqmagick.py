@@ -54,8 +54,8 @@ def parse_arguments():
     # An action is required, print help if nothing specified.
     if len(argv) == 0:
         print parser.description
-        print_action_help()
-        return 1
+        print_help(parser=parser)
+        return None, None
 
     # Determine the action.
     action = 'help' # Default to help action.
@@ -166,7 +166,8 @@ SeqMagick actions include:
     check            Check integrity of a file.
     convert          Convert between sequence file formats and optionally,  
                      perform other operations.
-    grep             Filter the sequences by regular expression in name to STDOUT.
+    grep             Filter the sequences by regular expression in name 
+                     to STDOUT.
     head             Print the top N records to STDOUT.
     mogrify          Perform in-place operations on a file containing sequences.
     tail             Print the bottom N records to STDOUT.

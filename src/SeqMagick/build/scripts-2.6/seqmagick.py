@@ -54,7 +54,7 @@ def parse_arguments():
     # An action is required, print help if nothing specified.
     if len(argv) == 0:
         print parser.description
-        print_action_help()
+        print_help()
         return 1
 
     # Determine the action.
