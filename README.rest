@@ -1,0 +1,84 @@
+=========
+seqmagick
+=========
+
+Motivation
+----------
+We often have to convert between sequence formats and do little tasks on them, and it's not worth writing scripts for that.
+We can write a kickass little utility to expose the file format conversion in biopython in a convenient way.
+Instead of having a big mess of scripts, there is one that takes arguments.
+
+May I emphasize that we are *not* building this to call from other scripts. 
+Any functionality which requires more than a single call to biopython should be factored into functions that are accessible from our libraries.
+
+Goal
+----
+A command line tool to do little sequence manipulations in the spirit of imagemagick_.
+
+In particular, the format conversion specification happens by suffix. 
+Writing::
+
+  seqmagick convert x.fasta y.phy
+
+should just convert the FASTA file to phylip format. Of course.
+
+In general the interface is in the format::
+
+  seqmagick <cmd>
+
+with <cmd> being one of:
+
+convert
+  convert a b will convert a to b
+
+mogrify
+  mogrify modifies in place
+
+The real action for these commands happens in the options.
+We should be able to stack these on top of one another.
+
+--sort          by len, revlen, name, revname, which are an argument.
+--wrap          interleave a phylip file or wrap a fasta file
+--cut           takes two integers: start and end.
+                cut the sequences between positions start and end (graceful failure if out of range) 
+                These are 1-indexed and inclusive.
+--degap         take out gaps in the sequence alignment
+--reverse       reverse the order of sites in the sequence
+--translate     if it's nucleotide, take to AA, and vice versa
+--upper         translate the sequences to upper case
+--lower         translate the sequences to lower case
+--dashgap       in the sequences, change . and : into -
+--regex         filter the sequences by regular expression in name
+--strict        make sure that you are using IUPAC characters for AA or Nuc
+
+We can specify some short options later.
+
+
+Other commands:
+
+check
+  check integrity of files
+  should take --DNA --AA arguments to check if the file is one of these types
+  (or perhaps an alphabet)
+
+
+
+Desired features
+----------------
+Should be able to convert between the file formats described on the wiki.
+
+
+Implementation notes
+--------------------
+The new argparse_ looks very hip.
+It's built in starting in Python 3.2. 
+Let's check the viability for 2.7.
+
+Starting points
+---------------
+really just expose http://biopython.org/wiki/Converting_sequence_files !
+
+
+.. _imagemagick: http://www.imagemagick.org/script/command-line-tools.php
+.. _argparse: http://docs.python.org/dev/library/argparse.html
+
