@@ -5,17 +5,10 @@ import sys
 import argparse
 
 from cStringIO import StringIO
+# Insert one level above project directory to path for testing.
+sys.path.insert(0, "../..")
 from SeqMagick.magickwrap import MagickWrap
 from SeqMagick.fileformat import FileFormat
-
-# Append top-level project directory to path for testing.
-#sys.path.append(".")
-#sys.path.append("..")
-#from magickwrap import MagickWrap 
-#from fileformat import FileFormat
-
-
-
 
 
 
@@ -24,6 +17,8 @@ def main():
 
     if arguments is not None and action is not None:
         wrap = MagickWrap(in_file=arguments.source_file[0], out_file=arguments.destination_file[0])
+        if action == 'align':
+            wrap.create_alignment()
         if action == 'convert':
             wrap.convert_format()
 
@@ -81,8 +76,8 @@ def parse_arguments():
 
     # Add arguments specific to the align action.
     if action in ('align'):
-        #parser.add_argument('--', dest='', type=, help='')
-        pass
+        parser.add_argument('source_file', type=sequence_file, nargs=1)
+        parser.add_argument('destination_file', nargs=1)
 
     # Add arguments specific to the align action.
     if action in ('check'):

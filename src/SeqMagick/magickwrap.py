@@ -3,9 +3,12 @@
 """
 
 import os
+import subprocess
+import sys
 
 from Bio import SeqIO
 from Bio.Alphabet import IUPAC
+from Bio.Align.Applications import MuscleCommandline
 from fileformat import FileFormat
 
 
@@ -137,11 +140,20 @@ class MagickWrap(object):
         """
         pass
 
-    def align_sequences(self):
+
+    def create_alignment(self):
         """
         Use BioPython muscle wrapper to create an alignment.
         """
-        pass
+        muscle_command = MuscleCommandline(input=self.source_file, out=self.destination_file)
+        child = subprocess.Popen(str(muscle_command),
+                                 stdout=subprocess.PIPE,
+                                 stderr=subprocess.PIPE,
+                                 shell=(sys.platform!="win32"))
+        return child.wait()
+
+
+
 
 
 # Private Methods
