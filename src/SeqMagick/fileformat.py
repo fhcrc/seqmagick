@@ -16,7 +16,8 @@ extension_to_type = { '.aln' : 'clustal',
                       '.gbk' : 'genbank', 
                       '.phy' : 'phylip', 
                       '.phylip' : 'phylip', 
-                      '.sth' : 'stockholm'
+                      '.sth' : 'stockholm',
+                      '.sto' : 'stockholm',
                       }
 
 
