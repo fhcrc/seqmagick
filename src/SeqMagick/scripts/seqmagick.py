@@ -17,8 +17,8 @@ def main():
 
     if arguments is not None and action is not None:
         wrap = MagickWrap(in_file=arguments.source_file[0], out_file=arguments.destination_file[0])
-        if action == 'align':
-            wrap.create_alignment()
+        if action == 'muscle':
+            wrap.create_muscle_alignment()
         if action == 'convert':
             wrap.convert_format()
 
@@ -30,7 +30,7 @@ def parse_arguments():
     argv = sys.argv[1:]
 
     # List of valid actions.
-    actions = ('convert', 'mogrify', 'align', 'check', 'grep', 'head', 'tail', 'help')
+    actions = ('convert', 'mogrify', 'muscle', 'check', 'grep', 'head', 'tail', 'help')
 
     # Create an argparse instance.
     parser = argparse.ArgumentParser(description='SeqMagick - Manipulate sequence files.')
@@ -40,7 +40,7 @@ def parse_arguments():
     # seqmagick.py convert x.fasta y.phy
     # seqmagick.py mogrify --degap --upper --reverse x.fasta 
     # seqmagick.py check x.fasta
-    # seqmagick.py align x.fasta
+    # seqmagick.py muscle x.fasta
     # seqmagick.py head -20 x.fasta
     # seqmagick.py head -20 x.fasta
     # seqmagick.py tail -20 x.fasta
@@ -74,17 +74,17 @@ def parse_arguments():
 
     # Argument groups might be an alternative to the way things are done below.
 
-    # Add arguments specific to the align action.
-    if action in ('align'):
+    # Add arguments specific to the muscle action.
+    if action in ('muscle'):
         parser.add_argument('source_file', type=sequence_file, nargs=1)
         parser.add_argument('destination_file', nargs=1)
 
-    # Add arguments specific to the align action.
+    # Add arguments specific to the check action.
     if action in ('check'):
         #parser.add_argument('--', dest='', type=, help='')
         pass
 
-    # Add arguments specific to the align action.
+    # Add arguments specific to the convert action.
     if action in ('convert'):
         parser.add_argument('source_file', type=sequence_file, nargs=1)
         parser.add_argument('destination_file', nargs=1)
@@ -157,7 +157,6 @@ def print_help(action=None, parser=None, message=None):
     if action is None:
         print """
 SeqMagick actions include:
-    align            Create an alignment.
     check            Check integrity of a file.
     convert          Convert between sequence file formats and optionally,  
                      perform other operations.
@@ -165,6 +164,7 @@ SeqMagick actions include:
                      to STDOUT.
     head             Print the top N records to STDOUT.
     mogrify          Perform in-place operations on a file containing sequences.
+    muscle           Create an alignment using muscle.
     tail             Print the bottom N records to STDOUT.
 
 See 'seqmagick.py help ACTION' for more information on a specific action.

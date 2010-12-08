@@ -6,6 +6,7 @@
 # of the class so static methods can access it.
 # Would be nice to check to see if python has enums to represent something like this.
 extension_to_type = { '.aln' : 'clustal', 
+                      '.fa' : 'fasta', 
                       '.faa' : 'fasta', 
                       '.fasta' : 'fasta',
                       '.fastq' : 'fastq',

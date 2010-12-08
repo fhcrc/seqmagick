@@ -141,7 +141,7 @@ class MagickWrap(object):
         pass
 
 
-    def create_alignment(self):
+    def create_muscle_alignment(self):
         """
         Use BioPython muscle wrapper to create an alignment.
         """
