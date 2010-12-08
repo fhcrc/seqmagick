@@ -147,11 +147,13 @@ class MagickWrap(object):
         """
         muscle_command = MuscleCommandline(input=self.source_file, out=self.destination_file)
         child = subprocess.Popen(str(muscle_command),
-                                 stdout=subprocess.PIPE,
-                                 stderr=subprocess.PIPE,
+                                 stdin=None,
+                                 stdout=None,
+                                 stderr=None,
                                  shell=(sys.platform!="win32"))
-        return child.wait()
-
+       	return_code = child.wait()
+       	return return_code
+        
 
 
 
