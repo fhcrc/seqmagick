@@ -50,6 +50,7 @@ We should be able to stack these on top of one another.
 --dashgap       in the sequences, change . and : into -
 --regex         filter the sequences by regular expression in name
 --strict        make sure that you are using IUPAC characters for AA or Nuc
+--firstname     take only the first whitespace-delimited word as the name of the sequence
 
 We can specify some short options later.
 
