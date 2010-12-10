@@ -7,20 +7,38 @@ import argparse
 from cStringIO import StringIO
 # Insert one level above project directory to path for testing.
 sys.path.insert(0, "../..")
-from SeqMagick.magickwrap import MagickWrap
-from SeqMagick.fileformat import FileFormat
+from seqmagick.magickwrap import MagickWrap
+from seqmagick.fileformat import FileFormat
 
 
 
 def main():
     action, arguments = parse_arguments()
 
-    if arguments is not None and action is not None:
-        wrap = MagickWrap(in_file=arguments.source_file[0], out_file=arguments.destination_file[0])
+    # We have nothing to do.
+    if arguments is None:
+        sys.exit(0)
+
+    source = arguments.source_file[0]
+    # Not all actions require a destination file.
+    destination = None
+    if arguments.destination_file:
+        destination = arguments.destination_file
+
+    # Will want to catch control-C and exceptions here to remove 
+    # destination file or temp file if script did not fully execute.
+    if arguments is not None and action:
+        wrap = MagickWrap(in_file=source, out_file=destination, tmp_dir=arguments.tmp_dir)
         if action == 'muscle':
             wrap.create_muscle_alignment()
         if action == 'convert':
             wrap.convert_format()
+        if action == 'mogrify':
+            wrap.mogrify(dashgap=arguments.dashgap, 
+                         deduplicate_taxa=arguments.deduplicatetaxa,
+                         deduplicate_sequences=arguments.deduplicateseqs,
+                         first_name_capture=arguments.firstname,
+                        )
 
 def parse_arguments():
     """
@@ -30,7 +48,7 @@ def parse_arguments():
     argv = sys.argv[1:]
 
     # List of valid actions.
-    actions = ('convert', 'mogrify', 'muscle', 'check', 'grep', 'head', 'tail', 'help')
+    actions = ('convert', 'mogrify', 'muscle', 'check', 'grep', 'head', 'sort', 'tail', 'help')
 
     # Create an argparse instance.
     parser = argparse.ArgumentParser(description='SeqMagick - Manipulate sequence files.')
@@ -81,7 +99,7 @@ def parse_arguments():
 
     # Add arguments specific to the check action.
     if action in ('check'):
-        #parser.add_argument('--', dest='', type=, help='')
+        parser.add_argument('--alphabet', dest='alphabet', help='To be implemented')
         pass
 
     # Add arguments specific to the convert action.
@@ -101,6 +119,7 @@ def parse_arguments():
 
     # Add arguments specific to the help action.
     if action in ('help'):
+        print parser.description
         print_help(parser=parser)
         # Do not do anything in addition to printing help text, just exit.
         return action, None
@@ -110,15 +129,25 @@ def parse_arguments():
         parser.add_argument('--cut', dest='cut', metavar="start:end", type=cut_range, 
                             help='Start and end positions for cutting sequences, : separated')
         parser.add_argument('--dashgap', action='store_true', help='Change . and : into - for all sequences')
+        parser.add_argument('--deduplicateseqs', action='store_true', help='Remove any duplicate sequences by sequence content, keep the first instance seen')
+        parser.add_argument('--deduplicatetaxa', action='store_true', help='Remove any duplicate sequences by ID, keep the first instance seen')
         parser.add_argument('--degap', action='store_true', help='Remove gaps in the sequence alignment')
+        parser.add_argument('--firstname', action='store_true', help='Take only the first whitespace-delimited word as the name of the sequence') 
         parser.add_argument('--lower', action='store_true', help='Translate the sequences to lower case')
-        parser.add_argument('--reverse', dest='', help='')
-        parser.add_argument('--sort', dest='', help='')
-        parser.add_argument('--strict', dest='', help='')
-        parser.add_argument('--translate', dest='', help='')
-        parser.add_argument('--upper', dest='', help='Translate the sequences to upper case.')
-        parser.add_argument('--wrap', dest='', help='')
-        #parser.add_argument('--', dest='', type=, help='')
+        parser.add_argument('--reverse', action='store_true', help='Reverse the order of sites in sequences.')
+        parser.add_argument('--strict', dest='data_type', metavar='data_type', 
+                            help='Verify only IUPAC characters for "aa" or "nuc" are used')
+        parser.add_argument('--translate', dest='destination_type', metavar='destination_type', 
+                            help='Translate between amino acids and nucleotides, use "aa" or "nuc" as destination type')
+        parser.add_argument('--upper', action='store_true', help='Translate the sequences to upper case')
+        parser.add_argument('--wrap', action='store_true', help='')
+        parser.add_argument('source_file', type=sequence_file, nargs=1)
+        parser.add_argument('destination_file', nargs='?', default=False) #parser.add_argument('--', dest='', type=, help='')
+
+    # Add arguments specific to the sort action.
+    if action in ('sort'):
+        parser.add_argument('source_file', type=sequence_file, nargs=1)
+        parser.add_argument('destination_file', nargs=1)
 
     # Add arguments specific to the tail action.
     if action in ('tail'):
@@ -127,6 +156,7 @@ def parse_arguments():
 
     # Add arguments common to all actions.
     if action in actions:
+        parser.add_argument('--tmp', dest='tmp_dir', default='/tmp', help='Temporary directory for working file. Default is /tmp.')
         parser.add_argument('--debug', dest='', help='')
         parser.add_argument('--verbose', dest='', help='')
 
@@ -151,8 +181,12 @@ def parse_arguments():
     finally:
         capture.close()
 
+
 def print_help(action=None, parser=None, message=None):
     """
+    Print out general help and help for specific actions.  Does some string 
+    manipulation to print text specific to an action, while continuing to use 
+    argparse functionality.
     """
     if action is None:
         print """
@@ -164,14 +198,18 @@ SeqMagick actions include:
                      to STDOUT.
     head             Print the top N records to STDOUT.
     mogrify          Perform in-place operations on a file containing sequences.
+                     Can accept multiple source files.
     muscle           Create an alignment using muscle.
+    sort             Sort sequences by length ascending, length descending,
+                     name ascending or name descending.  Sorting is done 
+                     in-memory.
     tail             Print the bottom N records to STDOUT.
 
 See 'seqmagick.py help ACTION' for more information on a specific action.
 
 """
 
-    if parser is not None and action is not None:
+    if parser is not None and action:
         # Ugly, but it seems there is no clean way to put 'positional' arguments 
         # at the beginning of the usage section.
         help_text = parser.format_help()
@@ -180,7 +218,9 @@ See 'seqmagick.py help ACTION' for more information on a specific action.
         help_text = help_text.replace('  action\n', '')
         # Remove --help when an action is specified.
         help_text = help_text.replace('[-h]', action + '')
+        # Have seen different amount of whitespace, will make sense to replace this with a regex.
         help_text = help_text.replace('  -h, --help        show this help message and exit\n', '')
+        help_text = help_text.replace('  -h, --help            show this help message and exit\n', '')
         help_text = help_text.replace('optional arguments', 'optional arguments for the ' + action + ' action')
         print help_text
 

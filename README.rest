@@ -51,6 +51,7 @@ We should be able to stack these on top of one another.
 --regex         filter the sequences by regular expression in name
 --strict        make sure that you are using IUPAC characters for AA or Nuc
 --firstname     take only the first whitespace-delimited word as the name of the sequence
+--deduplicate   Remove any duplicate sequences, keep the first instance seen.
 
 We can specify some short options later.
 
