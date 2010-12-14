@@ -296,9 +296,7 @@ class MagickWrap(object):
         Remove gaps from sequences.
         """
         for record in records:
-            raise Exception, 'Not implemented exception.'
-            # Not sure why Biopython complains when I do this....
-            yield SeqRecord(str(record.seq).replace('-', ''), id=record.id,
+            yield SeqRecord(record.seq.ungap("-"), id=record.id,
                             description=record.description)
 
 
