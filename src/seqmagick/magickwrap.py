@@ -23,31 +23,16 @@ class MagickWrap(object):
 
 # Constructor
 
-    def __init__(self, tmp_dir, in_file, out_file=None, alphabet=None):
+    def __init__(self, tmp_dir, in_files, out_file=None, alphabet=None):
         """
         Constructor
         """
-        file_name = os.path.split(in_file)[1]
 
-        self.source_file = in_file
-        self.source_file_type = FileFormat.lookup_file_type(os.path.splitext(in_file)[1])
+        self.source_files = in_files
+        self.tmp_dir = tmp_dir
 
-        # Specify full path to temporary file for operations that require this.
-        # tmp_file will have a seqmagick prefix, i.e. /tmp/seqmagick.a.fasta
-        self.tmp_file = os.path.join(tmp_dir, 'seqmagick.' + file_name) 
-        self.tmp_file_type = self.source_file_type 
-
-        # Not all operations require a destination file.
-        self.destination_file = None
-        if out_file is not None:
-            self.destination_file = out_file
-            self.destination_file_type = FileFormat.lookup_file_type(os.path.splitext(out_file)[1])
+        self.destination_file = out_file
             
-        # Read in the source file to create a list of SeqRecord objects.
-        # This should be fine unless the source file is extremely large.
-#        with open(in_file, 'r') as handle:
-#            self.source_records = list(SeqIO.parse(handle, self.source_file_type))
-
 
 # Public Methods
 
@@ -55,14 +40,19 @@ class MagickWrap(object):
     def convert_format(self):
         """
         Convert input file to a different output format.  This will not work for all formats, 
-        e.g. going from fastq to fasta or going from a non-alignment fasta file to phylip would not work.
+        e.g. going from fastq to fasta or going from a non-alignment fasta file to phylip would not work.  
+        Converts only the first file in the source_files list.
         """
+        source_file = self.source_files[0]
+        source_file_type = FileFormat.lookup_file_type(os.path.splitext(source_file)[1])
+        destination_file = self.destination_file
+        destination_file_type = FileFormat.lookup_file_type(os.path.splitext(destination_file)[1])
    
-        if self.source_file == self.destination_file:
+        if source_file == destination_file:
             raise Exception, "source_file and destination_file cannot be the same file."
         
         if self.destination_file is not None:
-           SeqIO.convert(self.source_file, self.source_file_type, self.destination_file, self.destination_file_type) 
+           SeqIO.convert(source_file, source_file_type, destination_file, destination_file_type) 
         else:
             raise Exception, "An output file was not specified.  Required by the convert action."
         pass
@@ -158,51 +148,66 @@ class MagickWrap(object):
        	return_code = child.wait()
        	return return_code
         
-    def mogrify(self, cut=False, dashgap=False, degap=False, lower=False, 
-                reverse=False, strict=False, translate=False, upper=False, wrap=False, 
-                first_name_capture=False, deduplicate_sequences=False, deduplicate_taxa=False):
+    def transform(self, cut=False, dashgap=False, degap=False, lower=False, 
+                  reverse=False, strict=False, translate=False, upper=False, wrap=False, 
+                  first_name_capture=False, deduplicate_sequences=False, deduplicate_taxa=False):
         """
         This method wraps many of the transformation generator functions found 
         in this class.
         """
 
-        # Get an iterator.
-        records = SeqIO.parse(self.source_file, self.source_file_type)
+        for source_file in self.source_files: 
+            # Get just the file name, useful for naming the temporary file.
+            file_name = os.path.split(source_file)[1]
+            source_file_type = FileFormat.lookup_file_type(os.path.splitext(source_file)[1])
 
-        #########################################
-        # Apply generator functions to iterator.#
-        #########################################
+            # Specify full path to temporary file for operations that require this.
+            # tmp_file will have a seqmagick prefix, i.e. /tmp/seqmagick.a.fasta.  
+            # If destination_file is part of the magickwrap instance, use that insted.
+            destination_file = os.path.join(self.tmp_dir, 'seqmagick.' + file_name) 
+            if self.destination_file is not None:
+                destination_file = self.destination_file
 
-        # Deduplication occurs first, to get a checksum of the 
-        # original sequence and to store the id field before any 
-        # transformations occur.
+            destination_file_type = FileFormat.lookup_file_type(os.path.splitext(destination_file)[1])
+
+            # Get an iterator.
+            records = SeqIO.parse(source_file, source_file_type)
+
+            #########################################
+            # Apply generator functions to iterator.#
+            #########################################
+
+            # Deduplication occurs first, to get a checksum of the 
+            # original sequence and to store the id field before any 
+            # transformations occur.
      
-        if deduplicate_sequences:
-            records = self._deduplicate_sequences(records)
+            if deduplicate_sequences:
+                records = self._deduplicate_sequences(records)
 
-        if deduplicate_taxa:
-            records = self._deduplicate_taxa(records)
+            if deduplicate_taxa:
+                records = self._deduplicate_taxa(records)
 
-        if dashgap:
-            records = self._dashes_cleanup(records)        
+            if dashgap:
+                records = self._dashes_cleanup(records)        
 
-        if first_name_capture:
-            records = self._first_name_capture(records)
+            if first_name_capture:
+                records = self._first_name_capture(records)
 
 
-        # Mogrify requires writing all changes to a temporary file first by default, 
-        # but use the destination file instead if one was specified. Get
-        # sequences from an iterator that has generator functions wrapping it. 
-        # After creation, it is then copied back over the original file if all 
-        # tasks finish up without an exception being thrown.  This avoids 
-        # loading the entire sequence file up into memory.
+            # Mogrify requires writing all changes to a temporary file by default, 
+            # but convert uses a destination file instead if one was specified. Get
+            # sequences from an iterator that has generator functions wrapping it. 
+            # After creation, it is then copied back over the original file if all 
+            # tasks finish up without an exception being thrown.  This avoids 
+            # loading the entire sequence file up into memory.
 
-        if self.destination_file is None:
-            SeqIO.write(records, self.tmp_file, self.tmp_file_type)
-            # Overwrite original file with temporary file.
-            os.rename(self.tmp_file, self.source_file)
-        else:
-            SeqIO.write(records, self.destination_file, self.destination_file_type)
+            SeqIO.write(records, destination_file, destination_file_type)
+
+            # Overwrite original file with temporary file, if necessary.
+            if self.destination_file is None:
+                os.rename(destination_file, source_file)
+
+
 
 # Private Methods 
 

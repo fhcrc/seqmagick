@@ -18,27 +18,29 @@ def main():
     # We have nothing to do.
     if arguments is None:
         sys.exit(0)
-
-    source = arguments.source_file[0]
-    # Not all actions require a destination file.
+  
+    # Convert takes a single source, mogrify can accept multiple 
+    # source files.
+    sources = []
     destination = None
-    if arguments.destination_file:
-        destination = arguments.destination_file
-
+    if action == 'convert':
+        sources = arguments.source_file
+        destination = arguments.destination_file[0]
+    elif action == 'mogrify':
+        sources = arguments.source_files
+        
     # Will want to catch control-C and exceptions here to remove 
     # destination file or temp file if script did not fully execute.
     if arguments is not None and action:
-        wrap = MagickWrap(in_file=source, out_file=destination, tmp_dir=arguments.tmp_dir)
+        wrap = MagickWrap(in_files=sources, out_file=destination, tmp_dir=arguments.tmp_dir)
         if action == 'muscle':
             wrap.create_muscle_alignment()
-        if action == 'convert':
-            wrap.convert_format()
-        if action == 'mogrify':
-            wrap.mogrify(dashgap=arguments.dashgap, 
-                         deduplicate_taxa=arguments.deduplicatetaxa,
-                         deduplicate_sequences=arguments.deduplicateseqs,
-                         first_name_capture=arguments.firstname,
-                        )
+        if action == 'mogrify' or action == 'convert':
+            wrap.transform(dashgap=arguments.dashgap, 
+                           deduplicate_taxa=arguments.deduplicatetaxa,
+                           deduplicate_sequences=arguments.deduplicateseqs,
+                           first_name_capture=arguments.firstname,
+                          )
 
 def parse_arguments():
     """
@@ -56,7 +58,7 @@ def parse_arguments():
     # Example command-line usage:
     #
     # seqmagick.py convert x.fasta y.phy
-    # seqmagick.py mogrify --degap --upper --reverse x.fasta 
+    # seqmagick.py mogrify --degap --upper --reverse x.fasta c.fasta t.fasta *.sth
     # seqmagick.py check x.fasta
     # seqmagick.py muscle x.fasta
     # seqmagick.py head -20 x.fasta
@@ -102,10 +104,30 @@ def parse_arguments():
         parser.add_argument('--alphabet', dest='alphabet', help='To be implemented')
         pass
 
+
+    # Add arguments shared between convert and mogrify
+    if action in ('convert') or action in ('mogrify'):
+        parser.add_argument('--cut', dest='cut', metavar="start:end", type=cut_range, 
+                            help='Start and end positions for cutting sequences, : separated')
+        parser.add_argument('--dashgap', action='store_true', help='Change . and : into - for all sequences')
+        parser.add_argument('--deduplicateseqs', action='store_true', help='Remove any duplicate sequences by sequence content, keep the first instance seen')
+        parser.add_argument('--deduplicatetaxa', action='store_true', help='Remove any duplicate sequences by ID, keep the first instance seen')
+        parser.add_argument('--degap', action='store_true', help='Remove gaps in the sequence alignment')
+        parser.add_argument('--firstname', action='store_true', help='Take only the first whitespace-delimited word as the name of the sequence') 
+        parser.add_argument('--lower', action='store_true', help='Translate the sequences to lower case')
+        parser.add_argument('--reverse', action='store_true', help='Reverse the order of sites in sequences.')
+        parser.add_argument('--strict', dest='data_type', metavar='data_type', 
+                            help='Verify only IUPAC characters for "aa" or "nuc" are used')
+        parser.add_argument('--translate', dest='destination_type', metavar='destination_type', 
+                            help='Translate between amino acids and nucleotides, use "aa" or "nuc" as destination type')
+        parser.add_argument('--upper', action='store_true', help='Translate the sequences to upper case')
+        parser.add_argument('--wrap', action='store_true', help='')
+
+
     # Add arguments specific to the convert action.
     if action in ('convert'):
         parser.add_argument('source_file', type=sequence_file, nargs=1)
-        parser.add_argument('destination_file', nargs=1)
+        parser.add_argument('destination_file', nargs=1, default=False)
 
     # Add arguments specific to the grep action.
     if action in ('grep'):
@@ -126,23 +148,7 @@ def parse_arguments():
 
     # Add arguments specific to the mogrify action.
     if action in ('mogrify'):
-        parser.add_argument('--cut', dest='cut', metavar="start:end", type=cut_range, 
-                            help='Start and end positions for cutting sequences, : separated')
-        parser.add_argument('--dashgap', action='store_true', help='Change . and : into - for all sequences')
-        parser.add_argument('--deduplicateseqs', action='store_true', help='Remove any duplicate sequences by sequence content, keep the first instance seen')
-        parser.add_argument('--deduplicatetaxa', action='store_true', help='Remove any duplicate sequences by ID, keep the first instance seen')
-        parser.add_argument('--degap', action='store_true', help='Remove gaps in the sequence alignment')
-        parser.add_argument('--firstname', action='store_true', help='Take only the first whitespace-delimited word as the name of the sequence') 
-        parser.add_argument('--lower', action='store_true', help='Translate the sequences to lower case')
-        parser.add_argument('--reverse', action='store_true', help='Reverse the order of sites in sequences.')
-        parser.add_argument('--strict', dest='data_type', metavar='data_type', 
-                            help='Verify only IUPAC characters for "aa" or "nuc" are used')
-        parser.add_argument('--translate', dest='destination_type', metavar='destination_type', 
-                            help='Translate between amino acids and nucleotides, use "aa" or "nuc" as destination type')
-        parser.add_argument('--upper', action='store_true', help='Translate the sequences to upper case')
-        parser.add_argument('--wrap', action='store_true', help='')
-        parser.add_argument('source_file', type=sequence_file, nargs=1)
-        parser.add_argument('destination_file', nargs='?', default=False) #parser.add_argument('--', dest='', type=, help='')
+        parser.add_argument('source_files', type=sequence_file, nargs='+')
 
     # Add arguments specific to the sort action.
     if action in ('sort'):
@@ -215,6 +221,7 @@ See 'seqmagick.py help ACTION' for more information on a specific action.
         help_text = parser.format_help()
         # Get rid of the action placeholder positional argument.
         help_text = help_text.replace('action source_file', 'source_file')
+        help_text = help_text.replace('action [source_files [source_files ...]]', '[source_files [source_files ...]]')
         help_text = help_text.replace('  action\n', '')
         # Remove --help when an action is specified.
         help_text = help_text.replace('[-h]', action + '')
