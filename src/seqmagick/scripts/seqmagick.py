@@ -122,14 +122,14 @@ def parse_arguments():
         parser.add_argument('--deduplicatetaxa', action='store_true', help='Remove any duplicate sequences by ID, keep the first instance seen')
         parser.add_argument('--ungap', action='store_true', help='Remove gaps in the sequence alignment')
         parser.add_argument('--firstname', action='store_true', help='Take only the first whitespace-delimited word as the name of the sequence') 
-        parser.add_argument('--head', dest='head', help='Pare down to top N sequences') 
-        parser.add_argument('--grep', dest='grep', help='Filter the sequences by regular expression in name') 
+        parser.add_argument('--head', metavar='N', dest='head', help='Pare down to top N sequences') 
+        parser.add_argument('--grep', metavar='regex', dest='grep', help='Filter the sequences by regular expression in name') 
         parser.add_argument('--lower', action='store_true', help='Translate the sequences to lower case')
         parser.add_argument('--reverse', action='store_true', help='Reverse the order of sites in sequences')
         parser.add_argument('--sort', dest='sort', help='Perform sorting') 
         parser.add_argument('--strict', dest='data_type', metavar='data_type', 
                             help='Verify only IUPAC characters for "aa" or "nuc" are used')
-        parser.add_argument('--tail', dest='tail', help='Pare down to bottom N sequences') 
+        parser.add_argument('--tail', metavar='N', dest='tail', help='Pare down to bottom N sequences') 
         parser.add_argument('--translate', dest='destination_type', metavar='destination_type', 
                             help='Translate between amino acids and nucleotides, use "aa" or "nuc" as destination type')
         parser.add_argument('--upper', action='store_true', help='Translate the sequences to upper case')
