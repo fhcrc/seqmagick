@@ -14,14 +14,13 @@ from Bio.Align.Applications import MuscleCommandline
 from Bio.Seq import Seq, SeqRecord
 from Bio.SeqUtils.CheckSum import seguid
 from fileformat import FileFormat
+from Bio.SeqIO import FastaIO
 
 
 class MagickWrap(object):
     """
     A class that wraps functionality present in BioPython.    
     """
-
-# Constructor
 
     def __init__(self, tmp_dir, in_files, out_file=None, alphabet=None):
         """
@@ -100,9 +99,9 @@ class MagickWrap(object):
        	return return_code
         
     def transform(self, cut=False, dashgap=False, ungap=False, lower=False, 
-                  reverse=False, strict=False, translate=False, upper=False, wrap=False, 
+                  reverse=False, strict=False, translate=False, upper=False, linewrap=False, 
                   first_name_capture=False, deduplicate_sequences=False, deduplicate_taxa=False, 
-                  complement=False, grep=False):
+                  complement=False, pattern_include=False, pattern_exclude=False):
         """
         This method wraps many of the transformation generator functions found 
         in this class.
@@ -142,6 +141,9 @@ class MagickWrap(object):
             if dashgap:
                 records = self._dashes_cleanup(records)        
 
+            # squeeze best to go after dashgap but before cut, 
+            # in the event one or both are called.
+
             if first_name_capture:
                 records = self._first_name_capture(records)
 
@@ -163,9 +165,21 @@ class MagickWrap(object):
             if ungap:
                 records = self._ungap_sequences(records)
 
-            if grep:
-                records = self._name_filter(records, grep)
-                
+            if pattern_include:
+                records = self._name_include(records, pattern_include)
+
+            if pattern_exclude:
+                records = self._name_exclude(records, pattern_exclude)
+
+
+
+
+            # Only the fasta format is supported, as SeqIO.write does not hava a 'wrap' parameter.
+            if linewrap is not None and destination_file_type == 'fasta' and source_file_type == 'fasta':
+                with open(destination_file,"w") as handle:
+                    writer = FastaIO.FastaWriter(handle, wrap=linewrap)
+                    writer.write_file(records)
+            else:
             # Mogrify requires writing all changes to a temporary file by default, 
             # but convert uses a destination file instead if one was specified. Get
             # sequences from an iterator that has generator functions wrapping it. 
@@ -173,7 +187,7 @@ class MagickWrap(object):
             # tasks finish up without an exception being thrown.  This avoids 
             # loading the entire sequence file up into memory.
 
-            SeqIO.write(records, destination_file, destination_file_type)
+                SeqIO.write(records, destination_file, destination_file_type)
 
             # Overwrite original file with temporary file, if necessary.
             if self.destination_file is None:
@@ -294,7 +308,7 @@ class MagickWrap(object):
                             description=record.description)
 
 
-    def _name_filter(self, records, filter_regex):
+    def _name_include(self, records, filter_regex):
         """
         Given a set of sequences, filter out any sequences with names 
         that do not match the specified regular expression.  Ignore case.
@@ -306,7 +320,59 @@ class MagickWrap(object):
             else: 
                 continue
 
+
+    def _name_exclude(self, records, filter_regex):
+        """
+        Given a set of sequences, filter out any sequences with names 
+        that match the specified regular expression.  Ignore case.
+        """
+        regex = re.compile(filter_regex, re.I)
+        for record in records:
+            if not regex.search(record.id):
+                yield record
+            else: 
+                continue
+
+
+    def _squeeze(self, gaps, records):
+        """
+        """
+        sequence_length = len(gaps)
+        for record in records:
+            sequence = list(str(record.seq))
+            squeezed = []
+            position = 0
+            while (position < sequence_length):
+                if bool(gaps[position]) is False:
+                    squeezed.append(sequence[position])
+                position += 1            
+
+            yield SeqRecord(''.join(squeezed), id=record.id,
+                            description=record.description)
+
     
+    # Begin squeeze-related functions
+
+    def _is_gap(self, character):
+        """
+        """
+        if character == '-':
+            return 1
+        else:
+            return 0
+
+
+    def _gap_check(self, gap, character):
+        """
+        Build up a gaps list that is used on all sequences 
+        in an alignment.
+        """
+        # Skip any characters that have already been found
+        if gap == 0:
+            return gap
+        return int(bool(i) & bool(self._is_gap(character)))
+
+    # End squeeze-related functions
 
 
 

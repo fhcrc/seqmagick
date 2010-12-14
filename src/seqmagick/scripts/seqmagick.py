@@ -28,7 +28,9 @@ def main():
         destination = arguments.destination_file[0]
     elif action == 'mogrify':
         sources = arguments.source_files
-        
+
+
+
     # Will want to catch control-C and exceptions here to remove 
     # destination file or temp file if script did not fully execute.
     if arguments is not None and action:
@@ -43,9 +45,11 @@ def main():
                            deduplicate_sequences=arguments.deduplicateseqs,
                            ungap=arguments.ungap,
                            first_name_capture=arguments.firstname,
-                           grep=arguments.grep,
+                           pattern_include=arguments.pattern_include,
+                           pattern_exclude=arguments.pattern_exclude,
                            lower=arguments.lower,
                            reverse=arguments.reverse,
+                           linewrap=arguments.linewrap,
                            upper=arguments.upper,
                           )
 
@@ -57,7 +61,7 @@ def parse_arguments():
     argv = sys.argv[1:]
 
     # List of valid actions.
-    actions = ('convert', 'mogrify', 'muscle', 'check', 'grep', 'head', 'sort', 'tail', 'help')
+    actions = ('convert', 'mogrify', 'muscle', 'check', 'head', 'tail', 'help')
 
     # Create an argparse instance.
     parser = argparse.ArgumentParser(description='SeqMagick - Manipulate sequence files.')
@@ -123,7 +127,9 @@ def parse_arguments():
         parser.add_argument('--ungap', action='store_true', help='Remove gaps in the sequence alignment')
         parser.add_argument('--firstname', action='store_true', help='Take only the first whitespace-delimited word as the name of the sequence') 
         parser.add_argument('--head', metavar='N', dest='head', help='Pare down to top N sequences') 
-        parser.add_argument('--grep', metavar='regex', dest='grep', help='Filter the sequences by regular expression in name') 
+        parser.add_argument('--pattern-include', metavar='regex', dest='pattern_include', help='Filter the sequences by regular expression in name') 
+        parser.add_argument('--pattern-exclude', metavar='regex', dest='pattern_exclude', help='Filter out sequences by regular expression in name') 
+        parser.add_argument('--linewrap', dest='linewrap', type=int, help='Adjust line wrap for sequence strings.  Useful for viewing an alignment when setting to 0 which has no line breaks. Only fasta files are supported.')
         parser.add_argument('--lower', action='store_true', help='Translate the sequences to lower case')
         parser.add_argument('--reverse', action='store_true', help='Reverse the order of sites in sequences')
         parser.add_argument('--sort', dest='sort', help='Perform sorting') 
@@ -133,7 +139,6 @@ def parse_arguments():
         parser.add_argument('--translate', dest='destination_type', metavar='destination_type', 
                             help='Translate between amino acids and nucleotides, use "aa" or "nuc" as destination type')
         parser.add_argument('--upper', action='store_true', help='Translate the sequences to upper case')
-        parser.add_argument('--wrap', action='store_true', help='')
 
 
     # Add arguments specific to the convert action.

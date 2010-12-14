@@ -1,6 +1,7 @@
 #! /usr/bin/env python
 # --squeeze prototype
 
+
 def is_gap(c):
     if c == '-':
         return 1
@@ -23,7 +24,7 @@ def squeeze(gaps, sequence):
         if bool(gaps[position]) is False:
             squeezed.append(sequence[position])
         position += 1
-    return squeezed
+    return ''.join(squeezed)
 
 gaps = [1, 1, 1, 1, 1]
 s1 = ['A', '-', 'A', '-', 'A']
