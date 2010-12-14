@@ -58,12 +58,6 @@ class MagickWrap(object):
         pass
 
 
-    def ungap_alignment(self):
-        """
-
-        """
-        pass
-
     def sort_sequences(self):
         """
 
@@ -105,7 +99,7 @@ class MagickWrap(object):
        	return_code = child.wait()
        	return return_code
         
-    def transform(self, cut=False, dashgap=False, degap=False, lower=False, 
+    def transform(self, cut=False, dashgap=False, ungap=False, lower=False, 
                   reverse=False, strict=False, translate=False, upper=False, wrap=False, 
                   first_name_capture=False, deduplicate_sequences=False, deduplicate_taxa=False, 
                   complement=False, grep=False):
@@ -166,8 +160,8 @@ class MagickWrap(object):
             if complement:
                 records = self._complement_sequences(records)
   
-            if degap:
-                records = self._degap_sequences(records)
+            if ungap:
+                records = self._ungap_sequences(records)
 
             if grep:
                 records = self._name_filter(records, grep)
@@ -291,9 +285,9 @@ class MagickWrap(object):
                             description=record.description)
 
 
-    def _degap_sequences(self, records):
+    def _ungap_sequences(self, records):
         """
-        Remove gaps from sequences.
+        Remove gaps from sequences, given an alignment.
         """
         for record in records:
             yield SeqRecord(record.seq.ungap("-"), id=record.id,

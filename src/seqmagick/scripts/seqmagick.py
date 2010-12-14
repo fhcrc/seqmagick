@@ -41,7 +41,7 @@ def main():
                            dashgap=arguments.dashgap, 
                            deduplicate_taxa=arguments.deduplicatetaxa,
                            deduplicate_sequences=arguments.deduplicateseqs,
-                           degap=arguments.degap,
+                           ungap=arguments.ungap,
                            first_name_capture=arguments.firstname,
                            grep=arguments.grep,
                            lower=arguments.lower,
@@ -65,7 +65,7 @@ def parse_arguments():
     # Example command-line usage:
     #
     # seqmagick.py convert x.fasta y.phy
-    # seqmagick.py mogrify --degap --upper --reverse x.fasta c.fasta t.fasta *.sth
+    # seqmagick.py mogrify --ungap --upper --reverse x.fasta c.fasta t.fasta *.sth
     # seqmagick.py check x.fasta
     # seqmagick.py muscle x.fasta
     # seqmagick.py head -20 x.fasta
@@ -120,7 +120,7 @@ def parse_arguments():
         parser.add_argument('--dashgap', action='store_true', help='Change . and : into - for all sequences')
         parser.add_argument('--deduplicateseqs', action='store_true', help='Remove any duplicate sequences by sequence content, keep the first instance seen')
         parser.add_argument('--deduplicatetaxa', action='store_true', help='Remove any duplicate sequences by ID, keep the first instance seen')
-        parser.add_argument('--degap', action='store_true', help='Remove gaps in the sequence alignment')
+        parser.add_argument('--ungap', action='store_true', help='Remove gaps in the sequence alignment')
         parser.add_argument('--firstname', action='store_true', help='Take only the first whitespace-delimited word as the name of the sequence') 
         parser.add_argument('--grep', dest='grep', help='Filter the sequences by regular expression in name') 
         parser.add_argument('--lower', action='store_true', help='Translate the sequences to lower case')
