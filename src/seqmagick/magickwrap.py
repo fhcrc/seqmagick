@@ -78,50 +78,7 @@ class MagickWrap(object):
         pass
 
 
-    def cut_sequences(self, start, end):
-        """
-
-        """
-        pass
-
-
-    def reverse_sequence_sites(self):
-        """
-
-        """
-        pass
-
-
     def translate_sequences(self):
-        """
-
-        """
-        pass
-
-
-    def sequences_to_upper(self):
-        """
-
-        """
-        pass
-
-
-    def sequences_to_lower(self):
-        """
-
-        """
-        pass
-
-
-    def name_filter(self, filter_regex):
-        """
-        Given a set of sequences, filter out any sequences with names 
-        that do not match the specified regular expression.
-        """
-        pass
-
-
-    def sequences_to_lower(self):
         """
 
         """
@@ -150,7 +107,8 @@ class MagickWrap(object):
         
     def transform(self, cut=False, dashgap=False, degap=False, lower=False, 
                   reverse=False, strict=False, translate=False, upper=False, wrap=False, 
-                  first_name_capture=False, deduplicate_sequences=False, deduplicate_taxa=False):
+                  first_name_capture=False, deduplicate_sequences=False, deduplicate_taxa=False, 
+                  complement=False, grep=False):
         """
         This method wraps many of the transformation generator functions found 
         in this class.
@@ -193,7 +151,27 @@ class MagickWrap(object):
             if first_name_capture:
                 records = self._first_name_capture(records)
 
+            if cut:
+                records = self._cut_sequences(records, start=cut[0], end=cut[1])
 
+            if upper:
+                records = self._upper_sequences(records)
+              
+            if lower:
+                records = self._lower_sequences(records)
+
+            if reverse:
+                records = self._reverse_sequences(records)
+
+            if complement:
+                records = self._complement_sequences(records)
+  
+            if degap:
+                records = self._degap_sequences(records)
+
+            if grep:
+                records = self._name_filter(records, grep)
+                
             # Mogrify requires writing all changes to a temporary file by default, 
             # but convert uses a destination file instead if one was specified. Get
             # sequences from an iterator that has generator functions wrapping it. 
@@ -265,7 +243,79 @@ class MagickWrap(object):
             if whitespace.search(record.description):
                 yield SeqRecord(record.seq, id=record.id, 
                                 description="")
-                                #description=whitespace.split(record.description, 1)[0])
             else: 
                 yield record
- 
+
+
+    def _cut_sequences(self, records, start, end):
+        """
+        Cut sequences given a one-based range.  Includes last item.
+        """
+        start = start - 1
+        for record in records:
+            yield SeqRecord(record.seq[start:end], id=record.id, 
+                            description=record.description)
+
+
+    def _lower_sequences(self, records):
+        """
+        Convert sequences to all lowercase.
+        """
+        for record in records:
+            yield record.lower()
+
+
+    def _upper_sequences(self, records):
+        """
+        Convert sequences to all uppercase.
+        """
+        for record in records:
+            yield record.upper()
+
+
+    def _reverse_sequences(self, records):
+        """
+        Reverse the order of sites in sequences.
+        """
+        for record in records:
+            yield SeqRecord(record.seq[::-1], id=record.id,
+                            description=record.description)
+
+
+    def _complement_sequences(self, records):
+        """
+        Transform sequences into complements.
+        """
+        for record in records:
+            yield SeqRecord(record.seq.complement(), id=record.id,
+                            description=record.description)
+
+
+    def _degap_sequences(self, records):
+        """
+        Remove gaps from sequences.
+        """
+        for record in records:
+            raise Exception, 'Not implemented exception.'
+            # Not sure why Biopython complains when I do this....
+            yield SeqRecord(str(record.seq).replace('-', ''), id=record.id,
+                            description=record.description)
+
+
+    def _name_filter(self, records, filter_regex):
+        """
+        Given a set of sequences, filter out any sequences with names 
+        that do not match the specified regular expression.  Ignore case.
+        """
+        regex = re.compile(filter_regex, re.I)
+        for record in records:
+            if regex.search(record.id):
+                yield record
+            else: 
+                continue
+
+    
+
+
+
+
