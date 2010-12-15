@@ -38,18 +38,19 @@ def main():
         if action == 'muscle':
             wrap.create_muscle_alignment()
         if action == 'mogrify' or action == 'convert':
-            wrap.transform(complement=arguments.complement,
-                           cut=arguments.cut,
+            wrap.transform(cut=arguments.cut,
                            dashgap=arguments.dashgap, 
                            deduplicate_taxa=arguments.deduplicatetaxa,
                            deduplicate_sequences=arguments.deduplicateseqs,
                            ungap=arguments.ungap,
                            first_name_capture=arguments.firstname,
+                           linewrap=arguments.linewrap,
+                           lower=arguments.lower,
                            pattern_include=arguments.pattern_include,
                            pattern_exclude=arguments.pattern_exclude,
-                           lower=arguments.lower,
                            reverse=arguments.reverse,
-                           linewrap=arguments.linewrap,
+                           reverse_complement=arguments.reverse_complement,
+                           squeeze=arguments.squeeze,
                            upper=arguments.upper,
                           )
 
@@ -61,7 +62,7 @@ def parse_arguments():
     argv = sys.argv[1:]
 
     # List of valid actions.
-    actions = ('convert', 'mogrify', 'muscle', 'check', 'head', 'tail', 'help')
+    actions = ('convert', 'mogrify', 'muscle', 'check', 'help')
 
     # Create an argparse instance.
     parser = argparse.ArgumentParser(description='SeqMagick - Manipulate sequence files.')
@@ -120,7 +121,6 @@ def parse_arguments():
     if action in ('convert') or action in ('mogrify'):
         parser.add_argument('--cut', dest='cut', metavar="start:end", type=cut_range, 
                             help='Start and end positions for cutting sequences, : separated.  Includes last item.')
-        parser.add_argument('--complement', action='store_true', help='Convert sequences into complements')
         parser.add_argument('--dashgap', action='store_true', help='Change . and : into - for all sequences')
         parser.add_argument('--deduplicateseqs', action='store_true', help='Remove any duplicate sequences by sequence content, keep the first instance seen')
         parser.add_argument('--deduplicatetaxa', action='store_true', help='Remove any duplicate sequences by ID, keep the first instance seen')
@@ -132,9 +132,9 @@ def parse_arguments():
         parser.add_argument('--linewrap', dest='linewrap', type=int, help='Adjust line wrap for sequence strings.  Useful for viewing an alignment when setting to 0 which has no line breaks. Only fasta files are supported.')
         parser.add_argument('--lower', action='store_true', help='Translate the sequences to lower case')
         parser.add_argument('--reverse', action='store_true', help='Reverse the order of sites in sequences')
+        parser.add_argument('--reversecomplement', dest='reverse_complement', action='store_true', help='Convert sequences into reverse complements')
         parser.add_argument('--sort', dest='sort', help='Perform sorting') 
-        parser.add_argument('--strict', dest='data_type', metavar='data_type', 
-                            help='Verify only IUPAC characters for "aa" or "nuc" are used')
+        parser.add_argument('--squeeze', action='store_true', help='Remove any gaps that are present in the same position across all sequences in an alignment')
         parser.add_argument('--tail', metavar='N', dest='tail', help='Pare down to bottom N sequences') 
         parser.add_argument('--translate', dest='destination_type', metavar='destination_type', 
                             help='Translate between amino acids and nucleotides, use "aa" or "nuc" as destination type')
@@ -212,11 +212,9 @@ SeqMagick actions include:
     check            Check integrity of a file.
     convert          Convert between sequence file formats and optionally,  
                      perform other operations.
-    head             Print the top N records to STDOUT.
     mogrify          Perform in-place operations on a file containing sequences.
                      Can accept multiple source files.
     muscle           Create an alignment using muscle.
-    tail             Print the bottom N records to STDOUT.
 
 See 'seqmagick.py help ACTION' for more information on a specific action.
 
@@ -224,7 +222,8 @@ See 'seqmagick.py help ACTION' for more information on a specific action.
 
     if parser is not None and action:
         # Ugly, but it seems there is no clean way to put 'positional' arguments 
-        # at the beginning of the usage section.
+        # at the beginning of the usage section.  Need to look at doing things with 
+        # sub-commands, which might be a lot cleaner.
         help_text = parser.format_help()
         # Get rid of the action placeholder positional argument.
         help_text = help_text.replace('action source_file', 'source_file')

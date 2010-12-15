@@ -13,8 +13,9 @@ from Bio.Alphabet import IUPAC
 from Bio.Align.Applications import MuscleCommandline
 from Bio.Seq import Seq, SeqRecord
 from Bio.SeqUtils.CheckSum import seguid
-from fileformat import FileFormat
 from Bio.SeqIO import FastaIO
+from numpy import *
+from fileformat import FileFormat
 
 
 class MagickWrap(object):
@@ -26,10 +27,8 @@ class MagickWrap(object):
         """
         Constructor
         """
-
         self.source_files = in_files
         self.tmp_dir = tmp_dir
-
         self.destination_file = out_file
             
 
@@ -54,20 +53,6 @@ class MagickWrap(object):
            SeqIO.convert(source_file, source_file_type, destination_file, destination_file_type) 
         else:
             raise Exception, "An output file was not specified.  Required by the convert action."
-        pass
-
-
-    def sort_sequences(self):
-        """
-
-        """
-        pass
-
-
-    def wrap_file(self):
-        """
-
-        """
         pass
 
 
@@ -101,7 +86,8 @@ class MagickWrap(object):
     def transform(self, cut=False, dashgap=False, ungap=False, lower=False, 
                   reverse=False, strict=False, translate=False, upper=False, linewrap=False, 
                   first_name_capture=False, deduplicate_sequences=False, deduplicate_taxa=False, 
-                  complement=False, pattern_include=False, pattern_exclude=False):
+                  reverse_complement=False, pattern_include=False, pattern_exclude=False,
+                  squeeze=False):
         """
         This method wraps many of the transformation generator functions found 
         in this class.
@@ -159,8 +145,8 @@ class MagickWrap(object):
             if reverse:
                 records = self._reverse_sequences(records)
 
-            if complement:
-                records = self._complement_sequences(records)
+            if reverse_complement:
+                records = self._reverse_complement_sequences(records)
   
             if ungap:
                 records = self._ungap_sequences(records)
@@ -171,7 +157,17 @@ class MagickWrap(object):
             if pattern_exclude:
                 records = self._name_exclude(records, pattern_exclude)
 
-
+            if squeeze:
+                gaps = []
+                # Need to iterate an additional time to determine which 
+                # gaps are share between all sequences in an alignment.
+                for record in SeqIO.parse(source_file, source_file_type):
+                    # Use numpy to prepopulate a gaps list.
+                    if len(gaps) == 0:
+                        gaps_length = len(str(record.seq))
+                        gaps = list(ones( (gaps_length), dtype=int16 ))
+                    gaps = map(self._gap_check, gaps, list(str(record.seq)))
+                records = self._squeeze(records, gaps)
 
 
             # Only the fasta format is supported, as SeqIO.write does not hava a 'wrap' parameter.
@@ -290,12 +286,12 @@ class MagickWrap(object):
                             description=record.description)
 
 
-    def _complement_sequences(self, records):
+    def _reverse_complement_sequences(self, records):
         """
-        Transform sequences into complements.
+        Transform sequences into reverse complements.
         """
         for record in records:
-            yield SeqRecord(record.seq.complement(), id=record.id,
+            yield SeqRecord(record.seq.reverse_complement(), id=record.id,
                             description=record.description)
 
 
@@ -334,8 +330,9 @@ class MagickWrap(object):
                 continue
 
 
-    def _squeeze(self, gaps, records):
+    def _squeeze(self, records, gaps):
         """
+        Remove any gaps that are present in the same position across all sequences in an alignment.:w
         """
         sequence_length = len(gaps)
         for record in records:
@@ -346,8 +343,7 @@ class MagickWrap(object):
                 if bool(gaps[position]) is False:
                     squeezed.append(sequence[position])
                 position += 1            
-
-            yield SeqRecord(''.join(squeezed), id=record.id,
+            yield SeqRecord(Seq(''.join(squeezed)), id=record.id,
                             description=record.description)
 
     
@@ -370,7 +366,7 @@ class MagickWrap(object):
         # Skip any characters that have already been found
         if gap == 0:
             return gap
-        return int(bool(i) & bool(self._is_gap(character)))
+        return int(bool(gap) & bool(self._is_gap(character)))
 
     # End squeeze-related functions
 
