@@ -19,25 +19,32 @@ def main():
     if arguments is None:
         sys.exit(0)
   
+    verbose = arguments.verbose
+    debug = arguments.debug
+
     # Convert takes a single source, mogrify can accept multiple 
     # source files.
     sources = []
     destination = None
-    if action == 'convert':
+    if action == 'convert' or action == 'muscle':
         sources = arguments.source_file
         destination = arguments.destination_file[0]
     elif action == 'mogrify':
         sources = arguments.source_files
 
-
+    if verbose: print 'Arguments parsed.  Action to be performed: ' + action
+    if debug: print 'DEBUG: command-line arguments:\n' + str(arguments)
 
     # Will want to catch control-C and exceptions here to remove 
     # destination file or temp file if script did not fully execute.
     if arguments is not None and action:
-        wrap = MagickWrap(in_files=sources, out_file=destination, tmp_dir=arguments.tmp_dir)
+        if verbose: print 'Creating MagickWrap instance.'
+        wrap = MagickWrap(in_files=sources, out_file=destination, tmp_dir=arguments.tmp_dir, debug=debug, verbose=verbose)
         if action == 'muscle':
+            if verbose: print 'Performing muscle alignment.'
             wrap.create_muscle_alignment()
         if action == 'mogrify' or action == 'convert':
+            if verbose: print 'Performing ' + action + '.'
             wrap.transform(cut=arguments.cut,
                            dashgap=arguments.dashgap, 
                            deduplicate_taxa=arguments.deduplicatetaxa,
@@ -175,8 +182,8 @@ def parse_arguments():
     # Add arguments common to all actions.
     if action in actions:
         parser.add_argument('--tmp', dest='tmp_dir', default='/tmp', help='Temporary directory for working file. Default is /tmp.')
-        parser.add_argument('--debug', dest='', help='')
-        parser.add_argument('--verbose', dest='', help='')
+        parser.add_argument('--debug', action='store_true', help='Enable debug output')
+        parser.add_argument('--verbose', action='store_true', help='Enable verbose output')
 
     # Print help relevant to the action.
     if len(argv) == 2 and argv[0].lower() == 'help' and argv[1].lower() in actions:

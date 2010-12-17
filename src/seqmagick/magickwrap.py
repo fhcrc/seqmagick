@@ -23,13 +23,15 @@ class MagickWrap(object):
     A class that wraps functionality present in BioPython.    
     """
 
-    def __init__(self, tmp_dir, in_files, out_file=None, alphabet=None):
+    def __init__(self, tmp_dir, in_files, out_file=None, alphabet=None, debug=False, verbose=False):
         """
         Constructor
         """
         self.source_files = in_files
         self.tmp_dir = tmp_dir
         self.destination_file = out_file
+        self.debug = debug
+        self.verbose = verbose
             
 
 # Public Methods
@@ -74,7 +76,8 @@ class MagickWrap(object):
         """
         Use BioPython muscle wrapper to create an alignment.
         """
-        muscle_command = MuscleCommandline(input=self.source_file, out=self.destination_file)
+        muscle_command = MuscleCommandline(input=self.source_files[0], out=self.destination_file)
+        if self.debug: print 'DEBUG: muscle command:\n' + str(muscle_command)
         child = subprocess.Popen(str(muscle_command),
                                  stdin=None,
                                  stdout=None,
@@ -113,6 +116,8 @@ class MagickWrap(object):
             #########################################
             # Apply generator functions to iterator.#
             #########################################
+
+            if self.verbose: print 'Setting up generator functions for file: ' + source_file
 
             # Deduplication occurs first, to get a checksum of the 
             # original sequence and to store the id field before any 
@@ -158,6 +163,7 @@ class MagickWrap(object):
                 records = self._name_exclude(records, pattern_exclude)
 
             if squeeze:
+                if self.verbose: print 'Performing squeeze, which requires a new iterator for the first pass.'
                 gaps = []
                 # Need to iterate an additional time to determine which 
                 # gaps are share between all sequences in an alignment.
@@ -168,10 +174,13 @@ class MagickWrap(object):
                         gaps = list(ones( (gaps_length), dtype=int16 ))
                     gaps = map(self._gap_check, gaps, list(str(record.seq)))
                 records = self._squeeze(records, gaps)
+                if self.verbose: print 'List of gaps to remove for alignment created by squeeze.'
+                if self.debug: print 'DEBUG: squeeze gaps list:\n' + str(gaps)
 
 
             # Only the fasta format is supported, as SeqIO.write does not hava a 'wrap' parameter.
             if linewrap is not None and destination_file_type == 'fasta' and source_file_type == 'fasta':
+                if self.verbose: print 'Attempting to write out fasta file with linebreaks set to ' + str(linewrap) + '.'
                 with open(destination_file,"w") as handle:
                     writer = FastaIO.FastaWriter(handle, wrap=linewrap)
                     writer.write_file(records)
@@ -182,11 +191,12 @@ class MagickWrap(object):
             # After creation, it is then copied back over the original file if all 
             # tasks finish up without an exception being thrown.  This avoids 
             # loading the entire sequence file up into memory.
-
+                if self.verbose: print 'Read through iterator and write out transformations to file: ' + destination_file
                 SeqIO.write(records, destination_file, destination_file_type)
 
             # Overwrite original file with temporary file, if necessary.
             if self.destination_file is None:
+                if self.verbose: print 'Moving temporary file: ' + destination_file + ' back to file: ' + source_file
                 os.rename(destination_file, source_file)
 
 
@@ -309,6 +319,8 @@ class MagickWrap(object):
         Given a set of sequences, filter out any sequences with names 
         that do not match the specified regular expression.  Ignore case.
         """
+        if self.verbose: print 'Applying _name_include generator: ' + \
+                               'including only IDs matching ' + filter_regex + ' in results.'
         regex = re.compile(filter_regex, re.I)
         for record in records:
             if regex.search(record.id):
