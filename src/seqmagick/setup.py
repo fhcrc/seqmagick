@@ -10,5 +10,6 @@ setup(name = 'SeqMagick',
       author_email = 'bhodges@fhcrc.org',
       package_dir = {'seqmagick': '.'},
       packages = ['seqmagick'],
-      scripts = glob.glob('scripts/*.py'),
+      scripts = ['scripts/seqmagick'],
       )
+      #scripts = glob.glob('scripts/*.py')'),
