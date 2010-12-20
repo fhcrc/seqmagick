@@ -14,7 +14,7 @@ from Bio.Align.Applications import MuscleCommandline
 from Bio.Seq import Seq, SeqRecord
 from Bio.SeqUtils.CheckSum import seguid
 from Bio.SeqIO import FastaIO
-from numpy import *
+#from numpy import *
 from fileformat import FileFormat
 
 
@@ -171,7 +171,8 @@ class MagickWrap(object):
                     # Use numpy to prepopulate a gaps list.
                     if len(gaps) == 0:
                         gaps_length = len(str(record.seq))
-                        gaps = list(ones( (gaps_length), dtype=int16 ))
+                        #gaps = list(ones( (gaps_length), dtype=int16 ))
+                        gaps = [1] * gaps_length
                     gaps = map(self._gap_check, gaps, list(str(record.seq)))
                 records = self._squeeze(records, gaps)
                 if self.verbose: print 'List of gaps to remove for alignment created by squeeze.'
