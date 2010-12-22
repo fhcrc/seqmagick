@@ -211,6 +211,8 @@ class MagickWrap(object):
         """
         Take an alignment and convert any undesirable characters such as ? or ~ to -.
         """
+        if self.verbose: print 'Applying _dashes_cleanup generator: ' + \
+                               'converting any ? or ~ characters to -.'
         translation_table = string.maketrans("?~", "--")
         for record in records:
             yield SeqRecord(Seq(str(record.seq).translate(translation_table)), 
@@ -222,6 +224,8 @@ class MagickWrap(object):
         Remove any duplicate records with identical sequences, keep the first 
         instance seen and discard additional occurences.
         """
+        if self.verbose: print 'Applying _deduplicate_sequences generator: ' + \
+                               'removing any duplicate records with identical sequences.'
         checksums = set()
         for record in records:
             checksum = seguid(record.seq)
@@ -236,6 +240,8 @@ class MagickWrap(object):
         Remove any duplicate records with identical IDs, keep the first 
         instance seen and discard additional occurences.
         """
+        if self.verbose: print 'Applying _deduplicate_taxa generator: ' + \
+                               'removing any duplicate records with identical IDs.'
         taxa = set()
         for record in records:
             # Default to full ID, split if | is found.
@@ -253,6 +259,8 @@ class MagickWrap(object):
         Take only the first whitespace-delimited word as the name of the sequence.  
         Essentially removes any extra text from the sequence's description.
         """
+        if self.verbose: print 'Applying _first_name_capture generator: ' + \
+                               'making sure ID only contains the  first whitespace-delimited word.'
         whitespace = re.compile(r'\s+')
         for record in records:
             if whitespace.search(record.description):
@@ -266,6 +274,8 @@ class MagickWrap(object):
         """
         Cut sequences given a one-based range.  Includes last item.
         """
+        if self.verbose: print 'Applying _cut_sequences generator: ' + \
+                               'cutting sequences based on specified range (' + start + '-' + end + ').'
         start = start - 1
         for record in records:
             yield SeqRecord(record.seq[start:end], id=record.id, 
@@ -276,6 +286,8 @@ class MagickWrap(object):
         """
         Convert sequences to all lowercase.
         """
+        if self.verbose: print 'Applying _lower_sequences generator: ' + \
+                               'converting sequences to all lowercase.'
         for record in records:
             yield record.lower()
 
@@ -284,6 +296,8 @@ class MagickWrap(object):
         """
         Convert sequences to all uppercase.
         """
+        if self.verbose: print 'Applying _upper_sequences generator: ' + \
+                               'converting sequences to all uppercase.'
         for record in records:
             yield record.upper()
 
@@ -292,6 +306,8 @@ class MagickWrap(object):
         """
         Reverse the order of sites in sequences.
         """
+        if self.verbose: print 'Applying _reverse_sequences generator: ' + \
+                               'reversing the order of sites in sequences.'
         for record in records:
             yield SeqRecord(record.seq[::-1], id=record.id,
                             description=record.description)
@@ -301,6 +317,8 @@ class MagickWrap(object):
         """
         Transform sequences into reverse complements.
         """
+        if self.verbose: print 'Applying _reverse_complement_sequences generator: ' + \
+                               'transforming sequences into reverse complements.'
         for record in records:
             yield SeqRecord(record.seq.reverse_complement(), id=record.id,
                             description=record.description)
@@ -310,6 +328,8 @@ class MagickWrap(object):
         """
         Remove gaps from sequences, given an alignment.
         """
+        if self.verbose: print 'Applying _ungap_sequences generator: ' + \
+                               'removing gaps from the alignment.'
         for record in records:
             yield SeqRecord(record.seq.ungap("-"), id=record.id,
                             description=record.description)
@@ -335,6 +355,8 @@ class MagickWrap(object):
         Given a set of sequences, filter out any sequences with names 
         that match the specified regular expression.  Ignore case.
         """
+        if self.verbose: print 'Applying _name_exclude generator: ' + \
+                               'excluding IDs matching ' + filter_regex + ' in results.'
         regex = re.compile(filter_regex, re.I)
         for record in records:
             if not regex.search(record.id):
@@ -345,8 +367,11 @@ class MagickWrap(object):
 
     def _squeeze(self, records, gaps):
         """
-        Remove any gaps that are present in the same position across all sequences in an alignment.:w
+        Remove any gaps that are present in the same position across all sequences in an alignment.
         """
+        if self.verbose: print 'Applying _squeeze generator: ' + \
+                               'removing any gaps that are present ' + \ 
+                               'in the same position across all sequences in an alignment.'
         sequence_length = len(gaps)
         for record in records:
             sequence = list(str(record.seq))
