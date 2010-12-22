@@ -3,6 +3,7 @@
 """
 
 import os
+import itertools
 import re
 import subprocess
 import sys
@@ -90,7 +91,7 @@ class MagickWrap(object):
                   reverse=False, strict=False, translate=False, upper=False, linewrap=False, 
                   first_name_capture=False, deduplicate_sequences=False, deduplicate_taxa=False, 
                   reverse_complement=False, pattern_include=False, pattern_exclude=False,
-                  squeeze=False):
+                  squeeze=False, head=False, tail=False):
         """
         This method wraps many of the transformation generator functions found 
         in this class.
@@ -132,15 +133,9 @@ class MagickWrap(object):
             if dashgap:
                 records = self._dashes_cleanup(records)        
 
-            # squeeze best to go after dashgap but before cut, 
-            # in the event one or both are called.
 
             if first_name_capture:
                 records = self._first_name_capture(records)
-
-            if cut:
-                records = self._cut_sequences(records, start=cut[0], end=cut[1])
-
             if upper:
                 records = self._upper_sequences(records)
               
@@ -162,6 +157,20 @@ class MagickWrap(object):
             if pattern_exclude:
                 records = self._name_exclude(records, pattern_exclude)
 
+            if head and tail:
+                raise Exception, "Error: head and tail are mutually exclusive at the moment."
+
+            if head:
+                records = self._head(records, head)
+
+            if tail:
+                # To know where to begin including records for tail, we need to count 
+                # the total number of records, which requires going through the entire 
+                # file and additional time.
+                record_count = sum(1 for record in SeqIO.parse(source_file, source_file_type))
+                records = self._tail(records, tail, record_count)
+
+
             if squeeze:
                 if self.verbose: print 'Performing squeeze, which requires a new iterator for the first pass.'
                 gaps = []
@@ -178,8 +187,12 @@ class MagickWrap(object):
                 if self.verbose: print 'List of gaps to remove for alignment created by squeeze.'
                 if self.debug: print 'DEBUG: squeeze gaps list:\n' + str(gaps)
 
+            # cut needs to go after squeeze or the gaps list will no longer be relevent.  
+            # It is probably best not to use squeeze and cut together in most cases.
+            if cut:
+                records = self._cut_sequences(records, start=cut[0], end=cut[1])
 
-            # Only the fasta format is supported, as SeqIO.write does not hava a 'wrap' parameter.
+           # Only the fasta format is supported, as SeqIO.write does not hava a 'wrap' parameter.
             if linewrap is not None and destination_file_type == 'fasta' and source_file_type == 'fasta':
                 if self.verbose: print 'Attempting to write out fasta file with linebreaks set to ' + str(linewrap) + '.'
                 with open(destination_file,"w") as handle:
@@ -363,6 +376,36 @@ class MagickWrap(object):
                 yield record
             else: 
                 continue
+
+    def _head(self, records, head):
+        """
+        Limit results to the top N records.
+        """
+        if self.verbose: print 'Applying _head generator: ' + \
+                               'limiting results to top ' + str(head) + ' records.'
+        count = 0
+        for record in records:
+            if count < head:
+                count += 1
+                yield record 
+            else:
+                break
+
+
+    def _tail(self, records, tail, record_count):
+        """
+        Limit results to the bottom N records.
+        """
+        if self.verbose: print 'Applying _tail generator: ' + \
+                               'limiting results to bottom ' + str(tail) + ' records.'
+        position = 0
+        start = record_count - tail
+        for record in records:
+            if position < start:
+                position += 1
+                continue
+            else:
+                yield record
 
 
     def _squeeze(self, records, gaps):
