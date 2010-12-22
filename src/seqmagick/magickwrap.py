@@ -370,7 +370,7 @@ class MagickWrap(object):
         Remove any gaps that are present in the same position across all sequences in an alignment.
         """
         if self.verbose: print 'Applying _squeeze generator: ' + \
-                               'removing any gaps that are present ' + \ 
+                               'removing any gaps that are present ' + \
                                'in the same position across all sequences in an alignment.'
         sequence_length = len(gaps)
         for record in records:
