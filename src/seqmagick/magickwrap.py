@@ -1,5 +1,4 @@
 """
-@author: bhodges
 """
 
 import os
