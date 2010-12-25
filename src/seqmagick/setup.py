@@ -3,7 +3,7 @@
 import glob
 from distutils.core import setup
 
-setup(name = 'SeqMagick',
+setup(name = 'seqmagick',
       version = '0.1',
       description = 'Tools for converting and working with sequence files.',
       author = 'Brian Hodges',
