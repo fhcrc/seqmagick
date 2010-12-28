@@ -58,7 +58,7 @@ class MagickWrap(object):
             raise Exception, "An output file was not specified.  Required by the convert action."
 
 
-    def describe_sequence_files(self, output_format='align', out_file=None):
+    def describe_sequence_files(self, output_format, width):
         """
         Given one more more sequence files, determine if the file is an alignment, the maximum 
         sequence length and the total number of sequences.  Provides different output 
@@ -66,19 +66,19 @@ class MagickWrap(object):
         borderless table).
         """
         handle = sys.stdout
+        if self.destination_file:
+            handle = open(self.destination_file, 'w')
+
         # Create and write out the header row.
         header = ['name', 'alignment', 'max_len', 'num_seqs']
         self._print_file_info(header, output_format=output_format, 
-                              handle=handle)
+                              handle=handle, width=width)
          # Go through all source files passed in, one by one.
         for source_file in self.source_files:
             is_alignment = True
             max_length = 0
             sequence_count = 0
             source_file_type = FileFormat.lookup_file_type(os.path.splitext(source_file)[1])
-            if out_file:
-                handle = open(out_file, 'w')
-
            
             # Get an iterator and analyze the data.
             for record in SeqIO.parse(source_file, source_file_type):
@@ -97,7 +97,9 @@ class MagickWrap(object):
                                   str(max_length),
                                   str(sequence_count),
                                   ], output_format=output_format, 
-                                  handle=handle)
+                                  handle=handle, width=width)
+        if self.destination_file:
+            handle.close()
 
        
     def create_muscle_alignment(self):
@@ -478,7 +480,7 @@ class MagickWrap(object):
 
     # End squeeze-related functions
 
-    def _print_file_info(self, row, output_format, handle, width=30):
+    def _print_file_info(self, row, output_format, handle, width):
         """
         Write out information that describes a sequence file.
         """

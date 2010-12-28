@@ -29,7 +29,10 @@ def main():
     if action == 'convert' or action == 'muscle':
         sources = arguments.source_file
         destination = arguments.destination_file[0]
-    elif action == 'mogrify' or action == 'info':
+    elif action == 'info':
+        sources = arguments.source_files
+        destination = arguments.destination_file
+    elif action == 'mogrify':
         sources = arguments.source_files
 
     if verbose: print 'Arguments parsed.  Action to be performed: ' + action
@@ -42,7 +45,9 @@ def main():
         wrap = MagickWrap(in_files=sources, out_file=destination, tmp_dir=arguments.tmp_dir, debug=debug, verbose=verbose)
         if action == 'info':
             if verbose: print 'Performing info action.'
-            wrap.describe_sequence_files()
+            wrap.describe_sequence_files(output_format=arguments.format, 
+                                         width=arguments.width,
+                                        )
         if action == 'muscle':
             if verbose: print 'Performing muscle alignment.'
             wrap.create_muscle_alignment()
@@ -180,14 +185,14 @@ def parse_arguments():
     if action in ('info'):
         parser.add_argument('source_files', metavar='sequence_files', 
                             type=sequence_file, nargs='+')
-        parser.add_argument('--outfile', dest='destination_file', 
+        parser.add_argument('--outfile', dest='destination_file', metavar='destination_file', 
                             help='Write output to a file.  If unspecified, ' + 
                             'defaults to STDOUT') 
-        parser.add_argument('--format', dest='format', 
+        parser.add_argument('--format', dest='format', default='tab', 
                             choices=['tab', 'csv', 'align'], 
                             help='Specify output format as tab-delimited, CSV or ' + 
-                            'aligned in a borderless table') 
-        parser.add_argument('--width', dest='width', type=int, 
+                            'aligned in a borderless table.  Default is tab-delimited') 
+        parser.add_argument('--width', dest='width', type=int, default=30,
                             help='Specify width of columns when --format is set to align. ' + 
                             'Defaults to a width of 30.  Any output exceeding the column width ' + 
                             'will be truncated ')
@@ -195,11 +200,6 @@ def parse_arguments():
     # Add arguments specific to the mogrify action.
     if action in ('mogrify'):
         parser.add_argument('source_files', type=sequence_file, nargs='+')
-
-    # Add arguments specific to the sort action.
-    if action in ('sort'):
-        parser.add_argument('source_file', type=sequence_file, nargs=1)
-        parser.add_argument('destination_file', nargs=1)
 
     # Add arguments common to all actions.
     if action in actions:
