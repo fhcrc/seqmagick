@@ -6,7 +6,7 @@ import argparse
 
 from cStringIO import StringIO
 # Insert one level above project directory to path for testing.
-#sys.path.insert(0, "../..")
+sys.path.insert(0, "../..")
 from seqmagick.magickwrap import MagickWrap
 from seqmagick.fileformat import FileFormat
 
@@ -29,7 +29,7 @@ def main():
     if action == 'convert' or action == 'muscle':
         sources = arguments.source_file
         destination = arguments.destination_file[0]
-    elif action == 'mogrify':
+    elif action == 'mogrify' or action == 'info':
         sources = arguments.source_files
 
     if verbose: print 'Arguments parsed.  Action to be performed: ' + action
@@ -40,6 +40,9 @@ def main():
     if arguments is not None and action:
         if verbose: print 'Creating MagickWrap instance.'
         wrap = MagickWrap(in_files=sources, out_file=destination, tmp_dir=arguments.tmp_dir, debug=debug, verbose=verbose)
+        if action == 'info':
+            if verbose: print 'Performing info action.'
+            wrap.describe_sequence_files()
         if action == 'muscle':
             if verbose: print 'Performing muscle alignment.'
             wrap.create_muscle_alignment()
@@ -71,20 +74,18 @@ def parse_arguments():
     argv = sys.argv[1:]
 
     # List of valid actions.
-    actions = ('convert', 'mogrify', 'muscle', 'check', 'help')
+    actions = ('check', 'convert', 'info', 'mogrify', 'muscle', 'help')
 
     # Create an argparse instance.
     parser = argparse.ArgumentParser(description='SeqMagick - Manipulate sequence files.')
 
     # Example command-line usage:
     #
-    # seqmagick.py convert x.fasta y.phy
-    # seqmagick.py mogrify --ungap --upper --reverse x.fasta c.fasta t.fasta *.sth
     # seqmagick.py check x.fasta
+    # seqmagick.py convert x.fasta y.phy
+    # seqmagick.py info x.fasta
+    # seqmagick.py mogrify --ungap --upper x.fasta c.fasta t.fasta *.sth
     # seqmagick.py muscle x.fasta
-    # seqmagick.py head -20 x.fasta
-    # seqmagick.py head -20 x.fasta
-    # seqmagick.py tail -20 x.fasta
     # seqmagick.py help mogrify
 
     # An action is required, print help if nothing specified.
@@ -153,7 +154,7 @@ def parse_arguments():
                             help='Convert sequences into reverse complements')
         parser.add_argument('--sort', dest='sort', 
                             choices=['length-asc', 'length-desc', 'name-asc', 'name-desc'], 
-                            help='Perform sorting by length or name, ascending or descending.') 
+                            help='Perform sorting by length or name, ascending or descending') 
         parser.add_argument('--squeeze', action='store_true', 
                             help='Remove any gaps that are present in the same position across ' + 
                             'all sequences in an alignment')
@@ -168,17 +169,28 @@ def parse_arguments():
         parser.add_argument('source_file', type=sequence_file, nargs=1)
         parser.add_argument('destination_file', nargs=1, default=False)
 
-    # Add arguments specific to the head action.
-    if action in ('head'):
-        #parser.add_argument('--', dest='', type=, help='')
-        pass
-
     # Add arguments specific to the help action.
     if action in ('help'):
         print parser.description
         print_help(parser=parser)
         # Do not do anything in addition to printing help text, just exit.
         return action, None
+
+    # Add arguments specific to the info action.
+    if action in ('info'):
+        parser.add_argument('source_files', metavar='sequence_files', 
+                            type=sequence_file, nargs='+')
+        parser.add_argument('--outfile', dest='destination_file', 
+                            help='Write output to a file.  If unspecified, ' + 
+                            'defaults to STDOUT') 
+        parser.add_argument('--format', dest='format', 
+                            choices=['tab', 'csv', 'align'], 
+                            help='Specify output format as tab-delimited, CSV or ' + 
+                            'aligned in a borderless table') 
+        parser.add_argument('--width', dest='width', type=int, 
+                            help='Specify width of columns when --format is set to align. ' + 
+                            'Defaults to a width of 30.  Any output exceeding the column width ' + 
+                            'will be truncated ')
 
     # Add arguments specific to the mogrify action.
     if action in ('mogrify'):
@@ -188,11 +200,6 @@ def parse_arguments():
     if action in ('sort'):
         parser.add_argument('source_file', type=sequence_file, nargs=1)
         parser.add_argument('destination_file', nargs=1)
-
-    # Add arguments specific to the tail action.
-    if action in ('tail'):
-        #parser.add_argument('--', dest='', type=, help='')
-        pass
 
     # Add arguments common to all actions.
     if action in actions:
@@ -234,6 +241,7 @@ SeqMagick actions include:
     check            Check integrity of a file.
     convert          Convert between sequence file formats and optionally,  
                      perform other operations.
+    info             Describe a sequence file.
     mogrify          Perform in-place operations on a file containing sequences.
                      Can accept multiple source files.
     muscle           Create an alignment using muscle.
@@ -251,6 +259,7 @@ See 'seqmagick.py help ACTION' for more information on a specific action.
         help_text = help_text.replace('action source_file', 'source_file')
         help_text = help_text.replace('action [source_files [source_files ...]]', '[source_files [source_files ...]]')
         help_text = help_text.replace('  action\n', '')
+        help_text = help_text.replace('action sequence_file', 'sequence_file')
         # Remove --help when an action is specified.
         help_text = help_text.replace('[-h]', action + '')
         # Have seen different amount of whitespace, will make sense to replace this with a regex.

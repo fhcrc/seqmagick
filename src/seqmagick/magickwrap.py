@@ -1,6 +1,7 @@
 """
 """
 
+import csv
 import os
 import itertools
 import re
@@ -55,23 +56,50 @@ class MagickWrap(object):
            SeqIO.convert(source_file, source_file_type, destination_file, destination_file_type) 
         else:
             raise Exception, "An output file was not specified.  Required by the convert action."
-        pass
 
 
-    def translate_sequences(self):
+    def describe_sequence_files(self, output_format='align', out_file=None):
         """
-
+        Given one more more sequence files, determine if the file is an alignment, the maximum 
+        sequence length and the total number of sequences.  Provides different output 
+        formats including tab (tab-delimited), csv and align (aligned as if part of a 
+        borderless table).
         """
-        pass
+        # Go through all source files passed in, one by one.
+        for source_file in self.source_files:
+            is_alignment = True
+            max_length = 0
+            sequence_count = 0
+            source_file_type = FileFormat.lookup_file_type(os.path.splitext(source_file)[1])
+            handle = sys.stdout
+            if out_file:
+                handle = open(out_file, 'w')
 
+            # Create and write out the header row.
+            header = ['name', 'alignment', 'max_len', 'num_seqs']
+            self._print_file_info(header, output_format=output_format, 
+                                  handle=handle)
+            
+            # Get an iterator and analyze the data.
+            for record in SeqIO.parse(source_file, source_file_type):
+                # We've found another sequence...
+                sequence_count += 1
+                if max_length != 0:
+                    # If even one sequence is not the same length as the others, 
+                    # we don't consider this an alignment.
+                    if len(str(record.seq)) != max_length:
+                        is_alignment = False
+                # Work on determining the length of the longest sequence.
+                if len(str(record.seq)) > max_length:
+                    max_length = len(str(record.seq))
+            self._print_file_info(row=[source_file, 
+                                  str(is_alignment).upper(), 
+                                  str(max_length),
+                                  str(sequence_count),
+                                  ], output_format=output_format, 
+                                  handle=handle)
 
-    def is_strict_alphabet(self):
-        """
-
-        """
-        pass
-
-
+       
     def create_muscle_alignment(self):
         """
         Use BioPython muscle wrapper to create an alignment.
@@ -449,6 +477,21 @@ class MagickWrap(object):
         return int(bool(gap) & bool(self._is_gap(character)))
 
     # End squeeze-related functions
+
+    def _print_file_info(self, row, output_format, handle, width=30):
+        """
+        Write out information that describes a sequence file.
+        """
+        if 'tab' in output_format:
+            handle.write("\t".join(row) + "\n")
+        elif 'csv' in output_format:
+            writer = csv.writer(handle, delimiter=',', quotechar='"', 
+                                quoting=csv.QUOTE_NONNUMERIC)
+            writer.writerow(row)
+        elif 'align' in output_format:
+            row = map(lambda s: s.ljust(width)[:width], row)
+            handle.write("".join(row) + "\n")
+
 
 
 
