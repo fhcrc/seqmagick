@@ -65,21 +65,21 @@ class MagickWrap(object):
         formats including tab (tab-delimited), csv and align (aligned as if part of a 
         borderless table).
         """
-        # Go through all source files passed in, one by one.
+        handle = sys.stdout
+        # Create and write out the header row.
+        header = ['name', 'alignment', 'max_len', 'num_seqs']
+        self._print_file_info(header, output_format=output_format, 
+                              handle=handle)
+         # Go through all source files passed in, one by one.
         for source_file in self.source_files:
             is_alignment = True
             max_length = 0
             sequence_count = 0
             source_file_type = FileFormat.lookup_file_type(os.path.splitext(source_file)[1])
-            handle = sys.stdout
             if out_file:
                 handle = open(out_file, 'w')
 
-            # Create and write out the header row.
-            header = ['name', 'alignment', 'max_len', 'num_seqs']
-            self._print_file_info(header, output_format=output_format, 
-                                  handle=handle)
-            
+           
             # Get an iterator and analyze the data.
             for record in SeqIO.parse(source_file, source_file_type):
                 # We've found another sequence...
