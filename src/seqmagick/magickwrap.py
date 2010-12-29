@@ -120,7 +120,7 @@ class MagickWrap(object):
                   reverse=False, strict=False, translate=False, upper=False, linewrap=False, 
                   first_name_capture=False, deduplicate_sequences=False, deduplicate_taxa=False, 
                   reverse_complement=False, pattern_include=False, pattern_exclude=False,
-                  squeeze=False, head=False, tail=False):
+                  squeeze=False, head=False, tail=False, sort=False):
         """
         This method wraps many of the transformation generator functions found 
         in this class.
@@ -141,7 +141,13 @@ class MagickWrap(object):
             destination_file_type = FileFormat.lookup_file_type(os.path.splitext(destination_file)[1])
 
             # Get an iterator.
-            records = SeqIO.parse(source_file, source_file_type)
+            if sort:             
+                # Sorted iterator.
+                records = self._sort_length(source_file=source_file, source_file_type=source_file_type, direction=0)
+            else:
+                # Unsorted iterator.
+                records = SeqIO.parse(source_file, source_file_type)
+
 
             #########################################
             # Apply generator functions to iterator.#
@@ -365,7 +371,6 @@ class MagickWrap(object):
             yield SeqRecord(record.seq.reverse_complement(), id=record.id,
                             description=record.description)
 
-
     def _ungap_sequences(self, records):
         """
         Remove gaps from sequences, given an alignment.
@@ -495,6 +500,27 @@ class MagickWrap(object):
             handle.write("".join(row) + "\n")
 
 
+    def _sort_length(self, source_file, source_file_type, direction=1):
+        """
+        Sort sequences by length. 1 is ascending (default) and 0 is descending. 
+        """
+        direction_text = 'ascending' if direction == 1 else 'descending'
+        
+        if self.verbose: print 'Indexing sequences by length: ' + direction_text
 
+        # Taken from the Biopython tutorial.
+
+        #Get the lengths and ids, and sort on length         
+        len_and_ids = sorted((len(rec), rec.id) for rec in SeqIO.parse(source_file, source_file_type))
+
+        if direction == 0:
+            ids = reversed([id for (length, id) in len_and_ids])
+        else:
+            ids = [id for (length, id) in len_and_ids]
+        del len_and_ids #free this memory
+        record_index = SeqIO.index(source_file, source_file_type)
+        records = (record_index[id] for id in ids)
+
+        return records
 
 

@@ -6,7 +6,7 @@ import argparse
 
 from cStringIO import StringIO
 # Insert one level above project directory to path for testing.
-#sys.path.insert(0, "../..")
+sys.path.insert(0, "../..")
 from seqmagick.magickwrap import MagickWrap
 from seqmagick.fileformat import FileFormat
 
