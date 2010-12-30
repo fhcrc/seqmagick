@@ -143,7 +143,19 @@ class MagickWrap(object):
             # Get an iterator.
             if sort:             
                 # Sorted iterator.
-                records = self._sort_length(source_file=source_file, source_file_type=source_file_type, direction=0)
+                if sort == 'length-asc':
+                    records = self._sort_length(source_file=source_file, 
+                                                source_file_type=source_file_type, direction=1)
+                elif sort == 'length-desc':
+                    records = self._sort_length(source_file=source_file, 
+                                                source_file_type=source_file_type, direction=0)
+                elif sort == 'name-asc':
+                    records = self._sort_name(source_file=source_file, 
+                                                source_file_type=source_file_type, direction=1)
+                elif sort == 'name-desc':
+                    records = self._sort_name(source_file=source_file, 
+                                                source_file_type=source_file_type, direction=0)
+                
             else:
                 # Unsorted iterator.
                 records = SeqIO.parse(source_file, source_file_type)
@@ -167,7 +179,6 @@ class MagickWrap(object):
 
             if dashgap:
                 records = self._dashes_cleanup(records)        
-
 
             if first_name_capture:
                 records = self._first_name_capture(records)
@@ -508,7 +519,7 @@ class MagickWrap(object):
         
         if self.verbose: print 'Indexing sequences by length: ' + direction_text
 
-        # Taken from the Biopython tutorial.
+        # Adapted from the Biopython tutorial example.
 
         #Get the lengths and ids, and sort on length         
         len_and_ids = sorted((len(rec), rec.id) for rec in SeqIO.parse(source_file, source_file_type))
@@ -518,6 +529,27 @@ class MagickWrap(object):
         else:
             ids = [id for (length, id) in len_and_ids]
         del len_and_ids #free this memory
+        record_index = SeqIO.index(source_file, source_file_type)
+        records = (record_index[id] for id in ids)
+
+        return records
+
+
+    def _sort_name(self, source_file, source_file_type, direction=1):
+        """
+        Sort sequences by name. 1 is ascending (default) and 0 is descending. 
+        """
+        direction_text = 'ascending' if direction == 1 else 'descending'
+        
+        if self.verbose: print 'Indexing sequences by name: ' + direction_text
+
+        # Adapted from the Biopython tutorial example.
+
+        #Sort on id         
+        ids = sorted((rec.id) for rec in SeqIO.parse(source_file, source_file_type))
+
+        if direction == 0:
+            ids = reversed(ids)
         record_index = SeqIO.index(source_file, source_file_type)
         records = (record_index[id] for id in ids)
 

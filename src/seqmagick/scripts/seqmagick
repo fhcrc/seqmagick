@@ -22,6 +22,7 @@ def main():
     verbose = arguments.verbose
     debug = arguments.debug
 
+
     # Convert takes a single source, mogrify can accept multiple 
     # source files.
     sources = []
@@ -66,6 +67,7 @@ def main():
                            pattern_exclude=arguments.pattern_exclude,
                            reverse=arguments.reverse,
                            reverse_complement=arguments.reverse_complement,
+                           sort=arguments.sort,
                            squeeze=arguments.squeeze,
                            tail=arguments.tail,
                            upper=arguments.upper,
@@ -159,7 +161,8 @@ def parse_arguments():
                             help='Convert sequences into reverse complements')
         parser.add_argument('--sort', dest='sort', 
                             choices=['length-asc', 'length-desc', 'name-asc', 'name-desc'], 
-                            help='Perform sorting by length or name, ascending or descending') 
+                            help='Perform sorting by length or name, ascending or descending.  ' + \
+                            'ASCII sorting is performed for names') 
         parser.add_argument('--squeeze', action='store_true', 
                             help='Remove any gaps that are present in the same position across ' + 
                             'all sequences in an alignment')
