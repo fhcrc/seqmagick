@@ -257,7 +257,7 @@ class MagickWrap(object):
             # Overwrite original file with temporary file, if necessary.
             if self.destination_file is None:
                 if self.verbose: print 'Moving temporary file: ' + destination_file + ' back to file: ' + source_file
-                os.rename(destination_file, source_file)
+                shutil.move(destination_file, source_file)
 
 
 
