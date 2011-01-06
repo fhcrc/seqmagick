@@ -8,6 +8,7 @@ import re
 import subprocess
 import sys
 import string
+import shutil
 
 from Bio import SeqIO
 from Bio.Alphabet import IUPAC
