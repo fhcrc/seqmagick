@@ -68,6 +68,7 @@ def main():
                            reverse=arguments.reverse,
                            reverse_complement=arguments.reverse_complement,
                            sort=arguments.sort,
+                           strip_range=arguments.strip_range,
                            squeeze=arguments.squeeze,
                            tail=arguments.tail,
                            upper=arguments.upper,
@@ -163,6 +164,8 @@ def parse_arguments():
                             choices=['length-asc', 'length-desc', 'name-asc', 'name-desc'], 
                             help='Perform sorting by length or name, ascending or descending.  ' + \
                             'ASCII sorting is performed for names') 
+        parser.add_argument('--striprange', dest='strip_range', action='store_true', 
+                            help='Strip ranges from sequences IDs, matching </x-y>') 
         parser.add_argument('--squeeze', action='store_true', 
                             help='Remove any gaps that are present in the same position across ' + 
                             'all sequences in an alignment')

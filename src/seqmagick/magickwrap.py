@@ -121,7 +121,7 @@ class MagickWrap(object):
                   reverse=False, strict=False, translate=False, upper=False, linewrap=False, 
                   first_name_capture=False, deduplicate_sequences=False, deduplicate_taxa=False, 
                   reverse_complement=False, pattern_include=False, pattern_exclude=False,
-                  squeeze=False, head=False, tail=False, sort=False):
+                  squeeze=False, head=False, tail=False, sort=False, strip_range=False):
         """
         This method wraps many of the transformation generator functions found 
         in this class.
@@ -209,6 +209,9 @@ class MagickWrap(object):
 
             if head:
                 records = self._head(records, head)
+
+            if strip_range:
+                records = self._strip_range(records)
 
             if tail:
                 # To know where to begin including records for tail, we need to count 
@@ -472,6 +475,28 @@ class MagickWrap(object):
                 position += 1            
             yield SeqRecord(Seq(''.join(squeezed)), id=record.id,
                             description=record.description)
+
+
+    def _strip_range(self, records):
+        """
+        Cut off trailing /<start>-<stop> ranges from IDs.  Ranges must be 1-indexed and 
+        the stop integer must not be less than the start integer.
+        """
+        if self.verbose: print 'Applying _strip_range generator: ' + \
+                               'removing /<start>-<stop> ranges from IDs'
+        # Split up and be greedy.
+        cut_regex = re.compile(r"(?P<id>.*)\/(?P<start>\d+)\-(?P<stop>\d+)") 
+        for record in records:
+            name = record.id
+            match = cut_regex.match(str(record.id))
+            if match: 
+                sequence_id = match.group('id')
+                start = int(match.group('start'))
+                stop = int(match.group('stop'))
+                if start > 0 and start <= stop: 
+                    name = sequence_id
+            yield SeqRecord(record.seq, id=name, 
+                            description='')
 
     
     # Begin squeeze-related functions
