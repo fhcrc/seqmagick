@@ -75,20 +75,22 @@ def parse_arguments(action_arguments=None):
     parser = argparse.ArgumentParser(description='SeqMagick - Manipulate sequence files.', prog='seqmagick')
 
     # Setup sub-commands
-    subparsers = parser.add_subparsers(dest='subparser_name', help='sub-command help')
+    subparsers = parser.add_subparsers(dest='subparser_name')
     # Check
-    parser_check = subparsers.add_parser('check', help='check help')
+    parser_check = subparsers.add_parser('check', help='Check integrity of a file.')
     parser_check.add_argument('--alphabet', dest='alphabet', help='To be implemented')
     parser_check.add_argument('source_file', type=sequence_file, nargs=1)
     # Convert
-    parser_convert = add_arguments(subparsers.add_parser('convert', help='convert help'))
+    parser_convert = add_arguments(subparsers.add_parser('convert', 
+                                   help='Convert between sequence file formats and optionally, ' + \
+                                   'perform other operations'))
     parser_convert.add_argument('source_file', type=sequence_file, nargs=1)
     parser_convert.add_argument('destination_file', nargs=1, default=False)
     # Help
-    parser_help = subparsers.add_parser('help', help='help for actions')
+    parser_help = subparsers.add_parser('help', help='Help for actions')
     parser_help.add_argument('action', nargs=1)
     # Info
-    parser_info = subparsers.add_parser('info', help='info help')
+    parser_info = subparsers.add_parser('info', help='Describe a sequence file.')
     parser_info.add_argument('source_files', metavar='sequence_files',
                              type=sequence_file, nargs='+')
     parser_info.add_argument('--outfile', dest='destination_file', metavar='destination_file',
@@ -103,10 +105,12 @@ def parse_arguments(action_arguments=None):
                              'Defaults to a width of 30.  Any output exceeding the column width ' +
                              'will be truncated ')
     # Mogrify
-    parser_mogrify = add_arguments(subparsers.add_parser('mogrify', help='mogrify help'))
+    parser_mogrify = add_arguments(subparsers.add_parser('mogrify', 
+                                   help='Perform in-place operations on a file ' + \
+                                   ' containing sequences.  Can accept multiple source files. '))
     parser_mogrify.add_argument('source_files', type=sequence_file, nargs='+')
     # Muscle
-    parser_muscle = subparsers.add_parser('muscle', help='muscle help')
+    parser_muscle = subparsers.add_parser('muscle', help=' Create an alignment using muscle.')
     parser_muscle.add_argument('source_file', type=sequence_file, nargs=1)
     parser_muscle.add_argument('destination_file', nargs=1)
 

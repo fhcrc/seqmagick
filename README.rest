@@ -27,11 +27,22 @@ In general the interface is in the format::
 
 with <cmd> being one of:
 
+check
+  check integrity of a file. Not yet implemented.
+
 convert
   convert a b will convert a to b
 
+info
+  describe a sequence file
+
 mogrify
   mogrify modifies in place
+
+muscle
+  create an alignment using muscle.
+
+
 
 The real action for these commands happens in the options.
 These can be stacked on top of one another.
