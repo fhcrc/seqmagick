@@ -47,28 +47,48 @@ The real action for these commands happens in the options.
 These can be stacked on top of one another.
 
 --cut start:end       Start and end positions for cutting sequences, : separated. Includes last item.
---dashgap             Change . and : into - for all sequences
---deduplicateseqs     Remove any duplicate sequences by sequence content, keep the first instance seen
---deduplicatetaxa     Remove any duplicate sequences by ID, keep the first instance seen
---ungap               Remove gaps in the sequence alignment
---firstname           Take only the first whitespace-delimited word as the name of the sequence
---head N              Trim down to top N sequences
---pattern-include regex  Filter the sequences by regular expression in name
---pattern-exclude regex  Filter out sequences by regular expression in name
---linewrap LINEWRAP   Adjust line wrap for sequence strings. Useful for viewing an alignment when setting to 0 which has no line breaks. Only fasta files are supported.
---lower               Translate the sequences to lower case
---reverse             Reverse the order of sites in sequences
---reversecomplement   Convert sequences into reverse complements
---sort {length-asc,length-desc,name-asc,name-desc} Perform sorting by length or name, ascending or descending. ASCII sorting is performed for names
---striprange          Strip ranges from sequences IDs, matching </x-y>
---squeeze             Remove any gaps that are present in the same position across all sequences in an alignment
---tail N              Trim down to bottom N sequences
---translate destination_type Translate between amino acids and nucleotides, use "aa" or "nuc" as destination type
---upper               Translate the sequences to upper case
---tmp TMP_DIR         Temporary directory for working file. Default is /tmp.
---debug               Enable debug output
---verbose             Enable verbose output
 
+--dashgap             Change . and : into - for all sequences
+
+--deduplicateseqs     Remove any duplicate sequences by sequence content, keep the first instance seen
+
+--deduplicatetaxa     Remove any duplicate sequences by ID, keep the first instance seen
+
+--ungap               Remove gaps in the sequence alignment
+
+--firstname           Take only the first whitespace-delimited word as the name of the sequence
+
+--head N              Trim down to top N sequences
+
+--pattern-include regex  Filter the sequences by regular expression in name
+
+--pattern-exclude regex  Filter out sequences by regular expression in name
+
+--linewrap LINEWRAP   Adjust line wrap for sequence strings. Useful for viewing an alignment when setting to 0 which has no line breaks. Only fasta files are supported.
+
+--lower               Translate the sequences to lower case
+
+--reverse             Reverse the order of sites in sequences
+
+--reversecomplement   Convert sequences into reverse complements
+
+--sort {length-asc,length-desc,name-asc,name-desc} Perform sorting by length or name, ascending or descending. ASCII sorting is performed for names
+
+--striprange          Strip ranges from sequences IDs, matching </x-y>
+
+--squeeze             Remove any gaps that are present in the same position across all sequences in an alignment
+
+--tail N              Trim down to bottom N sequences
+
+--translate destination_type Translate between amino acids and nucleotides, use "aa" or "nuc" as destination type
+
+--upper               Translate the sequences to upper case
+
+--tmp TMP_DIR         Temporary directory for working file. Default is /tmp.
+
+--debug               Enable debug output
+
+--verbose             Enable verbose output
 
 We can specify some short options later.
 
