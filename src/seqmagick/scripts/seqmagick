@@ -90,7 +90,7 @@ def parse_arguments(action_arguments=None):
     parser_help = subparsers.add_parser('help', help='Help for actions')
     parser_help.add_argument('action', nargs=1)
     # Info
-    parser_info = subparsers.add_parser('info', help='Describe a sequence file.')
+    parser_info = subparsers.add_parser('info', help='Describe sequence files.')
     parser_info.add_argument('source_files', metavar='sequence_files',
                              type=sequence_file, nargs='+')
     parser_info.add_argument('--outfile', dest='destination_file', metavar='destination_file',
@@ -155,7 +155,7 @@ def add_arguments(subparser):
     subparser.add_argument('--ungap', action='store_true', help='Remove gaps in the sequence alignment')
     subparser.add_argument('--firstname', action='store_true',
                         help='Take only the first whitespace-delimited word as the name of the sequence')
-    subparser.add_argument('--head', metavar='N', dest='head', type=int, help='Pare down to top N sequences')
+    subparser.add_argument('--head', metavar='N', dest='head', type=int, help='Trim down to top N sequences')
     subparser.add_argument('--pattern-include', metavar='regex', dest='pattern_include',
                         help='Filter the sequences by regular expression in name')
     subparser.add_argument('--pattern-exclude', metavar='regex', dest='pattern_exclude',
@@ -177,7 +177,7 @@ def add_arguments(subparser):
     subparser.add_argument('--squeeze', action='store_true',
                         help='Remove any gaps that are present in the same position across ' +
                         'all sequences in an alignment')
-    subparser.add_argument('--tail', metavar='N', dest='tail', type=int, help='Pare down to bottom N sequences')
+    subparser.add_argument('--tail', metavar='N', dest='tail', type=int, help='Trim down to bottom N sequences')
     subparser.add_argument('--translate', dest='destination_type', metavar='destination_type',
                         help='Translate between amino acids and nucleotides, use "aa" or "nuc" as destination type')
     subparser.add_argument('--upper', action='store_true', help='Translate the sequences to upper case')
