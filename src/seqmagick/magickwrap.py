@@ -12,11 +12,13 @@ import shutil
 
 from Bio import SeqIO
 from Bio.Alphabet import IUPAC
+from Bio.Alphabet import generic_dna
+from Bio.Alphabet import generic_rna
 from Bio.Align.Applications import MuscleCommandline
 from Bio.Seq import Seq, SeqRecord
 from Bio.SeqUtils.CheckSum import seguid
 from Bio.SeqIO import FastaIO
-#from numpy import *
+
 from fileformat import FileFormat
 
 
@@ -34,7 +36,6 @@ class MagickWrap(object):
         self.destination_file = out_file
         self.debug = debug
         self.verbose = verbose
-            
 
 # Public Methods
 
@@ -121,7 +122,9 @@ class MagickWrap(object):
                   reverse=False, strict=False, translate=False, upper=False, linewrap=False, 
                   first_name_capture=False, deduplicate_sequences=False, deduplicate_taxa=False, 
                   reverse_complement=False, pattern_include=False, pattern_exclude=False,
-                  squeeze=False, head=False, tail=False, sort=False, strip_range=False):
+                  squeeze=False, head=False, tail=False, sort=False,
+                  strip_range=False, transcribe=False,
+                  ):
         """
         This method wraps many of the transformation generator functions found 
         in this class.
@@ -220,6 +223,11 @@ class MagickWrap(object):
                 record_count = sum(1 for record in SeqIO.parse(source_file, source_file_type))
                 records = self._tail(records, tail, record_count)
 
+            if transcribe:
+                records = self._transcribe(records, transcribe)
+
+            if translate:
+                records = self._translate(records, translate)
 
             if squeeze:
                 if self.verbose: print 'Performing squeeze, which requires a new iterator for the first pass.'
@@ -498,6 +506,84 @@ class MagickWrap(object):
             yield SeqRecord(record.seq, id=name, 
                             description='')
 
+
+    def _transcribe(self, records, transcribe):
+        """
+        Perform transcription or back-transcription.
+        transcribe must be one of the following:
+            dna2rna
+            rna2dna
+        """
+        if self.verbose: print 'Applying _transcribe generator: ' + \
+                               'operation to perform is ' + transcribe + '.'
+        for record in records:
+            sequence = str(record.seq)
+            description = record.description
+            name = record.id
+            if transcribe == 'dna2rna':
+                dna = Seq(sequence, generic_dna)
+                rna = dna.transcribe()
+                yield SeqRecord(rna, id=name, description=description)
+            elif transcribe == 'rna2dna':
+                rna = Seq(sequence, generic_rna)
+                dna = rna.back_transcribe()
+                yield SeqRecord(dna, id=name, description=description)
+
+
+    def _translate(self, records, translate):
+        """
+        Perform translation from generic DNA/RNA to proteins.  Bio.Seq 
+        does not perform back-translation because the codons would 
+        more-or-less be arbitrary.  Option to translate only up until 
+        reaching a stop codon.  translate must be one of the following:
+            dna2protein
+            dna2proteinstop
+            rna2protein
+            rna2proteinstop
+        """
+        if self.verbose: print 'Applying _translation generator: ' + \
+                               'operation to perform is ' + translate + '.'
+        for record in records:
+            sequence = str(record.seq)
+            description = record.description
+            name = record.id
+            if translate == 'dna2protein':
+                dna = Seq(sequence, generic_dna)
+                protein = dna.translate()
+                yield SeqRecord(protein, id=name, description=description)
+            elif translate == 'dna2proteinstop':
+                dna = Seq(sequence, generic_dna)
+                protein = dna.translate(to_stop=True)
+                yield SeqRecord(protein, id=name, description=description)
+            elif translate == 'rna2protein':
+                rna = Seq(sequence, generic_rna)
+                protein = rna.translate()
+                yield SeqRecord(protein, id=name, description=description)
+            elif translate == 'rna2proteinstop':
+                rna = Seq(sequence, generic_rna)
+                protein = rna.translate(to_stop=True)
+                yield SeqRecord(protein, id=name, description=description)
+
+
+    def _transcribe(self, records, transcribe):
+        """
+        Perform transcription or back transcription.
+        """
+        if self.verbose: print 'Applying _transcribe generator: ' + \
+                               'operation to perform is ' + transcribe + '.'
+        for record in records:
+            sequence = str(record.seq)
+            description = record.description
+            name = record.id
+            if transcribe == 'dna2rna':
+                dna = Seq(sequence, generic_dna)
+                rna = dna.transcribe()
+                yield SeqRecord(rna, id=name, description=description)
+            elif transcribe == 'rna2dna':
+                rna = Seq(sequence, generic_rna)
+                dna = rna.back_transcribe()
+                yield SeqRecord(dna, id=name, description=description)
+          
     
     # Begin squeeze-related functions
 

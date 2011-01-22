@@ -5,7 +5,7 @@ import sys
 import argparse
 
 # Insert one level above project directory to path for testing.
-#sys.path.insert(0, "../..")
+sys.path.insert(0, "../..")
 from seqmagick.magickwrap import MagickWrap
 from seqmagick.fileformat import FileFormat
 
@@ -64,6 +64,8 @@ def main():
                            strip_range=arguments.strip_range,
                            squeeze=arguments.squeeze,
                            tail=arguments.tail,
+                           transcribe=arguments.transcribe,
+                           translate=arguments.translate,
                            upper=arguments.upper,
                           )
 
@@ -78,7 +80,8 @@ def parse_arguments(action_arguments=None):
     subparsers = parser.add_subparsers(dest='subparser_name')
     # Check
     parser_check = subparsers.add_parser('check', help='Check integrity of a file.')
-    parser_check.add_argument('--alphabet', dest='alphabet', help='To be implemented')
+    # To be implemented
+    #parser_check.add_argument('--alphabet', dest='alphabet', help='To be implemented')
     parser_check.add_argument('source_file', type=sequence_file, nargs=1)
     # Convert
     parser_convert = add_arguments(subparsers.add_parser('convert', 
@@ -178,8 +181,20 @@ def add_arguments(subparser):
                         help='Remove any gaps that are present in the same position across ' +
                         'all sequences in an alignment')
     subparser.add_argument('--tail', metavar='N', dest='tail', type=int, help='Trim down to bottom N sequences')
-    subparser.add_argument('--translate', dest='destination_type', metavar='destination_type',
-                        help='Translate between amino acids and nucleotides, use "aa" or "nuc" as destination type')
+    # To be implemented
+    #subparser.add_argument('--translate', dest='destination_type', metavar='destination_type',
+    #                    help='Translate between amino acids and nucleotides, use "aa" or "nuc" as destination type')
+    subparser.add_argument('--transcribe', dest='transcribe',
+                        choices=['dna2rna', 'rna2dna'],
+                        help='Transcription and back transcription for generic DNA and RNA.  ' + \
+                        'Source sequences must be the correct alphabet or this action will not ' + \
+                        'change any non-conforming sequences.')
+    subparser.add_argument('--translate', dest='translate',
+                        choices=['dna2protein', 'rna2protein', 'dna2proteinstop', 'rna2proteinstop'],
+                        help='Translate from generic DNA/RNA to proteins. Options with ' + \
+                        '"stop" suffix will NOT translate through stop codons .' + \
+                        'Source sequences must be the correct alphabet or this action will not ' + \
+                        'change any non-conforming sequences.')
     subparser.add_argument('--upper', action='store_true', help='Translate the sequences to upper case')
 
     return subparser
