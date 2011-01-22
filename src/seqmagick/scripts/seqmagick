@@ -187,14 +187,14 @@ def add_arguments(subparser):
     subparser.add_argument('--transcribe', dest='transcribe',
                         choices=['dna2rna', 'rna2dna'],
                         help='Transcription and back transcription for generic DNA and RNA.  ' + \
-                        'Source sequences must be the correct alphabet or this action will not ' + \
-                        'change any non-conforming sequences.')
+                        'Source sequences must be the correct alphabet or this action will likely ' + \
+                        'produce incorrect results.')
     subparser.add_argument('--translate', dest='translate',
                         choices=['dna2protein', 'rna2protein', 'dna2proteinstop', 'rna2proteinstop'],
                         help='Translate from generic DNA/RNA to proteins. Options with ' + \
                         '"stop" suffix will NOT translate through stop codons .' + \
-                        'Source sequences must be the correct alphabet or this action will not ' + \
-                        'change any non-conforming sequences.')
+                        'Source sequences must be the correct alphabet or this action will likely ' + \
+                        'produce incorrect results.')
     subparser.add_argument('--upper', action='store_true', help='Translate the sequences to upper case')
 
     return subparser

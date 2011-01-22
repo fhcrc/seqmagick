@@ -547,23 +547,16 @@ class MagickWrap(object):
             sequence = str(record.seq)
             description = record.description
             name = record.id
-            if translate == 'dna2protein':
+            if translate in ('dna2protein', 'dna2proteinstop'):
+                to_stop = translate == 'dna2proteinstop'
                 dna = Seq(sequence, generic_dna)
-                protein = dna.translate()
+                protein = dna.translate(to_stop=to_stop)
                 yield SeqRecord(protein, id=name, description=description)
-            elif translate == 'dna2proteinstop':
-                dna = Seq(sequence, generic_dna)
-                protein = dna.translate(to_stop=True)
-                yield SeqRecord(protein, id=name, description=description)
-            elif translate == 'rna2protein':
+            elif translate in ('rna2protein', 'rna2proteinstop'):
+                to_stop = translate == 'rna2proteinstop'
                 rna = Seq(sequence, generic_rna)
-                protein = rna.translate()
+                protein = rna.translate(to_stop=to_stop)
                 yield SeqRecord(protein, id=name, description=description)
-            elif translate == 'rna2proteinstop':
-                rna = Seq(sequence, generic_rna)
-                protein = rna.translate(to_stop=True)
-                yield SeqRecord(protein, id=name, description=description)
-
 
     def _transcribe(self, records, transcribe):
         """
