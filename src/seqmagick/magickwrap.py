@@ -123,7 +123,8 @@ class MagickWrap(object):
                   first_name_capture=False, deduplicate_sequences=False, deduplicate_taxa=False, 
                   reverse_complement=False, pattern_include=False, pattern_exclude=False,
                   squeeze=False, head=False, tail=False, sort=False,
-                  strip_range=False, transcribe=False,
+                  strip_range=False, transcribe=False, max_length=False,
+                  min_length=False,
                   ):
         """
         This method wraps many of the transformation generator functions found 
@@ -174,6 +175,12 @@ class MagickWrap(object):
             # Deduplication occurs first, to get a checksum of the 
             # original sequence and to store the id field before any 
             # transformations occur.
+
+            if max_length:
+                records = self._max_length_discard(records, max_length)
+     
+            if min_length:
+                records = self._min_length_discard(records, min_length)
      
             if deduplicate_sequences:
                 records = self._deduplicate_sequences(records)
@@ -577,6 +584,40 @@ class MagickWrap(object):
                 dna = rna.back_transcribe()
                 yield SeqRecord(dna, id=name, description=description)
           
+
+    def _max_length_discard(self, records, max_length):
+        """
+        Discard any records that are longer than max_length.
+        """
+        if self.verbose: print 'Applying _max_length_discard generator: ' + \
+                               'discarding records longer than ' + \
+                               str(max_length) + '.'
+        for record in records:
+            if len(record) > max_length:
+                if self.debug: 
+                    print 'DEBUG: discarding long sequence: ' + \
+                    record.id + ' length=' + str(len(record))
+                continue
+            else:
+                yield record 
+
+
+    def _min_length_discard(self, records, min_length):
+        """
+        Discard any records that are shorter than min_length.
+        """
+        if self.verbose: print 'Applying _min_length_discard generator: ' + \
+                               'discarding records shorter than ' + \
+                               str(min_length) + '.'
+        for record in records:
+            if len(record) < min_length:
+                if self.debug: 
+                    print 'DEBUG: discarding short sequence: ' + \
+                    record.id + ' length=' + str(len(record))
+                continue
+            else:
+                yield record 
+
     
     # Begin squeeze-related functions
 

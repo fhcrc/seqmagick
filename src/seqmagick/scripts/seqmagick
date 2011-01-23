@@ -56,6 +56,8 @@ def main():
                            head=arguments.head,
                            linewrap=arguments.linewrap,
                            lower=arguments.lower,
+                           max_length=arguments.max_length,
+                           min_length=arguments.min_length,
                            pattern_include=arguments.pattern_include,
                            pattern_exclude=arguments.pattern_exclude,
                            reverse=arguments.reverse,
@@ -155,18 +157,25 @@ def add_arguments(subparser):
                         help='Remove any duplicate sequences by sequence content, keep the first instance seen')
     subparser.add_argument('--deduplicatetaxa', action='store_true',
                         help='Remove any duplicate sequences by ID, keep the first instance seen')
-    subparser.add_argument('--ungap', action='store_true', help='Remove gaps in the sequence alignment')
     subparser.add_argument('--firstname', action='store_true',
                         help='Take only the first whitespace-delimited word as the name of the sequence')
     subparser.add_argument('--head', metavar='N', dest='head', type=int, help='Trim down to top N sequences')
-    subparser.add_argument('--pattern-include', metavar='regex', dest='pattern_include',
-                        help='Filter the sequences by regular expression in name')
-    subparser.add_argument('--pattern-exclude', metavar='regex', dest='pattern_exclude',
-                        help='Filter out sequences by regular expression in name')
     subparser.add_argument('--linewrap', dest='linewrap', type=int,
                         help='Adjust line wrap for sequence strings.  Useful for viewing an ' +
                         'alignment when setting to 0 which has no line breaks. Only fasta files are supported.')
     subparser.add_argument('--lower', action='store_true', help='Translate the sequences to lower case')
+    subparser.add_argument('--maxlength', dest='max_length', metavar='N',
+                           type=int, help='Discard any sequences beyond ' + \
+                           'the specified maximum length.  This operation occurs *before* all length-changing ' + \
+                           'options such as cut and squeeze.')
+    subparser.add_argument('--minlength', dest='min_length', metavar='N',
+                           type=int, help='Discard any sequences less than ' + \
+                           'the specified minimum length.  This operation occurs *before* all length-changing ' + \
+                           'options such as cut and squeeze.')
+    subparser.add_argument('--pattern-include', metavar='regex', dest='pattern_include',
+                        help='Filter the sequences by regular expression in name')
+    subparser.add_argument('--pattern-exclude', metavar='regex', dest='pattern_exclude',
+                        help='Filter out sequences by regular expression in name')    
     subparser.add_argument('--reverse', action='store_true', help='Reverse the order of sites in sequences')
     subparser.add_argument('--reversecomplement', dest='reverse_complement', action='store_true',
                         help='Convert sequences into reverse complements')
@@ -195,6 +204,7 @@ def add_arguments(subparser):
                         '"stop" suffix will NOT translate through stop codons .' + \
                         'Source sequences must be the correct alphabet or this action will likely ' + \
                         'produce incorrect results.')
+    subparser.add_argument('--ungap', action='store_true', help='Remove gaps in the sequence alignment')
     subparser.add_argument('--upper', action='store_true', help='Translate the sequences to upper case')
 
     return subparser
