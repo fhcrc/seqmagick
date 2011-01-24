@@ -19,3 +19,10 @@ We would like to have seqmagick do a conversion to and from extended phylip with
 We'll probably push this up to biopython, so let's make it modular!
 
 
+Not sure if this is useful, but the phylip standard is defined here:
+http://evolution.genetics.washington.edu/phylip/doc/main.html#inputfiles
+Haven't seen a spec for phyx yet, although it doesn't the differences seem minor from the 
+above description.
+
+Info. about how to add new file formats to Biopython:
+http://www.biopython.org/wiki/SeqIO_dev

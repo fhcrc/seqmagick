@@ -257,7 +257,7 @@ class MagickWrap(object):
             if cut:
                 records = self._cut_sequences(records, start=cut[0], end=cut[1])
 
-           # Only the fasta format is supported, as SeqIO.write does not hava a 'wrap' parameter.
+           # Only the fasta format is supported, as SeqIO.write does not have a 'wrap' parameter.
             if linewrap is not None and destination_file_type == 'fasta' and source_file_type == 'fasta':
                 if self.verbose: print 'Attempting to write out fasta file with linebreaks set to ' + str(linewrap) + '.'
                 with open(destination_file,"w") as handle:

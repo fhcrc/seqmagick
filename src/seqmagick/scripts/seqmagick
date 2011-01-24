@@ -160,9 +160,9 @@ def add_arguments(subparser):
     subparser.add_argument('--firstname', action='store_true',
                         help='Take only the first whitespace-delimited word as the name of the sequence')
     subparser.add_argument('--head', metavar='N', dest='head', type=int, help='Trim down to top N sequences')
-    subparser.add_argument('--linewrap', dest='linewrap', type=int,
-                        help='Adjust line wrap for sequence strings.  Useful for viewing an ' +
-                        'alignment when setting to 0 which has no line breaks. Only fasta files are supported.')
+    subparser.add_argument('--linewrap', dest='linewrap', metavar='N', type=int,
+                        help='Adjust line wrap for sequence strings.  When N is 0, ' +
+                        'all line breaks are removed. Only fasta files are supported for the output format.')
     subparser.add_argument('--lower', action='store_true', help='Translate the sequences to lower case')
     subparser.add_argument('--maxlength', dest='max_length', metavar='N',
                            type=int, help='Discard any sequences beyond ' + \
