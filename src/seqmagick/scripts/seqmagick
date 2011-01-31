@@ -150,7 +150,7 @@ def add_arguments(subparser):
     Add shared arguments to the convert or mogrify subparser.
     """
     subparser.add_argument('--cut', dest='cut', metavar="start:end", type=cut_range,
-                        help='Start and end positions for cutting sequences, : separated.  Includes last item.')
+                        help='1-indexed start and end positions for cutting sequences, : separated.  Includes last item.')
     subparser.add_argument('--dashgap', action='store_true',
                         help='Change . and : into - for all sequences')
     subparser.add_argument('--deduplicateseqs', action='store_true',
