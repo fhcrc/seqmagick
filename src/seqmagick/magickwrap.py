@@ -3,7 +3,6 @@
 
 import csv
 import os
-import itertools
 import re
 import subprocess
 import sys
@@ -124,7 +123,7 @@ class MagickWrap(object):
                   reverse_complement=False, pattern_include=False, pattern_exclude=False,
                   squeeze=False, head=False, tail=False, sort=False,
                   strip_range=False, transcribe=False, max_length=False,
-                  min_length=False,
+                  min_length=False, name_prefix=False, name_suffix=False,
                   ):
         """
         This method wraps many of the transformation generator functions found 
@@ -207,6 +206,12 @@ class MagickWrap(object):
   
             if ungap:
                 records = self._ungap_sequences(records)
+
+            if name_prefix:
+                records = self._name_insert_prefix(records, name_prefix)
+
+            if name_suffix:
+                records = self._name_append_suffix(records, name_suffix)
 
             if pattern_include:
                 records = self._name_include(records, pattern_include)
@@ -412,6 +417,31 @@ class MagickWrap(object):
                             description=record.description)
 
 
+    def _name_append_suffix(self, records, suffix):
+        """
+        Given a set of sequences, append a suffix for each sequence's name.
+        """
+        if self.verbose: print 'Applying _name_append_suffix generator: ' + \
+                               'Appending suffix ' + suffix + ' to all ' + \
+                               'sequence IDs.'
+        for record in records:
+            yield SeqRecord(record.seq, id=record.id+suffix,
+                            description=record.description)
+
+
+    def _name_insert_prefix(self, records, prefix):
+        """
+        Given a set of sequences, insert a prefix for each sequence's name.
+        """
+        if self.verbose: print 'Applying _name_insert_prefix generator: ' + \
+                               'Inserting prefix ' + prefix + ' for all ' + \
+                               'sequence IDs.'
+        for record in records:
+            yield SeqRecord(record.seq, id=prefix+record.id,
+                            description=record.description)
+
+
+
     def _name_include(self, records, filter_regex):
         """
         Given a set of sequences, filter out any sequences with names 
@@ -565,25 +595,6 @@ class MagickWrap(object):
                 protein = rna.translate(to_stop=to_stop)
                 yield SeqRecord(protein, id=name, description=description)
 
-    def _transcribe(self, records, transcribe):
-        """
-        Perform transcription or back transcription.
-        """
-        if self.verbose: print 'Applying _transcribe generator: ' + \
-                               'operation to perform is ' + transcribe + '.'
-        for record in records:
-            sequence = str(record.seq)
-            description = record.description
-            name = record.id
-            if transcribe == 'dna2rna':
-                dna = Seq(sequence, generic_dna)
-                rna = dna.transcribe()
-                yield SeqRecord(rna, id=name, description=description)
-            elif transcribe == 'rna2dna':
-                rna = Seq(sequence, generic_rna)
-                dna = rna.back_transcribe()
-                yield SeqRecord(dna, id=name, description=description)
-          
 
     def _max_length_discard(self, records, max_length):
         """

@@ -58,6 +58,8 @@ def main():
                            lower=arguments.lower,
                            max_length=arguments.max_length,
                            min_length=arguments.min_length,
+                           name_suffix=arguments.name_suffix,
+                           name_prefix=arguments.name_prefix,
                            pattern_include=arguments.pattern_include,
                            pattern_exclude=arguments.pattern_exclude,
                            reverse=arguments.reverse,
@@ -172,6 +174,10 @@ def add_arguments(subparser):
                            type=int, help='Discard any sequences less than ' + \
                            'the specified minimum length.  This operation occurs *before* all length-changing ' + \
                            'options such as cut and squeeze.')
+    subparser.add_argument('--name-suffix', metavar='SUFFIX', dest='name_suffix',
+                        help='Append a suffix to all IDs.')
+    subparser.add_argument('--name-prefix', metavar='PREFIX', dest='name_prefix',
+                        help='Insert a prefix for all IDs.')
     subparser.add_argument('--pattern-include', metavar='regex', dest='pattern_include',
                         help='Filter the sequences by regular expression in name')
     subparser.add_argument('--pattern-exclude', metavar='regex', dest='pattern_exclude',
