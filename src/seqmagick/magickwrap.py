@@ -14,7 +14,8 @@ from Bio.Alphabet import IUPAC
 from Bio.Alphabet import generic_dna
 from Bio.Alphabet import generic_rna
 from Bio.Align.Applications import MuscleCommandline
-from Bio.Seq import Seq, SeqRecord
+from Bio.Seq import Seq
+from Bio.SeqRecord import SeqRecord
 from Bio.SeqUtils.CheckSum import seguid
 from Bio.SeqIO import FastaIO
 
