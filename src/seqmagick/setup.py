@@ -1,6 +1,5 @@
 #! /usr/bin/env python
 
-import glob
 from distutils.core import setup
 
 setup(name = 'seqmagick',
@@ -11,4 +10,3 @@ setup(name = 'seqmagick',
       packages = ['seqmagick'],
       scripts = ['scripts/seqmagick'],
       )
-      #scripts = glob.glob('scripts/*.py')'),
