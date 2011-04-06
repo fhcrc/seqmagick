@@ -24,7 +24,7 @@ from fileformat import FileFormat
 
 class MagickWrap(object):
     """
-    A class that wraps functionality present in BioPython.    
+    A class that wraps functionality present in BioPython.
     """
 
     def __init__(self, tmp_dir, in_files, out_file=None, alphabet=None, debug=False, verbose=False):
@@ -42,29 +42,29 @@ class MagickWrap(object):
 
     def convert_format(self):
         """
-        Convert input file to a different output format.  This will not work for all formats, 
-        e.g. going from fastq to fasta or going from a non-alignment fasta file to phylip would not work.  
+        Convert input file to a different output format.  This will not work for all formats,
+        e.g. going from fastq to fasta or going from a non-alignment fasta file to phylip would not work.
         Converts only the first file in the source_files list.
         """
         source_file = self.source_files[0]
         source_file_type = FileFormat.lookup_file_type(os.path.splitext(source_file)[1])
         destination_file = self.destination_file
         destination_file_type = FileFormat.lookup_file_type(os.path.splitext(destination_file)[1])
-   
+
         if source_file == destination_file:
             raise Exception, "source_file and destination_file cannot be the same file."
-        
+
         if self.destination_file is not None:
-           SeqIO.convert(source_file, source_file_type, destination_file, destination_file_type) 
+           SeqIO.convert(source_file, source_file_type, destination_file, destination_file_type)
         else:
             raise Exception, "An output file was not specified.  Required by the convert action."
 
 
     def describe_sequence_files(self, output_format, width):
         """
-        Given one more more sequence files, determine if the file is an alignment, the maximum 
-        sequence length and the total number of sequences.  Provides different output 
-        formats including tab (tab-delimited), csv and align (aligned as if part of a 
+        Given one more more sequence files, determine if the file is an alignment, the maximum
+        sequence length and the total number of sequences.  Provides different output
+        formats including tab (tab-delimited), csv and align (aligned as if part of a
         borderless table).
         """
         handle = sys.stdout
@@ -73,7 +73,7 @@ class MagickWrap(object):
 
         # Create and write out the header row.
         header = ['name', 'alignment', 'max_len', 'num_seqs']
-        self._print_file_info(header, output_format=output_format, 
+        self._print_file_info(header, output_format=output_format,
                               handle=handle, width=width)
          # Go through all source files passed in, one by one.
         for source_file in self.source_files:
@@ -81,29 +81,29 @@ class MagickWrap(object):
             max_length = 0
             sequence_count = 0
             source_file_type = FileFormat.lookup_file_type(os.path.splitext(source_file)[1])
-           
+
             # Get an iterator and analyze the data.
             for record in SeqIO.parse(source_file, source_file_type):
                 # We've found another sequence...
                 sequence_count += 1
                 if max_length != 0:
-                    # If even one sequence is not the same length as the others, 
+                    # If even one sequence is not the same length as the others,
                     # we don't consider this an alignment.
                     if len(str(record.seq)) != max_length:
                         is_alignment = False
                 # Work on determining the length of the longest sequence.
                 if len(str(record.seq)) > max_length:
                     max_length = len(str(record.seq))
-            self._print_file_info(row=[source_file, 
-                                  str(is_alignment).upper(), 
+            self._print_file_info(row=[source_file,
+                                  str(is_alignment).upper(),
                                   str(max_length),
                                   str(sequence_count),
-                                  ], output_format=output_format, 
+                                  ], output_format=output_format,
                                   handle=handle, width=width)
         if self.destination_file:
             handle.close()
 
-       
+
     def create_muscle_alignment(self):
         """
         Use BioPython muscle wrapper to create an alignment.
@@ -117,50 +117,50 @@ class MagickWrap(object):
                                  shell=(sys.platform!="win32"))
        	return_code = child.wait()
        	return return_code
-        
-    def transform(self, cut=False, dashgap=False, ungap=False, lower=False, 
-                  reverse=False, strict=False, translate=False, upper=False, linewrap=False, 
-                  first_name_capture=False, deduplicate_sequences=False, deduplicate_taxa=False, 
+
+    def transform(self, cut=False, dashgap=False, ungap=False, lower=False,
+                  reverse=False, strict=False, translate=False, upper=False, linewrap=False,
+                  first_name_capture=False, deduplicate_sequences=False, deduplicate_taxa=False,
                   reverse_complement=False, pattern_include=False, pattern_exclude=False,
                   squeeze=False, head=False, tail=False, sort=False,
                   strip_range=False, transcribe=False, max_length=False,
                   min_length=False, name_prefix=False, name_suffix=False,
                   ):
         """
-        This method wraps many of the transformation generator functions found 
+        This method wraps many of the transformation generator functions found
         in this class.
         """
 
-        for source_file in self.source_files: 
+        for source_file in self.source_files:
             # Get just the file name, useful for naming the temporary file.
             file_name = os.path.split(source_file)[1]
             source_file_type = FileFormat.lookup_file_type(os.path.splitext(source_file)[1])
 
             # Specify full path to temporary file for operations that require this.
-            # tmp_file will have a seqmagick prefix, i.e. /tmp/seqmagick.a.fasta.  
+            # tmp_file will have a seqmagick prefix, i.e. /tmp/seqmagick.a.fasta.
             # If destination_file is part of the magickwrap instance, use that insted.
-            destination_file = os.path.join(self.tmp_dir, 'seqmagick.' + file_name) 
+            destination_file = os.path.join(self.tmp_dir, 'seqmagick.' + file_name)
             if self.destination_file is not None:
                 destination_file = self.destination_file
 
             destination_file_type = FileFormat.lookup_file_type(os.path.splitext(destination_file)[1])
 
             # Get an iterator.
-            if sort:             
+            if sort:
                 # Sorted iterator.
                 if sort == 'length-asc':
-                    records = self._sort_length(source_file=source_file, 
+                    records = self._sort_length(source_file=source_file,
                                                 source_file_type=source_file_type, direction=1)
                 elif sort == 'length-desc':
-                    records = self._sort_length(source_file=source_file, 
+                    records = self._sort_length(source_file=source_file,
                                                 source_file_type=source_file_type, direction=0)
                 elif sort == 'name-asc':
-                    records = self._sort_name(source_file=source_file, 
+                    records = self._sort_name(source_file=source_file,
                                                 source_file_type=source_file_type, direction=1)
                 elif sort == 'name-desc':
-                    records = self._sort_name(source_file=source_file, 
+                    records = self._sort_name(source_file=source_file,
                                                 source_file_type=source_file_type, direction=0)
-                
+
             else:
                 # Unsorted iterator.
                 records = SeqIO.parse(source_file, source_file_type)
@@ -172,16 +172,16 @@ class MagickWrap(object):
 
             if self.verbose: print 'Setting up generator functions for file: ' + source_file
 
-            # Deduplication occurs first, to get a checksum of the 
-            # original sequence and to store the id field before any 
+            # Deduplication occurs first, to get a checksum of the
+            # original sequence and to store the id field before any
             # transformations occur.
 
             if max_length:
                 records = self._max_length_discard(records, max_length)
-     
+
             if min_length:
                 records = self._min_length_discard(records, min_length)
-     
+
             if deduplicate_sequences:
                 records = self._deduplicate_sequences(records)
 
@@ -189,13 +189,13 @@ class MagickWrap(object):
                 records = self._deduplicate_taxa(records)
 
             if dashgap:
-                records = self._dashes_cleanup(records)        
+                records = self._dashes_cleanup(records)
 
             if first_name_capture:
                 records = self._first_name_capture(records)
             if upper:
                 records = self._upper_sequences(records)
-              
+
             if lower:
                 records = self._lower_sequences(records)
 
@@ -204,7 +204,7 @@ class MagickWrap(object):
 
             if reverse_complement:
                 records = self._reverse_complement_sequences(records)
-  
+
             if ungap:
                 records = self._ungap_sequences(records)
 
@@ -230,8 +230,8 @@ class MagickWrap(object):
                 records = self._strip_range(records)
 
             if tail:
-                # To know where to begin including records for tail, we need to count 
-                # the total number of records, which requires going through the entire 
+                # To know where to begin including records for tail, we need to count
+                # the total number of records, which requires going through the entire
                 # file and additional time.
                 record_count = sum(1 for record in SeqIO.parse(source_file, source_file_type))
                 records = self._tail(records, tail, record_count)
@@ -245,7 +245,7 @@ class MagickWrap(object):
             if squeeze:
                 if self.verbose: print 'Performing squeeze, which requires a new iterator for the first pass.'
                 gaps = []
-                # Need to iterate an additional time to determine which 
+                # Need to iterate an additional time to determine which
                 # gaps are share between all sequences in an alignment.
                 for record in SeqIO.parse(source_file, source_file_type):
                     # Use numpy to prepopulate a gaps list.
@@ -258,7 +258,7 @@ class MagickWrap(object):
                 if self.verbose: print 'List of gaps to remove for alignment created by squeeze.'
                 if self.debug: print 'DEBUG: squeeze gaps list:\n' + str(gaps)
 
-            # cut needs to go after squeeze or the gaps list will no longer be relevent.  
+            # cut needs to go after squeeze or the gaps list will no longer be relevent.
             # It is probably best not to use squeeze and cut together in most cases.
             if cut:
                 records = self._cut_sequences(records, start=cut[0], end=cut[1])
@@ -270,11 +270,11 @@ class MagickWrap(object):
                     writer = FastaIO.FastaWriter(handle, wrap=linewrap)
                     writer.write_file(records)
             else:
-            # Mogrify requires writing all changes to a temporary file by default, 
+            # Mogrify requires writing all changes to a temporary file by default,
             # but convert uses a destination file instead if one was specified. Get
-            # sequences from an iterator that has generator functions wrapping it. 
-            # After creation, it is then copied back over the original file if all 
-            # tasks finish up without an exception being thrown.  This avoids 
+            # sequences from an iterator that has generator functions wrapping it.
+            # After creation, it is then copied back over the original file if all
+            # tasks finish up without an exception being thrown.  This avoids
             # loading the entire sequence file up into memory.
                 if self.verbose: print 'Read through iterator and write out transformations to file: ' + destination_file
                 SeqIO.write(records, destination_file, destination_file_type)
@@ -286,11 +286,11 @@ class MagickWrap(object):
 
 
 
-# Private Methods 
+# Private Methods
 
 
     # Generator Functions
- 
+
     def _dashes_cleanup(self, records):
         """
         Take an alignment and convert any undesirable characters such as ? or ~ to -.
@@ -299,13 +299,13 @@ class MagickWrap(object):
                                'converting any ? or ~ characters to -.'
         translation_table = string.maketrans("?~", "--")
         for record in records:
-            yield SeqRecord(Seq(str(record.seq).translate(translation_table)), 
+            yield SeqRecord(Seq(str(record.seq).translate(translation_table)),
                             id=record.id, description=record.description)
 
 
     def _deduplicate_sequences(self, records):
         """
-        Remove any duplicate records with identical sequences, keep the first 
+        Remove any duplicate records with identical sequences, keep the first
         instance seen and discard additional occurences.
         """
         if self.verbose: print 'Applying _deduplicate_sequences generator: ' + \
@@ -318,10 +318,10 @@ class MagickWrap(object):
             checksums.add(checksum)
             yield record
 
-             
+
     def _deduplicate_taxa(self, records):
         """
-        Remove any duplicate records with identical IDs, keep the first 
+        Remove any duplicate records with identical IDs, keep the first
         instance seen and discard additional occurences.
         """
         if self.verbose: print 'Applying _deduplicate_taxa generator: ' + \
@@ -340,7 +340,7 @@ class MagickWrap(object):
 
     def _first_name_capture(self, records):
         """
-        Take only the first whitespace-delimited word as the name of the sequence.  
+        Take only the first whitespace-delimited word as the name of the sequence.
         Essentially removes any extra text from the sequence's description.
         """
         if self.verbose: print 'Applying _first_name_capture generator: ' + \
@@ -348,9 +348,9 @@ class MagickWrap(object):
         whitespace = re.compile(r'\s+')
         for record in records:
             if whitespace.search(record.description):
-                yield SeqRecord(record.seq, id=record.id, 
+                yield SeqRecord(record.seq, id=record.id,
                                 description="")
-            else: 
+            else:
                 yield record
 
 
@@ -362,7 +362,7 @@ class MagickWrap(object):
                                'cutting sequences based on specified range (' + start + '-' + end + ').'
         start = start - 1
         for record in records:
-            yield SeqRecord(record.seq[start:end], id=record.id, 
+            yield SeqRecord(record.seq[start:end], id=record.id,
                             description=record.description)
 
 
@@ -445,7 +445,7 @@ class MagickWrap(object):
 
     def _name_include(self, records, filter_regex):
         """
-        Given a set of sequences, filter out any sequences with names 
+        Given a set of sequences, filter out any sequences with names
         that do not match the specified regular expression.  Ignore case.
         """
         if self.verbose: print 'Applying _name_include generator: ' + \
@@ -454,13 +454,13 @@ class MagickWrap(object):
         for record in records:
             if regex.search(record.id):
                 yield record
-            else: 
+            else:
                 continue
 
 
     def _name_exclude(self, records, filter_regex):
         """
-        Given a set of sequences, filter out any sequences with names 
+        Given a set of sequences, filter out any sequences with names
         that match the specified regular expression.  Ignore case.
         """
         if self.verbose: print 'Applying _name_exclude generator: ' + \
@@ -469,7 +469,7 @@ class MagickWrap(object):
         for record in records:
             if not regex.search(record.id):
                 yield record
-            else: 
+            else:
                 continue
 
     def _head(self, records, head):
@@ -482,7 +482,7 @@ class MagickWrap(object):
         for record in records:
             if count < head:
                 count += 1
-                yield record 
+                yield record
             else:
                 break
 
@@ -518,30 +518,30 @@ class MagickWrap(object):
             while (position < sequence_length):
                 if bool(gaps[position]) is False:
                     squeezed.append(sequence[position])
-                position += 1            
+                position += 1
             yield SeqRecord(Seq(''.join(squeezed)), id=record.id,
                             description=record.description)
 
 
     def _strip_range(self, records):
         """
-        Cut off trailing /<start>-<stop> ranges from IDs.  Ranges must be 1-indexed and 
+        Cut off trailing /<start>-<stop> ranges from IDs.  Ranges must be 1-indexed and
         the stop integer must not be less than the start integer.
         """
         if self.verbose: print 'Applying _strip_range generator: ' + \
                                'removing /<start>-<stop> ranges from IDs'
         # Split up and be greedy.
-        cut_regex = re.compile(r"(?P<id>.*)\/(?P<start>\d+)\-(?P<stop>\d+)") 
+        cut_regex = re.compile(r"(?P<id>.*)\/(?P<start>\d+)\-(?P<stop>\d+)")
         for record in records:
             name = record.id
             match = cut_regex.match(str(record.id))
-            if match: 
+            if match:
                 sequence_id = match.group('id')
                 start = int(match.group('start'))
                 stop = int(match.group('stop'))
-                if start > 0 and start <= stop: 
+                if start > 0 and start <= stop:
                     name = sequence_id
-            yield SeqRecord(record.seq, id=name, 
+            yield SeqRecord(record.seq, id=name,
                             description='')
 
 
@@ -570,9 +570,9 @@ class MagickWrap(object):
 
     def _translate(self, records, translate):
         """
-        Perform translation from generic DNA/RNA to proteins.  Bio.Seq 
-        does not perform back-translation because the codons would 
-        more-or-less be arbitrary.  Option to translate only up until 
+        Perform translation from generic DNA/RNA to proteins.  Bio.Seq
+        does not perform back-translation because the codons would
+        more-or-less be arbitrary.  Option to translate only up until
         reaching a stop codon.  translate must be one of the following:
             dna2protein
             dna2proteinstop
@@ -606,12 +606,12 @@ class MagickWrap(object):
                                str(max_length) + '.'
         for record in records:
             if len(record) > max_length:
-                if self.debug: 
+                if self.debug:
                     print 'DEBUG: discarding long sequence: ' + \
                     record.id + ' length=' + str(len(record))
                 continue
             else:
-                yield record 
+                yield record
 
 
     def _min_length_discard(self, records, min_length):
@@ -623,14 +623,14 @@ class MagickWrap(object):
                                str(min_length) + '.'
         for record in records:
             if len(record) < min_length:
-                if self.debug: 
+                if self.debug:
                     print 'DEBUG: discarding short sequence: ' + \
                     record.id + ' length=' + str(len(record))
                 continue
             else:
-                yield record 
+                yield record
 
-    
+
     # Begin squeeze-related functions
 
     def _is_gap(self, character):
@@ -644,7 +644,7 @@ class MagickWrap(object):
 
     def _gap_check(self, gap, character):
         """
-        Build up a gaps list that is used on all sequences 
+        Build up a gaps list that is used on all sequences
         in an alignment.
         """
         # Skip any characters that have already been found
@@ -661,7 +661,7 @@ class MagickWrap(object):
         if 'tab' in output_format:
             handle.write("\t".join(row) + "\n")
         elif 'csv' in output_format:
-            writer = csv.writer(handle, delimiter=',', quotechar='"', 
+            writer = csv.writer(handle, delimiter=',', quotechar='"',
                                 quoting=csv.QUOTE_NONNUMERIC)
             writer.writerow(row)
         elif 'align' in output_format:
@@ -671,15 +671,15 @@ class MagickWrap(object):
 
     def _sort_length(self, source_file, source_file_type, direction=1):
         """
-        Sort sequences by length. 1 is ascending (default) and 0 is descending. 
+        Sort sequences by length. 1 is ascending (default) and 0 is descending.
         """
         direction_text = 'ascending' if direction == 1 else 'descending'
-        
+
         if self.verbose: print 'Indexing sequences by length: ' + direction_text
 
         # Adapted from the Biopython tutorial example.
 
-        #Get the lengths and ids, and sort on length         
+        #Get the lengths and ids, and sort on length
         len_and_ids = sorted((len(rec), rec.id) for rec in SeqIO.parse(source_file, source_file_type))
 
         if direction == 0:
@@ -695,15 +695,15 @@ class MagickWrap(object):
 
     def _sort_name(self, source_file, source_file_type, direction=1):
         """
-        Sort sequences by name. 1 is ascending (default) and 0 is descending. 
+        Sort sequences by name. 1 is ascending (default) and 0 is descending.
         """
         direction_text = 'ascending' if direction == 1 else 'descending'
-        
+
         if self.verbose: print 'Indexing sequences by name: ' + direction_text
 
         # Adapted from the Biopython tutorial example.
 
-        #Sort on id         
+        #Sort on id
         ids = sorted((rec.id) for rec in SeqIO.parse(source_file, source_file_type))
 
         if direction == 0:
