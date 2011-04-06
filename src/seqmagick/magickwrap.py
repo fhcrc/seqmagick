@@ -8,6 +8,7 @@ import subprocess
 import sys
 import string
 import shutil
+import tempfile
 
 from Bio import SeqIO
 from Bio.Alphabet import IUPAC
@@ -138,10 +139,16 @@ class MagickWrap(object):
 
             # Specify full path to temporary file for operations that require this.
             # tmp_file will have a seqmagick prefix, i.e. /tmp/seqmagick.a.fasta.
-            # If destination_file is part of the magickwrap instance, use that insted.
-            destination_file = os.path.join(self.tmp_dir, 'seqmagick.' + file_name)
+            # If destination_file is part of the magickwrap instance, use that instead
             if self.destination_file is not None:
                 destination_file = self.destination_file
+            else:
+                # Generate a named temporary file
+                with tempfile.NamedTemporaryFile(prefix='seqmagick.',
+                                                 suffix=file_name,
+                                                 delete=False,
+                                                 dir=self.tmp_dir) as t:
+                    destination_file = t.name
 
             destination_file_type = FileFormat.lookup_file_type(os.path.splitext(destination_file)[1])
 
