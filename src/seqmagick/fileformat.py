@@ -2,20 +2,21 @@
 @author: bhodges
 '''
 
-# Define mappings in a dictionary with extension : BioPython_file_type.  Defined outside 
+# Define mappings in a dictionary with extension : BioPython_file_type.  Defined outside
 # of the class so static methods can access it.
-extension_to_type = { '.aln' : 'clustal', 
-                      '.fa' : 'fasta', 
-                      '.faa' : 'fasta', 
+extension_to_type = { '.aln' : 'clustal',
+                      '.fa' : 'fasta',
+                      '.faa' : 'fasta',
                       '.fasta' : 'fasta',
                       '.fastq' : 'fastq',
-                      '.ffn' : 'fasta', 
-                      '.fna' : 'fasta', 
-                      '.frn' : 'fasta', 
-                      '.gb' : 'genbank', 
-                      '.gbk' : 'genbank', 
-                      '.phy' : 'phylip', 
-                      '.phylip' : 'phylip', 
+                      '.ffn' : 'fasta',
+                      '.fna' : 'fasta',
+                      '.frn' : 'fasta',
+                      '.gb' : 'genbank',
+                      '.gbk' : 'genbank',
+                      '.phy' : 'phylip',
+                      '.phylip' : 'phylip',
+                      '.sff' : 'sff',
                       '.sth' : 'stockholm',
                       '.sto' : 'stockholm',
                       }
@@ -24,7 +25,7 @@ extension_to_type = { '.aln' : 'clustal',
 
 class FileFormat():
     '''
-    A class that maps file extensions to BioPython file formats.    
+    A class that maps file extensions to BioPython file formats.
     '''
 
 
@@ -45,7 +46,7 @@ class FileFormat():
         '''
         Constructor - left for now, but all methods may end up being static.
         '''
-        pass 
+        pass
 
 
-        
+
