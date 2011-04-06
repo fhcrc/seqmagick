@@ -1,0 +1,37 @@
+seqmagick README
+================
+seqmagick provides a command-line interface that exposes some of the 
+functionality present in the fabulous Biopython package.  For more information 
+about Biopython, please visit: http://biopython.org/ 
+
+seqmagick was inspired by ImageMagick, allowing for easy conversion between 
+different sequence file formats, and a number of helpful transformation 
+options have been implemented.
+
+Current Release
+---------------
+seqmagick has not yet had an official release.
+
+Installation
+------------
+See the INSTALL document.
+
+Source Control
+--------------
+The source for seqmagick can be found on github at:
+
+https://github.com/fhcrc/seqmagick
+
+Official releases will be eventually be published to 
+a site that will be referenced here.
+
+Getting Help
+------------
+Send an e-mail to:
+
+Brian Hodges <bhodges@fhcrc.org>
+
+License
+-------
+seqmagick is distributed under the terms of the GPLv3 license.
+See the LICENSE file for more information.

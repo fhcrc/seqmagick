@@ -1,6 +1,9 @@
 To install system-wide, run:
 sudo python setup.py install
 
-To install in your home directory, try something like this:
+To install for a specific version of python:
+/path/to/python setup.py install
+
+Yet another installation option:
 python setup.py install --home=/home/username/local
 

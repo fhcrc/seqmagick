@@ -1,5 +1,4 @@
 '''
-@author: bhodges
 '''
 
 # Define mappings in a dictionary with extension : BioPython_file_type.  Defined outside
