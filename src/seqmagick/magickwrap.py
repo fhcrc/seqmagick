@@ -370,7 +370,7 @@ class MagickWrap(object):
                 cut_record.annotations[k] = v
 
             # Letter annotations must be lists / tuples / strings of the same
-            # length as teh sequence
+            # length as the sequence
             for k, v in record.letter_annotations.items():
                 cut_record.letter_annotations[k] = v[start:end]
 
@@ -403,8 +403,22 @@ class MagickWrap(object):
         if self.verbose: print 'Applying _reverse_sequences generator: ' + \
                                'reversing the order of sites in sequences.'
         for record in records:
-            yield SeqRecord(record.seq[::-1], id=record.id,
-                            description=record.description)
+            rev_record = SeqRecord(record.seq[::-1], id=record.id,
+                                   name=record.name,
+                                   description=record.description)
+            # Copy the annotations over
+            for k, v in record.annotations.items():
+                # Trim if appropriate
+                if isinstance(v, (tuple, list)) and len(v) == len(record):
+                    v = v[::-1]
+                rev_record.annotations[k] = v
+
+            # Letter annotations must be lists / tuples / strings of the same
+            # length as the sequence
+            for k, v in record.letter_annotations.items():
+                rev_record.letter_annotations[k] = v[::-1]
+
+            yield rev_record
 
 
     def _reverse_complement_sequences(self, records):
@@ -414,8 +428,22 @@ class MagickWrap(object):
         if self.verbose: print 'Applying _reverse_complement_sequences generator: ' + \
                                'transforming sequences into reverse complements.'
         for record in records:
-            yield SeqRecord(record.seq.reverse_complement(), id=record.id,
-                            description=record.description)
+            rev_record = SeqRecord(record.seq.reverse_complement(),
+                                   id=record.id, name=record.name,
+                                   description=record.description)
+            # Copy the annotations over
+            for k, v in record.annotations.items():
+                # Trim if appropriate
+                if isinstance(v, (tuple, list)) and len(v) == len(record):
+                    v = v[::-1]
+                rev_record.annotations[k] = v
+
+            # Letter annotations must be lists / tuples / strings of the same
+            # length as the sequence
+            for k, v in record.letter_annotations.items():
+                rev_record.letter_annotations[k] = v[::-1]
+
+            yield rev_record
 
     def _ungap_sequences(self, records):
         """
