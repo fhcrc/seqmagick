@@ -395,6 +395,25 @@ class MagickWrap(object):
         for record in records:
             yield record.upper()
 
+    @staticmethod
+    def _reverse_annotations(old_record, new_record):
+        """
+        Copy annotations form old_record to new_record, reversing any
+        lists / tuples / strings.
+        """
+        # Copy the annotations over
+        for k, v in old_record.annotations.items():
+            # Trim if appropriate
+            if isinstance(v, (tuple, list)) and len(v) == len(old_record):
+                assert len(v) == len(old_record)
+                v = v[::-1]
+            new_record.annotations[k] = v
+
+        # Letter annotations must be lists / tuples / strings of the same
+        # length as the sequence
+        for k, v in old_record.letter_annotations.items():
+            assert len(v) == len(old_record)
+            new_record.letter_annotations[k] = v[::-1]
 
     def _reverse_sequences(self, records):
         """
@@ -407,19 +426,9 @@ class MagickWrap(object):
                                    name=record.name,
                                    description=record.description)
             # Copy the annotations over
-            for k, v in record.annotations.items():
-                # Trim if appropriate
-                if isinstance(v, (tuple, list)) and len(v) == len(record):
-                    v = v[::-1]
-                rev_record.annotations[k] = v
-
-            # Letter annotations must be lists / tuples / strings of the same
-            # length as the sequence
-            for k, v in record.letter_annotations.items():
-                rev_record.letter_annotations[k] = v[::-1]
+            MagickWrap._reverse_annotations(record, rev_record)
 
             yield rev_record
-
 
     def _reverse_complement_sequences(self, records):
         """
@@ -432,16 +441,7 @@ class MagickWrap(object):
                                    id=record.id, name=record.name,
                                    description=record.description)
             # Copy the annotations over
-            for k, v in record.annotations.items():
-                # Trim if appropriate
-                if isinstance(v, (tuple, list)) and len(v) == len(record):
-                    v = v[::-1]
-                rev_record.annotations[k] = v
-
-            # Letter annotations must be lists / tuples / strings of the same
-            # length as the sequence
-            for k, v in record.letter_annotations.items():
-                rev_record.letter_annotations[k] = v[::-1]
+            MagickWrap._reverse_annotations(record, rev_record)
 
             yield rev_record
 
@@ -750,5 +750,3 @@ class MagickWrap(object):
         records = (record_index[id] for id in ids)
 
         return records
-
-
