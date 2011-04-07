@@ -362,13 +362,6 @@ class MagickWrap(object):
                                'cutting sequences based on specified range (' + start + '-' + end + ').'
         start = start - 1
         for record in records:
-            record = SeqRecord(record.seq[start:end], id=record.id,
-                    name=record.name, description=record.description)
-
-            # TODO: Make this a little cleaner?
-            # Include quality scores if present
-
-
             yield SeqRecord(record.seq[start:end], id=record.id,
                             description=record.description)
 
