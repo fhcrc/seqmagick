@@ -299,9 +299,8 @@ class MagickWrap(object):
                                'converting any ? or ~ characters to -.'
         translation_table = string.maketrans("?~", "--")
         for record in records:
-            yield SeqRecord(Seq(str(record.seq).translate(translation_table)),
-                            id=record.id, description=record.description)
-
+            record.seq = Seq(str(record.seq.translate(translation_table)), record.seq.alphabet)
+            yield record
 
     def _deduplicate_sequences(self, records):
         """
@@ -358,13 +357,24 @@ class MagickWrap(object):
         """
         Cut sequences given a one-based range.  Includes last item.
         """
-        if self.verbose: print 'Applying _cut_sequences generator: ' + \
-                               'cutting sequences based on specified range (' + start + '-' + end + ').'
         start = start - 1
         for record in records:
-            yield SeqRecord(record.seq[start:end], id=record.id,
-                            description=record.description)
+            cut_record = SeqRecord(record.seq[start:end], id=record.id,
+                                   name=record.name, description=record.description)
 
+            # Copy the annotations over
+            for k, v in record.annotations.items():
+                # Trim if appropriate
+                if isinstance(v, (tuple, list)) and len(v) == len(record):
+                    v = v[start:end]
+                cut_record.annotations[k] = v
+
+            # Letter annotations must be lists / tuples / strings of the same
+            # length as the sequence
+            for k, v in record.letter_annotations.items():
+                cut_record.letter_annotations[k] = v[start:end]
+
+            yield cut_record
 
     def _lower_sequences(self, records):
         """
@@ -385,6 +395,25 @@ class MagickWrap(object):
         for record in records:
             yield record.upper()
 
+    @staticmethod
+    def _reverse_annotations(old_record, new_record):
+        """
+        Copy annotations form old_record to new_record, reversing any
+        lists / tuples / strings.
+        """
+        # Copy the annotations over
+        for k, v in old_record.annotations.items():
+            # Trim if appropriate
+            if isinstance(v, (tuple, list)) and len(v) == len(old_record):
+                assert len(v) == len(old_record)
+                v = v[::-1]
+            new_record.annotations[k] = v
+
+        # Letter annotations must be lists / tuples / strings of the same
+        # length as the sequence
+        for k, v in old_record.letter_annotations.items():
+            assert len(v) == len(old_record)
+            new_record.letter_annotations[k] = v[::-1]
 
     def _reverse_sequences(self, records):
         """
@@ -393,9 +422,13 @@ class MagickWrap(object):
         if self.verbose: print 'Applying _reverse_sequences generator: ' + \
                                'reversing the order of sites in sequences.'
         for record in records:
-            yield SeqRecord(record.seq[::-1], id=record.id,
-                            description=record.description)
+            rev_record = SeqRecord(record.seq[::-1], id=record.id,
+                                   name=record.name,
+                                   description=record.description)
+            # Copy the annotations over
+            MagickWrap._reverse_annotations(record, rev_record)
 
+            yield rev_record
 
     def _reverse_complement_sequences(self, records):
         """
@@ -404,8 +437,13 @@ class MagickWrap(object):
         if self.verbose: print 'Applying _reverse_complement_sequences generator: ' + \
                                'transforming sequences into reverse complements.'
         for record in records:
-            yield SeqRecord(record.seq.reverse_complement(), id=record.id,
-                            description=record.description)
+            rev_record = SeqRecord(record.seq.reverse_complement(),
+                                   id=record.id, name=record.name,
+                                   description=record.description)
+            # Copy the annotations over
+            MagickWrap._reverse_annotations(record, rev_record)
+
+            yield rev_record
 
     def _ungap_sequences(self, records):
         """
@@ -712,5 +750,3 @@ class MagickWrap(object):
         records = (record_index[id] for id in ids)
 
         return records
-
-
