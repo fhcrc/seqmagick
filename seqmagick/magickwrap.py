@@ -1,23 +1,20 @@
 """
 """
-
 import csv
 import os
 import re
+import shutil
+import string
 import subprocess
 import sys
-import string
-import shutil
 
 from Bio import SeqIO
-from Bio.Alphabet import IUPAC
-from Bio.Alphabet import generic_dna
-from Bio.Alphabet import generic_rna
 from Bio.Align.Applications import MuscleCommandline
+from Bio.Alphabet import generic_dna, generic_rna
 from Bio.Seq import Seq
+from Bio.SeqIO import FastaIO
 from Bio.SeqRecord import SeqRecord
 from Bio.SeqUtils.CheckSum import seguid
-from Bio.SeqIO import FastaIO
 
 from fileformat import FileFormat
 
@@ -27,7 +24,8 @@ class MagickWrap(object):
     A class that wraps functionality present in BioPython.
     """
 
-    def __init__(self, tmp_dir, in_files, out_file=None, alphabet=None, debug=False, verbose=False):
+    def __init__(self, tmp_dir, in_files, out_file=None, alphabet=None,
+                 debug=False, verbose=False):
         """
         Constructor
         """
@@ -37,14 +35,13 @@ class MagickWrap(object):
         self.debug = debug
         self.verbose = verbose
 
-# Public Methods
-
-
+    # Public Methods
     def convert_format(self):
         """
-        Convert input file to a different output format.  This will not work for all formats,
-        e.g. going from fastq to fasta or going from a non-alignment fasta file to phylip would not work.
-        Converts only the first file in the source_files list.
+        Convert input file to a different output format.  This will not work for
+        all formats, e.g. going from fastq to fasta or going from a
+        non-alignment fasta file to phylip would not work. Converts only the
+        first file in the source_files list.
         """
         source_file = self.source_files[0]
         source_file_type = FileFormat.lookup_file_type(os.path.splitext(source_file)[1])
@@ -52,20 +49,23 @@ class MagickWrap(object):
         destination_file_type = FileFormat.lookup_file_type(os.path.splitext(destination_file)[1])
 
         if source_file == destination_file:
-            raise Exception, "source_file and destination_file cannot be the same file."
+            raise ValueError("source_file and destination_file cannot "
+                             "be the same file.")
 
         if self.destination_file is not None:
-           SeqIO.convert(source_file, source_file_type, destination_file, destination_file_type)
+           SeqIO.convert(source_file, source_file_type, destination_file,
+                         destination_file_type)
         else:
-            raise Exception, "An output file was not specified.  Required by the convert action."
-
+            raise ValueError("An output file was not specified. "
+                             "Required by the convert action.")
 
     def describe_sequence_files(self, output_format, width):
         """
-        Given one more more sequence files, determine if the file is an alignment, the maximum
-        sequence length and the total number of sequences.  Provides different output
-        formats including tab (tab-delimited), csv and align (aligned as if part of a
-        borderless table).
+        Given one more more sequence files, determine if the file is an
+        alignment, the maximum sequence length and the total number of
+        sequences.  Provides different output formats including tab
+        (tab-delimited), csv and align (aligned as if part of a borderless
+        table).
         """
         handle = sys.stdout
         if self.destination_file:
@@ -118,7 +118,6 @@ class MagickWrap(object):
         if self.destination_file:
             handle.close()
 
-
     def create_muscle_alignment(self):
         """
         Use BioPython muscle wrapper to create an alignment.
@@ -134,13 +133,13 @@ class MagickWrap(object):
         return return_code
 
     def transform(self, cut=False, dashgap=False, ungap=False, lower=False,
-                  reverse=False, strict=False, translate=False, upper=False, linewrap=False,
-                  first_name_capture=False, deduplicate_sequences=False, deduplicate_taxa=False,
-                  reverse_complement=False, pattern_include=False, pattern_exclude=False,
-                  squeeze=False, head=False, tail=False, sort=False,
-                  strip_range=False, transcribe=False, max_length=False,
-                  min_length=False, name_prefix=False, name_suffix=False,
-                  ):
+            reverse=False, strict=False, translate=False, upper=False,
+            linewrap=False, first_name_capture=False,
+            deduplicate_sequences=False, deduplicate_taxa=False,
+            reverse_complement=False, pattern_include=False,
+            pattern_exclude=False, squeeze=False, head=False, tail=False,
+            sort=False, strip_range=False, transcribe=False, max_length=False,
+            min_length=False, name_prefix=False, name_suffix=False,):
         """
         This method wraps many of the transformation generator functions found
         in this class.
@@ -165,16 +164,20 @@ class MagickWrap(object):
                 # Sorted iterator.
                 if sort == 'length-asc':
                     records = self._sort_length(source_file=source_file,
-                                                source_file_type=source_file_type, direction=1)
+                                                source_file_type=source_file_type,
+                                                direction=1)
                 elif sort == 'length-desc':
                     records = self._sort_length(source_file=source_file,
-                                                source_file_type=source_file_type, direction=0)
+                                                source_file_type=source_file_type,
+                                                direction=0)
                 elif sort == 'name-asc':
                     records = self._sort_name(source_file=source_file,
-                                                source_file_type=source_file_type, direction=1)
+                                              source_file_type=source_file_type,
+                                              direction=1)
                 elif sort == 'name-desc':
                     records = self._sort_name(source_file=source_file,
-                                                source_file_type=source_file_type, direction=0)
+                                              source_file_type=source_file_type,
+                                              direction=0)
 
             else:
                 # Unsorted iterator.
@@ -185,7 +188,8 @@ class MagickWrap(object):
             # Apply generator functions to iterator.#
             #########################################
 
-            if self.verbose: print 'Setting up generator functions for file: ' + source_file
+            if self.verbose:
+                print 'Setting up generator functions for file: ' + source_file
 
             # Deduplication occurs first, to get a checksum of the
             # original sequence and to store the id field before any
@@ -258,14 +262,15 @@ class MagickWrap(object):
                 records = self._translate(records, translate)
 
             if squeeze:
-                if self.verbose: print 'Performing squeeze, which requires a new iterator for the first pass.'
+                if self.verbose:
+                    print 'Performing squeeze, which requires a new iterator for the first pass.'
                 gaps = []
                 # Need to iterate an additional time to determine which
                 # gaps are share between all sequences in an alignment.
                 for record in SeqIO.parse(source_file, source_file_type):
                     # Use numpy to prepopulate a gaps list.
                     if len(gaps) == 0:
-                        gaps_length = len(str(record.seq))
+                        gaps_length = len(record.seq)
                         #gaps = list(ones( (gaps_length), dtype=int16 ))
                         gaps = [1] * gaps_length
                     gaps = map(self._gap_check, gaps, list(str(record.seq)))
