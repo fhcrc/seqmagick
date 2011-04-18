@@ -36,7 +36,9 @@ def main():
     # destination file or temp file if script did not fully execute.
     if arguments is not None and action:
         if verbose: print 'Creating MagickWrap instance.'
-        wrap = MagickWrap(in_files=sources, out_file=destination, tmp_dir=arguments.tmp_dir, debug=debug, verbose=verbose)
+        wrap = MagickWrap(in_files=sources, out_file=destination,
+                          tmp_dir=arguments.tmp_dir, debug=debug,
+                          verbose=verbose)
         if action == 'info':
             if verbose: print 'Performing info action.'
             wrap.describe_sequence_files(output_format=arguments.format,
@@ -54,12 +56,14 @@ def main():
                            ungap=arguments.ungap,
                            first_name_capture=arguments.firstname,
                            head=arguments.head,
+                           input_format=arguments.input_format,
                            linewrap=arguments.linewrap,
                            lower=arguments.lower,
                            max_length=arguments.max_length,
                            min_length=arguments.min_length,
                            name_suffix=arguments.name_suffix,
                            name_prefix=arguments.name_prefix,
+                           output_format=arguments.output_format,
                            pattern_include=arguments.pattern_include,
                            pattern_exclude=arguments.pattern_exclude,
                            reverse=arguments.reverse,
@@ -71,7 +75,7 @@ def main():
                            transcribe=arguments.transcribe,
                            translate=arguments.translate,
                            upper=arguments.upper,
-                          )
+                           )
 
 
 def parse_arguments(action_arguments=None):
@@ -162,9 +166,11 @@ def add_arguments(subparser):
     subparser.add_argument('--firstname', action='store_true',
                         help='Take only the first whitespace-delimited word as the name of the sequence')
     subparser.add_argument('--head', metavar='N', dest='head', type=int, help='Trim down to top N sequences')
+    subparser.add_argument('--input-format', metavar='Format',
+            help="Input file format")
     subparser.add_argument('--linewrap', dest='linewrap', metavar='N', type=int,
-                        help='Adjust line wrap for sequence strings.  When N is 0, ' +
-                        'all line breaks are removed. Only fasta files are supported for the output format.')
+            help='Adjust line wrap for sequence strings.  When N is 0, '
+                 'all line breaks are removed. Only fasta files are supported for the output format.')
     subparser.add_argument('--lower', action='store_true', help='Translate the sequences to lower case')
     subparser.add_argument('--maxlength', dest='max_length', metavar='N',
                            type=int, help='Discard any sequences beyond '
@@ -178,6 +184,8 @@ def add_arguments(subparser):
                         help='Append a suffix to all IDs.')
     subparser.add_argument('--name-prefix', metavar='PREFIX', dest='name_prefix',
                         help='Insert a prefix for all IDs.')
+    subparser.add_argument('--output-format', metavar='Format',
+            help="Output file format")
     subparser.add_argument('--pattern-include', metavar='regex', dest='pattern_include',
                         help='Filter the sequences by regular expression in name')
     subparser.add_argument('--pattern-exclude', metavar='regex', dest='pattern_exclude',
@@ -235,11 +243,10 @@ def sequence_file(sequence_file):
     """
     A custom argparse 'type' to make sure sequence files exist and the type is supported.
     """
-    FileFormat.lookup_file_type(os.path.splitext(sequence_file)[1])
     if os.access(sequence_file, os.R_OK) and os.path.isfile(sequence_file):
         return sequence_file
     else:
-        raise Exception, sequence_file + " not found or is not readable."
+        raise IOError(sequence_file + " not found or is not readable.")
 
 
 if __name__ == '__main__':

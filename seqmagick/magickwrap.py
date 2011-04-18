@@ -139,7 +139,8 @@ class MagickWrap(object):
             reverse_complement=False, pattern_include=False,
             pattern_exclude=False, squeeze=False, head=False, tail=False,
             sort=False, strip_range=False, transcribe=False, max_length=False,
-            min_length=False, name_prefix=False, name_suffix=False,):
+            min_length=False, name_prefix=False, name_suffix=False,
+            input_format=None, output_format=None):
         """
         This method wraps many of the transformation generator functions found
         in this class.
@@ -148,7 +149,9 @@ class MagickWrap(object):
         for source_file in self.source_files:
             # Get just the file name, useful for naming the temporary file.
             file_name = os.path.split(source_file)[1]
-            source_file_type = FileFormat.lookup_file_type(os.path.splitext(source_file)[1])
+            file_ext = os.path.splitext(source_file)[1]
+            source_file_type = (input_format or
+                                FileFormat.lookup_file_type(file_ext))
 
             # Specify full path to temporary file for operations that require this.
             # tmp_file will have a seqmagick prefix, i.e. /tmp/seqmagick.a.fasta.
@@ -157,7 +160,9 @@ class MagickWrap(object):
             if self.destination_file is not None:
                 destination_file = self.destination_file
 
-            destination_file_type = FileFormat.lookup_file_type(os.path.splitext(destination_file)[1])
+            output_ext = os.path.splitext(destination_file)[1]
+            destination_file_type = (output_format or
+                                     FileFormat.lookup_file_type(output_ext))
 
             # Get an iterator.
             if sort:
