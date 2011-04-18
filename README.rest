@@ -5,21 +5,24 @@ seqmagick
 Motivation
 ==========
 
-We often have to convert between sequence formats and do little tasks on them, and it's not worth writing scripts for that.
-Seqmagick is a kickass little utility to expose the file format conversion in Biopython in a convenient way.
+We often have to convert between sequence formats and do little tasks on them,
+and it's not worth writing scripts for that.  Seqmagick is a kickass little
+utility to expose the file format conversion in Biopython in a convenient way.
 Instead of having a big mess of scripts, there is one that takes arguments.
 
 The code
 ========
 
-A command line tool to do little sequence manipulations in the spirit of imagemagick_.
+A command line tool to do little sequence manipulations in the spirit of
+imagemagick_.
 
-In particular, the format conversion specification happens by suffix. 
-Writing::
+In particular, the format conversion specification happens by suffix unless
+you specify otherwise. Writing::
 
   seqmagick convert x.fasta y.phy
 
-converts the FASTA file to phylip format. Of course.
+converts the FASTA file to phylip format. Of course. See the `BioPython
+SeqIO wiki page`_ for a list of supported types.
 
 In general the interface is in the format::
 
@@ -104,7 +107,7 @@ help
   e.g. seqmagick help convert
 
 info
-  Describe sequence files, with different output options. 
+  Describe sequence files, with different output options.
 
 muscle
   Create an alignment using Muscle.
@@ -115,5 +118,7 @@ check
   (or perhaps an alphabet)
   make sure that you are using IUPAC characters for AA or Nuc
 
+
 .. _imagemagick: http://www.imagemagick.org/script/command-line-tools.php
 
+.. _`BioPython SeqIO wiki page`: http://www.biopython.org/wiki/SeqIO#File_Formats
