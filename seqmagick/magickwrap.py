@@ -73,12 +73,15 @@ class MagickWrap(object):
             handle = open(self.destination_file, 'w')
 
         # Create and write out the header row.
-        header = ['name', 'alignment', 'max_len', 'num_seqs']
+        header = ['name', 'alignment', 'min_len', 'max_len', 'avg_len',
+                  'num_seqs']
         self._print_file_info(header, output_format=output_format,
                               handle=handle, width=width)
          # Go through all source files passed in, one by one.
         for source_file in self.source_files:
             is_alignment = True
+            avg_length = None
+            min_length = sys.maxint
             max_length = 0
             sequence_count = 0
             source_file_type = FileFormat.lookup_file_type(os.path.splitext(source_file)[1])
@@ -90,16 +93,28 @@ class MagickWrap(object):
                 if max_length != 0:
                     # If even one sequence is not the same length as the others,
                     # we don't consider this an alignment.
-                    if len(str(record.seq)) != max_length:
+                    if len(record) != max_length:
                         is_alignment = False
+
                 # Work on determining the length of the longest sequence.
-                if len(str(record.seq)) > max_length:
-                    max_length = len(str(record.seq))
+                if len(record) > max_length:
+                    max_length = len(record)
+                if len(record) < min_length:
+                    min_length = len(record)
+
+                # Average length
+                if sequence_count == 1:
+                    avg_length = float(len(record))
+                else:
+                    avg_length = avg_length + ((len(record) - avg_length) /
+                                               sequence_count)
             self._print_file_info(row=[source_file,
-                                  str(is_alignment).upper(),
-                                  str(max_length),
-                                  str(sequence_count),
-                                  ], output_format=output_format,
+                                       str(is_alignment).upper(),
+                                       str(min_length),
+                                       str(max_length),
+                                       '{0:.2f}'.format(avg_length),
+                                       str(sequence_count),
+                                       ], output_format=output_format,
                                   handle=handle, width=width)
         if self.destination_file:
             handle.close()
