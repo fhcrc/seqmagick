@@ -166,8 +166,6 @@ def add_arguments(subparser):
     subparser.add_argument('--firstname', action='store_true',
                         help='Take only the first whitespace-delimited word as the name of the sequence')
     subparser.add_argument('--head', metavar='N', dest='head', type=int, help='Trim down to top N sequences')
-    subparser.add_argument('--input-format', metavar='Format',
-            help="Input file format")
     subparser.add_argument('--linewrap', dest='linewrap', metavar='N', type=int,
             help='Adjust line wrap for sequence strings.  When N is 0, '
                  'all line breaks are removed. Only fasta files are supported for the output format.')
@@ -184,8 +182,6 @@ def add_arguments(subparser):
                         help='Append a suffix to all IDs.')
     subparser.add_argument('--name-prefix', metavar='PREFIX', dest='name_prefix',
                         help='Insert a prefix for all IDs.')
-    subparser.add_argument('--output-format', metavar='Format',
-            help="Output file format")
     subparser.add_argument('--pattern-include', metavar='regex', dest='pattern_include',
                         help='Filter the sequences by regular expression in name')
     subparser.add_argument('--pattern-exclude', metavar='regex', dest='pattern_exclude',
@@ -220,6 +216,12 @@ def add_arguments(subparser):
                         'produce incorrect results.')
     subparser.add_argument('--ungap', action='store_true', help='Remove gaps in the sequence alignment')
     subparser.add_argument('--upper', action='store_true', help='Translate the sequences to upper case')
+
+    format_group = subparser.add_argument_group('Format Options')
+    format_group.add_argument('--input-format', metavar='Format',
+            help="Input file format")
+    format_group.add_argument('--output-format', metavar='Format',
+            help="Output file format")
 
     return subparser
 
