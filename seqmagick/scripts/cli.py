@@ -88,8 +88,8 @@ def parse_arguments(action_arguments=None):
     #parser_check.add_argument('--alphabet', dest='alphabet', help='To be implemented')
     parser_check.add_argument('source_file', type=sequence_file, nargs=1)
     # Convert
-    parser_convert = add_arguments(subparsers.add_parser('convert', 
-                                   help='Convert between sequence file formats and optionally, ' + \
+    parser_convert = add_arguments(subparsers.add_parser('convert',
+                                   help='Convert between sequence file formats and optionally, '
                                    'perform other operations'))
     parser_convert.add_argument('source_file', type=sequence_file, nargs=1)
     parser_convert.add_argument('destination_file', nargs=1, default=False)
@@ -112,8 +112,8 @@ def parse_arguments(action_arguments=None):
                              'Defaults to a width of 30.  Any output exceeding the column width ' +
                              'will be truncated ')
     # Mogrify
-    parser_mogrify = add_arguments(subparsers.add_parser('mogrify', 
-                                   help='Perform in-place operations on a file ' + \
+    parser_mogrify = add_arguments(subparsers.add_parser('mogrify',
+                                   help='Perform in-place operations on a file '
                                    ' containing sequences.  Can accept multiple source files. '))
     parser_mogrify.add_argument('source_files', type=sequence_file, nargs='+')
     # Muscle
@@ -121,12 +121,12 @@ def parse_arguments(action_arguments=None):
     parser_muscle.add_argument('source_file', type=sequence_file, nargs=1)
     parser_muscle.add_argument('destination_file', nargs=1)
 
-    # With the exception of 'help', all subcommands share a certain 
+    # With the exception of 'help', all subcommands share a certain
     # number of arguments, which are added here.
     for subcommand in subparsers.choices.keys():
         if subcommand == 'help': continue
         subparser = subparsers.choices[subcommand]
-        subparser.add_argument('--tmp', dest='tmp_dir', default='/tmp', 
+        subparser.add_argument('--tmp', dest='tmp_dir', default='/tmp',
                                 help='Temporary directory for working file. Default is /tmp.')
         subparser.add_argument('--debug', action='store_true', help='Enable debug output')
         subparser.add_argument('--verbose', action='store_true', help='Enable verbose output')
@@ -138,13 +138,13 @@ def parse_arguments(action_arguments=None):
         arguments = parser.parse_args()
 
     action = arguments.subparser_name
-    
-    # Support seqmagick help <action> by simply having this function call itself and 
+
+    # Support seqmagick help <action> by simply having this function call itself and
     # translate the arguments into something that argparse can work with.
     if (action == 'help'):
-        parse_arguments(action_arguments=[str(arguments.action[0]), '-h'])    
+        parse_arguments(action_arguments=[str(arguments.action[0]), '-h'])
 
-    return action, arguments 
+    return action, arguments
 
 
 def add_arguments(subparser):
@@ -167,12 +167,12 @@ def add_arguments(subparser):
                         'all line breaks are removed. Only fasta files are supported for the output format.')
     subparser.add_argument('--lower', action='store_true', help='Translate the sequences to lower case')
     subparser.add_argument('--maxlength', dest='max_length', metavar='N',
-                           type=int, help='Discard any sequences beyond ' + \
-                           'the specified maximum length.  This operation occurs *before* all length-changing ' + \
+                           type=int, help='Discard any sequences beyond '
+                           'the specified maximum length.  This operation occurs *before* all length-changing '
                            'options such as cut and squeeze.')
     subparser.add_argument('--minlength', dest='min_length', metavar='N',
-                           type=int, help='Discard any sequences less than ' + \
-                           'the specified minimum length.  This operation occurs *before* all length-changing ' + \
+                           type=int, help='Discard any sequences less than '
+                           'the specified minimum length.  This operation occurs *before* all length-changing '
                            'options such as cut and squeeze.')
     subparser.add_argument('--name-suffix', metavar='SUFFIX', dest='name_suffix',
                         help='Append a suffix to all IDs.')
@@ -181,13 +181,13 @@ def add_arguments(subparser):
     subparser.add_argument('--pattern-include', metavar='regex', dest='pattern_include',
                         help='Filter the sequences by regular expression in name')
     subparser.add_argument('--pattern-exclude', metavar='regex', dest='pattern_exclude',
-                        help='Filter out sequences by regular expression in name')    
+                        help='Filter out sequences by regular expression in name')
     subparser.add_argument('--reverse', action='store_true', help='Reverse the order of sites in sequences')
     subparser.add_argument('--reversecomplement', dest='reverse_complement', action='store_true',
                         help='Convert sequences into reverse complements')
     subparser.add_argument('--sort', dest='sort',
                         choices=['length-asc', 'length-desc', 'name-asc', 'name-desc'],
-                        help='Perform sorting by length or name, ascending or descending.  ' + \
+                        help='Perform sorting by length or name, ascending or descending.  '
                         'ASCII sorting is performed for names')
     subparser.add_argument('--striprange', dest='strip_range', action='store_true',
                         help='Strip ranges from sequences IDs, matching </x-y>')
@@ -201,14 +201,14 @@ def add_arguments(subparser):
     #                    help='Translate between amino acids and nucleotides, use "aa" or "nuc" as destination type')
     subparser.add_argument('--transcribe', dest='transcribe',
                         choices=['dna2rna', 'rna2dna'],
-                        help='Transcription and back transcription for generic DNA and RNA.  ' + \
-                        'Source sequences must be the correct alphabet or this action will likely ' + \
+                        help='Transcription and back transcription for generic DNA and RNA.  '
+                        'Source sequences must be the correct alphabet or this action will likely '
                         'produce incorrect results.')
     subparser.add_argument('--translate', dest='translate',
                         choices=['dna2protein', 'rna2protein', 'dna2proteinstop', 'rna2proteinstop'],
-                        help='Translate from generic DNA/RNA to proteins. Options with ' + \
-                        '"stop" suffix will NOT translate through stop codons .' + \
-                        'Source sequences must be the correct alphabet or this action will likely ' + \
+                        help='Translate from generic DNA/RNA to proteins. Options with '
+                        '"stop" suffix will NOT translate through stop codons .'
+                        'Source sequences must be the correct alphabet or this action will likely '
                         'produce incorrect results.')
     subparser.add_argument('--ungap', action='store_true', help='Remove gaps in the sequence alignment')
     subparser.add_argument('--upper', action='store_true', help='Translate the sequences to upper case')

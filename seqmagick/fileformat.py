@@ -20,8 +20,6 @@ extension_to_type = { '.aln' : 'clustal',
                       '.sto' : 'stockholm',
                       }
 
-
-
 class FileFormat():
     '''
     A class that maps file extensions to BioPython file formats.
