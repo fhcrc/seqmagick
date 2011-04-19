@@ -36,29 +36,6 @@ class MagickWrap(object):
         self.verbose = verbose
 
     # Public Methods
-    def convert_format(self):
-        """
-        Convert input file to a different output format.  This will not work for
-        all formats, e.g. going from fastq to fasta or going from a
-        non-alignment fasta file to phylip would not work. Converts only the
-        first file in the source_files list.
-        """
-        source_file = self.source_files[0]
-        source_file_type = FileFormat.lookup_file_type(os.path.splitext(source_file)[1])
-        destination_file = self.destination_file
-        destination_file_type = FileFormat.lookup_file_type(os.path.splitext(destination_file)[1])
-
-        if source_file == destination_file:
-            raise ValueError("source_file and destination_file cannot "
-                             "be the same file.")
-
-        if self.destination_file is not None:
-           SeqIO.convert(source_file, source_file_type, destination_file,
-                         destination_file_type)
-        else:
-            raise ValueError("An output file was not specified. "
-                             "Required by the convert action.")
-
     def describe_sequence_files(self, output_format, width):
         """
         Given one more more sequence files, determine if the file is an
@@ -140,7 +117,8 @@ class MagickWrap(object):
             reverse_complement=False, pattern_include=False,
             pattern_exclude=False, squeeze=False, head=False, tail=False,
             sort=False, strip_range=False, transcribe=False, max_length=False,
-            min_length=False, name_prefix=False, name_suffix=False,):
+            min_length=False, name_prefix=False, name_suffix=False,
+            input_format=None, output_format=None):
         """
         This method wraps many of the transformation generator functions found
         in this class.
@@ -149,7 +127,9 @@ class MagickWrap(object):
         for source_file in self.source_files:
             # Get just the file name, useful for naming the temporary file.
             file_name = os.path.split(source_file)[1]
-            source_file_type = FileFormat.lookup_file_type(os.path.splitext(source_file)[1])
+            file_ext = os.path.splitext(source_file)[1]
+            source_file_type = (input_format or
+                                FileFormat.lookup_file_type(file_ext))
 
             # Specify full path to temporary file for operations that require this.
             # tmp_file will have a seqmagick prefix, i.e. /tmp/seqmagick.a.fasta.
@@ -158,7 +138,9 @@ class MagickWrap(object):
             if self.destination_file is not None:
                 destination_file = self.destination_file
 
-            destination_file_type = FileFormat.lookup_file_type(os.path.splitext(destination_file)[1])
+            output_ext = os.path.splitext(destination_file)[1]
+            destination_file_type = (output_format or
+                                     FileFormat.lookup_file_type(output_ext))
 
             # Get an iterator.
             if sort:
