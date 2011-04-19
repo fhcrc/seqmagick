@@ -3,6 +3,7 @@
 import argparse
 import os
 import sys
+import tempfile
 
 from seqmagick.magickwrap import MagickWrap
 
@@ -129,8 +130,8 @@ def parse_arguments(action_arguments=None):
     for subcommand in subparsers.choices.keys():
         if subcommand == 'help': continue
         subparser = subparsers.choices[subcommand]
-        subparser.add_argument('--tmp', dest='tmp_dir', default='/tmp',
-                                help='Temporary directory for working file. Default is /tmp.')
+        subparser.add_argument('--tmp', dest='tmp_dir', default=tempfile.gettempdir(),
+                                help='Temporary directory for working file. Default is %(default)s.')
         subparser.add_argument('--debug', action='store_true', help='Enable debug output')
         subparser.add_argument('--verbose', action='store_true', help='Enable verbose output')
 
