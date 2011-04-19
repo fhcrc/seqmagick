@@ -9,6 +9,7 @@ import argparse
 from seqmagick.magickwrap import MagickWrap
 from seqmagick.fileformat import FileFormat
 
+
 def main():
     action, arguments = parse_arguments()
 
@@ -219,9 +220,9 @@ def add_arguments(subparser):
 
     format_group = subparser.add_argument_group('Format Options')
     format_group.add_argument('--input-format', metavar='Format',
-            help="Input file format")
+            help="Input file format (default: determine from extension")
     format_group.add_argument('--output-format', metavar='Format',
-            help="Output file format")
+            help="Output file format (default: determine from extension)")
 
     return subparser
 
