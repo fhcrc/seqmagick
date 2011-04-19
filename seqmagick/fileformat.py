@@ -3,23 +3,23 @@
 
 # Define mappings in a dictionary with extension : BioPython_file_type.  Defined outside
 # of the class so static methods can access it.
-extension_to_type = { '.aln' : 'clustal',
-                      '.fa' : 'fasta',
-                      '.faa' : 'fasta',
-                      '.fasta' : 'fasta',
-                      '.fastq' : 'fastq',
-                      '.ffn' : 'fasta',
-                      '.fna' : 'fasta',
-                      '.frn' : 'fasta',
-                      '.gb' : 'genbank',
-                      '.gbk' : 'genbank',
-                      '.needle' : 'emboss',
-                      '.phy' : 'phylip',
-                      '.phylip' : 'phylip',
-                      '.sff' : 'sff',
-                      '.sth' : 'stockholm',
-                      '.sto' : 'stockholm',
-                      }
+EXTENSION_TO_TYPE = {'.aln': 'clustal',
+                     '.fa': 'fasta',
+                     '.faa': 'fasta',
+                     '.fasta': 'fasta',
+                     '.fastq': 'fastq',
+                     '.ffn': 'fasta',
+                     '.fna': 'fasta',
+                     '.frn': 'fasta',
+                     '.gb': 'genbank',
+                     '.gbk': 'genbank',
+                     '.needle': 'emboss',
+                     '.phy': 'phylip',
+                     '.phylip': 'phylip',
+                     '.sff': 'sff',
+                     '.sth': 'stockholm',
+                     '.sto': 'stockholm',
+                     }
 
 class FileFormat():
     '''
@@ -34,10 +34,10 @@ class FileFormat():
         Convert extension to lower case and look up the corresponding BioPython file type.
         '''
         lower = extension.lower()
-        if (lower not in extension_to_type):
+        if (lower not in EXTENSION_TO_TYPE):
             raise Exception, "SeqMagick does not know how to handle files with extensions like this: " + extension
         else:
-            return extension_to_type[lower]
+            return EXTENSION_TO_TYPE[lower]
 
 
     def __init__(self):
