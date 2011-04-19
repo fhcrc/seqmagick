@@ -36,29 +36,6 @@ class MagickWrap(object):
         self.verbose = verbose
 
     # Public Methods
-    def convert_format(self):
-        """
-        Convert input file to a different output format.  This will not work for
-        all formats, e.g. going from fastq to fasta or going from a
-        non-alignment fasta file to phylip would not work. Converts only the
-        first file in the source_files list.
-        """
-        source_file = self.source_files[0]
-        source_file_type = FileFormat.lookup_file_type(os.path.splitext(source_file)[1])
-        destination_file = self.destination_file
-        destination_file_type = FileFormat.lookup_file_type(os.path.splitext(destination_file)[1])
-
-        if source_file == destination_file:
-            raise ValueError("source_file and destination_file cannot "
-                             "be the same file.")
-
-        if self.destination_file is not None:
-           SeqIO.convert(source_file, source_file_type, destination_file,
-                         destination_file_type)
-        else:
-            raise ValueError("An output file was not specified. "
-                             "Required by the convert action.")
-
     def describe_sequence_files(self, output_format, width):
         """
         Given one more more sequence files, determine if the file is an
