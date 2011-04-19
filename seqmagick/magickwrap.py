@@ -89,23 +89,24 @@ class MagickWrap(object):
             for record in SeqIO.parse(source_file, source_file_type):
                 # We've found another sequence...
                 sequence_count += 1
+                sequence_length = len(record)
                 if max_length != 0:
                     # If even one sequence is not the same length as the others,
                     # we don't consider this an alignment.
-                    if len(record) != max_length:
+                    if sequence_length != max_length:
                         is_alignment = False
 
                 # Work on determining the length of the longest sequence.
-                if len(record) > max_length:
-                    max_length = len(record)
-                if len(record) < min_length:
-                    min_length = len(record)
+                if sequence_length > max_length:
+                    max_length = sequence_length
+                if sequence_length < min_length:
+                    min_length = sequence_length
 
                 # Average length
                 if sequence_count == 1:
-                    avg_length = float(len(record))
+                    avg_length = float(sequence_length)
                 else:
-                    avg_length = avg_length + ((len(record) - avg_length) /
+                    avg_length = avg_length + ((sequence_length - avg_length) /
                                                sequence_count)
             self._print_file_info(row=[source_file,
                                        str(is_alignment).upper(),
