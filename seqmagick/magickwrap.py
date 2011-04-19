@@ -118,7 +118,7 @@ class MagickWrap(object):
             pattern_exclude=False, squeeze=False, head=False, tail=False,
             sort=False, strip_range=False, transcribe=False, max_length=False,
             min_length=False, name_prefix=False, name_suffix=False,
-            input_format=None, output_format=None):
+            input_format=None, output_format=None, prune_empty=False):
         """
         This method wraps many of the transformation generator functions found
         in this class.
@@ -198,6 +198,9 @@ class MagickWrap(object):
 
             if lower:
                 records = self._lower_sequences(records)
+
+            if prune_empty:
+                records = self._prune_empty(records)
 
             if reverse:
                 records = self._reverse_sequences(records)
@@ -395,6 +398,11 @@ class MagickWrap(object):
                                'converting sequences to all uppercase.'
         for record in records:
             yield record.upper()
+
+    def _prune_empty(self, records):
+        for record in records:
+            if not all(c == '-' for c in str(record.seq)):
+                yield record
 
     @staticmethod
     def _reverse_annotations(old_record, new_record):

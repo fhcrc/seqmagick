@@ -45,7 +45,7 @@ def main():
         if action == 'muscle':
             if verbose: print 'Performing muscle alignment.'
             wrap.create_muscle_alignment()
-        if action == 'mogrify' or action == 'convert':
+        if action in ('mogrify', 'convert'):
             if verbose: print 'Performing ' + action + '.'
             wrap.transform(cut=arguments.cut,
                            dashgap=arguments.dashgap,
@@ -64,6 +64,7 @@ def main():
                            output_format=arguments.output_format,
                            pattern_include=arguments.pattern_include,
                            pattern_exclude=arguments.pattern_exclude,
+                           prune_empty=arguments.prune_empty,
                            reverse=arguments.reverse,
                            reverse_complement=arguments.reverse_complement,
                            sort=arguments.sort,
@@ -184,6 +185,8 @@ def add_arguments(subparser):
                         help='Filter the sequences by regular expression in name')
     subparser.add_argument('--pattern-exclude', metavar='regex', dest='pattern_exclude',
                         help='Filter out sequences by regular expression in name')
+    subparser.add_argument('--prune-empty', action="store_true", default=False,
+                        help="Prune sequences containing only gaps ('-')")
     subparser.add_argument('--reverse', action='store_true', help='Reverse the order of sites in sequences')
     subparser.add_argument('--reversecomplement', dest='reverse_complement', action='store_true',
                         help='Convert sequences into reverse complements')
