@@ -1,13 +1,10 @@
 #! /usr/bin/env python
 
+import argparse
 import os
 import sys
-import argparse
 
-# Insert one level above project directory to path for testing.
-#sys.path.insert(0, "../..")
 from seqmagick.magickwrap import MagickWrap
-from seqmagick.fileformat import FileFormat
 
 
 def main():

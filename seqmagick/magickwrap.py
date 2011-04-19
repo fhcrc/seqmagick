@@ -16,7 +16,7 @@ from Bio.SeqIO import FastaIO
 from Bio.SeqRecord import SeqRecord
 from Bio.SeqUtils.CheckSum import seguid
 
-from fileformat import FileFormat
+from fileformat import lookup_file_type
 
 
 class MagickWrap(object):
@@ -60,7 +60,7 @@ class MagickWrap(object):
             min_length = sys.maxint
             max_length = 0
             sequence_count = 0
-            source_file_type = FileFormat.lookup_file_type(os.path.splitext(source_file)[1])
+            source_file_type = lookup_file_type(os.path.splitext(source_file)[1])
 
             # Get an iterator and analyze the data.
             for record in SeqIO.parse(source_file, source_file_type):
@@ -128,8 +128,7 @@ class MagickWrap(object):
             # Get just the file name, useful for naming the temporary file.
             file_name = os.path.split(source_file)[1]
             file_ext = os.path.splitext(source_file)[1]
-            source_file_type = (input_format or
-                                FileFormat.lookup_file_type(file_ext))
+            source_file_type = (input_format or lookup_file_type(file_ext))
 
             # Specify full path to temporary file for operations that require this.
             # tmp_file will have a seqmagick prefix, i.e. /tmp/seqmagick.a.fasta.
@@ -139,8 +138,7 @@ class MagickWrap(object):
                 destination_file = self.destination_file
 
             output_ext = os.path.splitext(destination_file)[1]
-            destination_file_type = (output_format or
-                                     FileFormat.lookup_file_type(output_ext))
+            destination_file_type = (output_format or lookup_file_type(output_ext))
 
             # Get an iterator.
             if sort:
@@ -745,7 +743,8 @@ class MagickWrap(object):
         # Adapted from the Biopython tutorial example.
 
         #Sort on id
-        ids = sorted((rec.id) for rec in SeqIO.parse(source_file, source_file_type))
+        ids = sorted((rec.id) for rec in SeqIO.parse(source_file,
+                                                     source_file_type))
 
         if direction == 0:
             ids = reversed(ids)

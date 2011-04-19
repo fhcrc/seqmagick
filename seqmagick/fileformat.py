@@ -1,8 +1,8 @@
-'''
-'''
+"""
+Mappings from file extensions to biopython types
+"""
 
-# Define mappings in a dictionary with extension : BioPython_file_type.  Defined outside
-# of the class so static methods can access it.
+# Define mappings in a dictionary with extension : BioPython_file_type.
 EXTENSION_TO_TYPE = {'.aln': 'clustal',
                      '.fa': 'fasta',
                      '.faa': 'fasta',
@@ -21,30 +21,17 @@ EXTENSION_TO_TYPE = {'.aln': 'clustal',
                      '.sto': 'stockholm',
                      }
 
-class FileFormat():
-    '''
-    A class that maps file extensions to BioPython file formats.
-    '''
+
+class UnknownExtensionError(ValueError):
+    pass
 
 
-
-    @staticmethod
-    def lookup_file_type(extension):
-        '''
-        Convert extension to lower case and look up the corresponding BioPython file type.
-        '''
-        lower = extension.lower()
-        if (lower not in EXTENSION_TO_TYPE):
-            raise Exception, "SeqMagick does not know how to handle files with extensions like this: " + extension
-        else:
-            return EXTENSION_TO_TYPE[lower]
-
-
-    def __init__(self):
-        '''
-        Constructor - left for now, but all methods may end up being static.
-        '''
-        pass
-
-
-
+def lookup_file_type(extension):
+    """
+    Convert extension to lower case and look up the corresponding BioPython file type.
+    """
+    try:
+        return EXTENSION_TO_TYPE[extension.lower()]
+    except KeyError:
+        raise UnknownExtensionError("SeqMagick does not know how to handle " +
+                "files with extensions like this: " + extension)
