@@ -86,6 +86,11 @@ class MagickWrap(object):
                 else:
                     avg_length = avg_length + ((sequence_length - avg_length) /
                                                sequence_count)
+
+            # Handle an empty file:
+            if avg_length is None:
+                min_length = max_length = avg_length = 0
+
             self._print_file_info(row=[source_file,
                                        str(is_alignment).upper(),
                                        str(min_length),
