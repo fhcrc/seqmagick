@@ -134,9 +134,10 @@ class MagickWrap(object):
        	return_code = child.wait()
        	return return_code
 
-    def transform(self, cut=False, dashgap=False, ungap=False, lower=False,
-                  reverse=False, strict=False, translate=False, upper=False, linewrap=False,
-                  first_name_capture=False, deduplicate_sequences=False, deduplicate_taxa=False,
+    def transform(self, cut=False, dash_gap=False, ungap=False, lower=False,
+                  reverse=False, strict=False, translate=False, upper=False,
+                  line_wrap=False, first_name_capture=False,
+                  deduplicate_sequences=False, deduplicate_taxa=False,
                   reverse_complement=False, pattern_include=False, pattern_exclude=False,
                   squeeze=False, head=False, tail=False, sort=False,
                   strip_range=False, transcribe=False, max_length=False,
@@ -210,7 +211,7 @@ class MagickWrap(object):
             if deduplicate_taxa:
                 records = self._deduplicate_taxa(records)
 
-            if dashgap:
+            if dash_gap:
                 records = self._dashes_cleanup(records)
 
             if first_name_capture:
@@ -286,10 +287,10 @@ class MagickWrap(object):
                 records = self._cut_sequences(records, start=cut[0], end=cut[1])
 
            # Only the fasta format is supported, as SeqIO.write does not have a 'wrap' parameter.
-            if linewrap is not None and destination_file_type == 'fasta' and source_file_type == 'fasta':
-                if self.verbose: print 'Attempting to write out fasta file with linebreaks set to ' + str(linewrap) + '.'
+            if line_wrap is not None and destination_file_type == 'fasta' and source_file_type == 'fasta':
+                if self.verbose: print 'Attempting to write out fasta file with linebreaks set to ' + str(line_wrap) + '.'
                 with open(destination_file,"w") as handle:
-                    writer = FastaIO.FastaWriter(handle, wrap=linewrap)
+                    writer = FastaIO.FastaWriter(handle, wrap=line_wrap)
                     writer.write_file(records)
             else:
             # Mogrify requires writing all changes to a temporary file by default,
@@ -743,12 +744,12 @@ class MagickWrap(object):
         len_and_ids = sorted((len(rec), rec.id) for rec in SeqIO.parse(source_file, source_file_type))
 
         if direction == 0:
-            ids = reversed([id for (length, id) in len_and_ids])
+            ids = reversed([seq_id for (length, seq_id) in len_and_ids])
         else:
-            ids = [id for (length, id) in len_and_ids]
+            ids = [seq_id for (length, seq_id) in len_and_ids]
         del len_and_ids #free this memory
         record_index = SeqIO.index(source_file, source_file_type)
-        records = (record_index[id] for id in ids)
+        records = (record_index[seq_id] for seq_id in ids)
 
         return records
 
