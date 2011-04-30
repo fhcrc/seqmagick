@@ -45,33 +45,6 @@ def main():
             if verbose: print 'Performing info action.'
             wrap.describe_sequence_files(output_format=arguments.format,
                 width=arguments.width,)
-        if action in ('mogrify', 'convert'):
-            if verbose: print 'Performing ' + action + '.'
-            wrap.transform(cut=arguments.cut,
-                dash_gap=arguments.dash_gap,
-                deduplicate_taxa=arguments.deduplicate_taxa,
-                deduplicate_sequences=arguments.deduplicate_sequences,
-                ungap=arguments.ungap,
-                first_name_capture=arguments.first_name,
-                head=arguments.head,
-                line_wrap=arguments.line_wrap,
-                lower=arguments.lower,
-                max_length=arguments.max_length,
-                min_length=arguments.min_length,
-                name_suffix=arguments.name_suffix,
-                name_prefix=arguments.name_prefix,
-                pattern_include=arguments.pattern_include,
-                pattern_exclude=arguments.pattern_exclude,
-                reverse=arguments.reverse,
-                reverse_complement=arguments.reverse_complement,
-                sort=arguments.sort,
-                strip_range=arguments.strip_range,
-                squeeze=arguments.squeeze,
-                tail=arguments.tail,
-                transcribe=arguments.transcribe,
-                translate=arguments.translate,
-                upper=arguments.upper,
-                )
         if action == 'muscle':
             if verbose: print 'Performing muscle alignment.'
             wrap.create_muscle_alignment()
