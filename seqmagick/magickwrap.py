@@ -315,7 +315,8 @@ class MagickWrap(object):
                                'converting any ? or ~ characters to -.'
         translation_table = string.maketrans("?~", "--")
         for record in records:
-            record.seq = Seq(str(record.seq.translate(translation_table)), record.seq.alphabet)
+            record.seq = Seq(str(record.seq).translate(translation_table),
+                             record.seq.alphabet)
             yield record
 
     def _deduplicate_sequences(self, records):
