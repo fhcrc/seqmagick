@@ -124,7 +124,8 @@ class MagickWrap(object):
             pattern_exclude=False, squeeze=False, head=False, tail=False,
             sort=False, strip_range=False, transcribe=False, max_length=False,
             min_length=False, name_prefix=False, name_suffix=False,
-            input_format=None, output_format=None, prune_empty=False):
+            input_format=None, output_format=None, prune_empty=False,
+            pattern_replace=None):
         """
         This method wraps many of the transformation generator functions found
         in this class.
@@ -235,8 +236,14 @@ class MagickWrap(object):
             if pattern_exclude:
                 records = self._name_exclude(records, pattern_exclude)
 
+            if pattern_replace:
+                search_pattern, replace_pattern = pattern_replace
+                records = self._name_replace(records, search_pattern,
+                        replace_pattern)
+
             if head and tail:
-                raise Exception, "Error: head and tail are mutually exclusive at the moment."
+                raise ValueError("Error: head and tail are mutually exclusive "
+                        "at the moment.")
 
             if head:
                 records = self._head(records, head)
@@ -530,6 +537,16 @@ class MagickWrap(object):
                 yield record
             else:
                 continue
+
+    def _name_replace(self, records, search_regex, replace_pattern):
+        """
+        Given a set of sequences, replace all occurrences of search_regex
+        with replace_pattern. Ignore case.
+        """
+        regex = re.compile(search_regex, re.I)
+        for record in records:
+            record.id = regex.sub(replace_pattern, record.id)
+            yield record
 
     def _head(self, records, head):
         """
