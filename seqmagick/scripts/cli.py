@@ -2,6 +2,7 @@
 
 import argparse
 import os
+import re
 import sys
 import tempfile
 
@@ -103,6 +104,7 @@ def main():
                            transcribe=arguments.transcribe,
                            translate=arguments.translate,
                            upper=arguments.upper,
+                           pattern_replace=arguments.pattern_replace,
                            )
 
 
@@ -235,6 +237,10 @@ def add_arguments(subparser):
     subparser.add_argument('--pattern-exclude', metavar='regex',
         dest='pattern_exclude', help='Filter out sequences by regular '
         'expression in name')
+    subparser.add_argument('--pattern-replace',
+                        metavar=('search_pattern', 'replace_pattern'), nargs=2,
+                        help='Replace regex pattern "search_pattern" with '
+                             '"replace_pattern" in sequence ID')
     subparser.add_argument('--prune-empty', action="store_true", default=False,
                         help="Prune sequences containing only gaps ('-')")
     subparser.add_argument('--reverse', action='store_true', dest='reverse',
@@ -296,13 +302,13 @@ def cut_range(string):
 
 def sequence_file(sequence_file):
     """
-    A custom argparse 'type' to make sure sequence files exist and the type is supported.
+    A custom argparse 'type' to make sure sequence files exist and the type is
+    supported.
     """
     if os.access(sequence_file, os.R_OK) and os.path.isfile(sequence_file):
         return sequence_file
     else:
         raise IOError(sequence_file + " not found or is not readable.")
-
 
 if __name__ == '__main__':
     sys.exit(main())
