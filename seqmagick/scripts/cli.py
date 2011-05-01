@@ -251,7 +251,7 @@ def add_arguments(subparser):
 
     format_group = subparser.add_argument_group('Format Options')
     format_group.add_argument('--input-format', metavar='Format',
-            help="Input file format (default: determine from extension")
+            help="Input file format (default: determine from extension)")
     format_group.add_argument('--output-format', metavar='Format',
             help="Output file format (default: determine from extension)")
 
