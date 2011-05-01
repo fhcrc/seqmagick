@@ -168,86 +168,92 @@ def add_arguments(subparser):
     """
     Add shared arguments to the convert or mogrify subparser.
     """
-    subparser.add_argument('--cut', dest='cut', metavar="start:end",
+    seq_mods = subparser.add_argument_group("Sequence Modificaton")
+    seq_mods.add_argument('--cut', dest='cut', metavar="start:end",
         type=cut_range, help='1-indexed start and end positions for '
         'cutting sequences, : separated.  Includes last item.')
-    subparser.add_argument('--dash-gap', action='store_true', dest='dash_gap',
+    seq_mods.add_argument('--dash-gap', action='store_true', dest='dash_gap',
         help='Change . and : into - for all sequences')
-    subparser.add_argument('--deduplicate-sequences', action='store_true',
-        dest='deduplicate_sequences', help='Remove any duplicate sequences '
-        'by sequence content, keep the first instance seen')
-    subparser.add_argument('--deduplicate-taxa', action='store_true',
-        dest='deduplicate_taxa',
-        help='Remove any duplicate sequences by ID, keep the first '
-        'instance seen')
-    subparser.add_argument('--first-name', action='store_true',
-        dest='first_name',
-        help='Take only the first whitespace-delimited word as the '
-        'name of the sequence')
-    subparser.add_argument('--head', metavar='N', dest='head', type=int,
-        help='Trim down to top N sequences')
-    subparser.add_argument('--line-wrap', dest='line_wrap', metavar='N',
-        type=int, help='Adjust line wrap for sequence strings.  '
-        'When N is 0, all line breaks are removed. Only fasta files '
-        'are supported for the output format.')
-    subparser.add_argument('--lower', action='store_true', dest='lower',
+    seq_mods.add_argument('--lower', action='store_true', dest='lower',
         help='Translate the sequences to lower case')
-    subparser.add_argument('--max-length', dest='max_length', metavar='N',
-        type=int, help='Discard any sequences beyond the specified '
-        'maximum length.  This operation occurs *before* all '
-        'length-changing options such as cut and squeeze.')
-    subparser.add_argument('--min-length', dest='min_length', metavar='N',
-        type=int, help='Discard any sequences less than the specified '
-        'minimum length.  This operation occurs *before* all '
-        'length-changing options such as cut and squeeze.')
-    subparser.add_argument('--name-suffix', metavar='SUFFIX',
-        dest='name_suffix', help='Append a suffix to all IDs.')
-    subparser.add_argument('--name-prefix', metavar='PREFIX',
-        dest='name_prefix', help='Insert a prefix for all IDs.')
-    subparser.add_argument('--pattern-include', metavar='regex',
-        dest='pattern_include', help='Filter the sequences by '
-        'regular expression in name')
-    subparser.add_argument('--pattern-exclude', metavar='regex',
-        dest='pattern_exclude', help='Filter out sequences by regular '
-        'expression in name')
-    subparser.add_argument('--pattern-replace',
-                        metavar=('search_pattern', 'replace_pattern'), nargs=2,
-                        help='Replace regex pattern "search_pattern" with '
-                             '"replace_pattern" in sequence ID')
-    subparser.add_argument('--prune-empty', action="store_true", default=False,
-                        help="Prune sequences containing only gaps ('-')")
-    subparser.add_argument('--reverse', action='store_true', dest='reverse',
+    seq_mods.add_argument('--reverse', action='store_true', dest='reverse',
         help='Reverse the order of sites in sequences')
-    subparser.add_argument('--reverse-complement', dest='reverse_complement',
+    seq_mods.add_argument('--reverse-complement', dest='reverse_complement',
         action='store_true', help='Convert sequences into reverse complements')
-    subparser.add_argument('--sort', dest='sort',
-        choices=['length-asc', 'length-desc', 'name-asc', 'name-desc'],
-        help='Perform sorting by length or name, ascending or descending. '
-        'ASCII sorting is performed for names')
-    subparser.add_argument('--strip-range', dest='strip_range',
-        action='store_true', help='Strip ranges from sequences IDs, '
-        'matching </x-y>')
-    subparser.add_argument('--squeeze', action='store_true', dest='squeeze',
+    seq_mods.add_argument('--squeeze', action='store_true', dest='squeeze',
         help='Remove any gaps that are present in the same position '
         'across all sequences in an alignment')
-    subparser.add_argument('--tail', metavar='N', dest='tail', type=int,
-        help='Trim down to bottom N sequences')
-    subparser.add_argument('--transcribe', dest='transcribe',
+    seq_mods.add_argument('--transcribe', dest='transcribe',
         choices=['dna2rna', 'rna2dna'],
         help='Transcription and back transcription for generic DNA and '
         'RNA. Source sequences must be the correct alphabet or this '
         'action will likely produce incorrect results.')
-    subparser.add_argument('--translate', dest='translate',
+    seq_mods.add_argument('--translate', dest='translate',
         choices=['dna2protein', 'rna2protein',
                  'dna2proteinstop', 'rna2proteinstop'],
         help='Translate from generic DNA/RNA to proteins. Options with '
         '"stop" suffix will NOT translate through stop codons .'
         'Source sequences must be the correct alphabet or this action '
         'will likely produce incorrect results.')
-    subparser.add_argument('--ungap', action='store_true', dest='ungap',
+    seq_mods.add_argument('--ungap', action='store_true', dest='ungap',
         help='Remove gaps in the sequence alignment')
-    subparser.add_argument('--upper', action='store_true', dest='upper',
+    seq_mods.add_argument('--upper', action='store_true', dest='upper',
         help='Translate the sequences to upper case')
+
+    seq_select = subparser.add_argument_group("Record Selection")
+    seq_select.add_argument('--deduplicate-sequences', action='store_true',
+        dest='deduplicate_sequences', help='Remove any duplicate sequences '
+        'by sequence content, keep the first instance seen')
+    seq_select.add_argument('--deduplicate-taxa', action='store_true',
+        dest='deduplicate_taxa',
+        help='Remove any duplicate sequences by ID, keep the first '
+        'instance seen')
+    seq_select.add_argument('--head', metavar='N', dest='head', type=int,
+        help='Trim down to top N sequences')
+    seq_select.add_argument('--max-length', dest='max_length', metavar='N',
+        type=int, help='Discard any sequences beyond the specified '
+        'maximum length.  This operation occurs *before* all '
+        'length-changing options such as cut and squeeze.')
+    seq_select.add_argument('--min-length', dest='min_length', metavar='N',
+        type=int, help='Discard any sequences less than the specified '
+        'minimum length.  This operation occurs *before* all '
+        'length-changing options such as cut and squeeze.')
+    seq_select.add_argument('--pattern-include', metavar='regex',
+        dest='pattern_include', help='Filter the sequences by '
+        'regular expression in name')
+    seq_select.add_argument('--pattern-exclude', metavar='regex',
+        dest='pattern_exclude', help='Filter out sequences by regular '
+        'expression in name')
+    seq_select.add_argument('--prune-empty', action="store_true", default=False,
+                        help="Prune sequences containing only gaps ('-')")
+    seq_select.add_argument('--tail', metavar='N', dest='tail', type=int,
+        help='Trim down to bottom N sequences')
+
+    id_mods = subparser.add_argument_group("Sequence ID Modification")
+    id_mods.add_argument('--first-name', action='store_true',
+        dest='first_name',
+        help='Take only the first whitespace-delimited word as the '
+        'name of the sequence')
+    id_mods.add_argument('--name-suffix', metavar='SUFFIX',
+        dest='name_suffix', help='Append a suffix to all IDs.')
+    id_mods.add_argument('--name-prefix', metavar='PREFIX',
+        dest='name_prefix', help='Insert a prefix for all IDs.')
+    id_mods.add_argument('--pattern-replace', nargs=2,
+                        metavar=('search_pattern', 'replace_pattern'),
+                        help='Replace regex pattern "search_pattern" with '
+                             '"replace_pattern" in sequence ID')
+    id_mods.add_argument('--strip-range', dest='strip_range',
+        action='store_true', help='Strip ranges from sequences IDs, '
+        'matching </x-y>')
+
+    subparser.add_argument('--line-wrap', dest='line_wrap', metavar='N',
+        type=int, help='Adjust line wrap for sequence strings.  '
+        'When N is 0, all line breaks are removed. Only fasta files '
+        'are supported for the output format.')
+    subparser.add_argument('--sort', dest='sort',
+        choices=['length-asc', 'length-desc', 'name-asc', 'name-desc'],
+        help='Perform sorting by length or name, ascending or descending. '
+        'ASCII sorting is performed for names')
 
     format_group = subparser.add_argument_group('Format Options')
     format_group.add_argument('--input-format', metavar='Format',
