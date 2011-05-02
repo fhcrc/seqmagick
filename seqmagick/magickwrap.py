@@ -547,6 +547,7 @@ class MagickWrap(object):
         regex = re.compile(search_regex, re.I)
         for record in records:
             record.id = regex.sub(replace_pattern, record.id)
+            record.description = regex.sub(replace_pattern, record.description)
             yield record
 
     def _head(self, records, head):
