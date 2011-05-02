@@ -40,7 +40,7 @@ def main():
                           tmp_dir=arguments.tmp_dir, debug=debug,
                           verbose=verbose)
         if action == 'check':
-            raise Exception, 'Not implemented exception (check action)'
+            raise NotImplementedError("Not implemented.")
         if action == 'info':
             if verbose: print 'Performing info action.'
             wrap.describe_sequence_files(output_format=arguments.format,
@@ -251,7 +251,7 @@ def add_arguments(subparser):
 
     format_group = subparser.add_argument_group('Format Options')
     format_group.add_argument('--input-format', metavar='Format',
-            help="Input file format (default: determine from extension")
+            help="Input file format (default: determine from extension)")
     format_group.add_argument('--output-format', metavar='Format',
             help="Output file format (default: determine from extension)")
 
@@ -267,7 +267,8 @@ def cut_range(string):
     value_range = tuple(map(int, value_range))
 
     # Make sure the value range looks sane.
-    if len(value_range) != 2 or value_range[0] < 1 or  value_range[0] >  value_range[1]:
+    if (len(value_range) != 2 or value_range[0] < 1 or
+            value_range[0] > value_range[1]):
         msg = "%s is not a valid, 1-indexed range." % string
         raise argparse.ArgumentTypeError(msg)
     return value_range
@@ -281,7 +282,9 @@ def sequence_file(sequence_file):
     if os.access(sequence_file, os.R_OK) and os.path.isfile(sequence_file):
         return sequence_file
     else:
-        raise IOError(sequence_file + " not found or is not readable.")
+        raise argparse.ArgumentTypeError(sequence_file +
+                " not found or is not readable.")
+
 
 if __name__ == '__main__':
     sys.exit(main())
