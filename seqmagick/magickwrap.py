@@ -125,7 +125,8 @@ class MagickWrap(object):
             sort=False, strip_range=False, transcribe=False, max_length=False,
             min_length=False, name_prefix=False, name_suffix=False,
             input_format=None, output_format=None, prune_empty=False,
-            pattern_replace=None):
+            pattern_replace=None, seq_pattern_include=None,
+            seq_pattern_exclude=None):
         """
         This method wraps many of the transformation generator functions found
         in this class.
@@ -521,9 +522,6 @@ class MagickWrap(object):
         for record in records:
             if regex.search(record.id):
                 yield record
-            else:
-                continue
-
 
     def _name_exclude(self, records, filter_regex):
         """
@@ -536,8 +534,6 @@ class MagickWrap(object):
         for record in records:
             if not regex.search(record.id):
                 yield record
-            else:
-                continue
 
     def _name_replace(self, records, search_regex, replace_pattern):
         """
@@ -549,6 +545,25 @@ class MagickWrap(object):
             record.id = regex.sub(replace_pattern, record.id)
             record.description = regex.sub(replace_pattern, record.description)
             yield record
+
+    def _seq_include(self, records, filter_regex):
+        """
+        Filter any sequences who's seq does not match the filter. Ignore case.
+        """
+        regex = re.compile(filter_regex, re.I)
+        for record in records:
+            if regex.search(str(record.seq)):
+                yield record
+
+
+    def _seq_exclude(self, records, filter_regex):
+        """
+        Filter any sequences who's seq matches the filter. Ignore case.
+        """
+        regex = re.compile(filter_regex, re.I)
+        for record in records:
+            if not regex.search(str(record.seq)):
+                yield record
 
     def _head(self, records, head):
         """

@@ -108,3 +108,32 @@ class SqueezeTestCase(MagickWrapMixin, unittest.TestCase):
 
         self.assertEqual([str(i.seq) for i in expected],
                 [str(i.seq) for i in result])
+
+class SeqPatternTestCase(MagickWrapMixin, unittest.TestCase):
+
+    def setUp(self):
+        super(SeqPatternTestCase, self).setUp()
+
+        self.sequences = [
+            seqrecord('sequence_1', 'AC-G--'),
+            seqrecord('sequence_2', '-C-GT-'),
+            seqrecord('sequence_3', '-T-AG-'),
+        ]
+
+        self.tests = [('^$', []), ('.*', self.sequences),
+                ('^AC', [self.sequences[0]])]
+
+    def test_include(self):
+        result = self.instance._seq_include(self.sequences, '^$')
+
+        for regex, expected in self.tests:
+            result = list(self.instance._seq_include(self.sequences, regex))
+            self.assertEqual(expected, result)
+
+    def test_exclude(self):
+        result = self.instance._seq_include(self.sequences, '^$')
+
+        for regex, expected_include in self.tests:
+            expected = [i for i in self.sequences if i not in expected_include]
+            result = list(self.instance._seq_exclude(self.sequences, regex))
+            self.assertEqual(expected, result)

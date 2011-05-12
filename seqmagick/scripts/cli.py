@@ -77,6 +77,8 @@ def main():
                            translate=arguments.translate,
                            upper=arguments.upper,
                            pattern_replace=arguments.pattern_replace,
+                           seq_pattern_include=arguments.seq_pattern_include,
+                           seq_pattern_exclude=arguments.seq_pattern_exclude,
                            )
 
 
@@ -235,6 +237,12 @@ def add_arguments(subparser):
         'expression in name')
     seq_select.add_argument('--prune-empty', action="store_true", default=False,
                         help="Prune sequences containing only gaps ('-')")
+    seq_select.add_argument('--seq-pattern-include', metavar='regex',
+        dest='seq_pattern_include', help='Filter the sequences by '
+        'regular expression in sequence')
+    seq_select.add_argument('--seq-pattern-exclude', metavar='regex',
+        dest='seq_pattern_exclude', help='Filter out sequences by regular '
+        'expression in sequence')
     seq_select.add_argument('--tail', metavar='N', dest='tail', type=int,
         help='Trim down to bottom N sequences')
 
@@ -254,7 +262,6 @@ def add_arguments(subparser):
     id_mods.add_argument('--strip-range', dest='strip_range',
         action='store_true', help='Strip ranges from sequences IDs, '
         'matching </x-y>')
-
 
     format_group = subparser.add_argument_group('Format Options')
     format_group.add_argument('--input-format', metavar='Format',
