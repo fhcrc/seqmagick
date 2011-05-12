@@ -9,7 +9,7 @@ import tempfile
 from Bio.SeqRecord import SeqRecord
 from Bio.Seq import Seq
 
-from seqmagick import magickwrap
+from seqmagick import transform
 
 
 def seqrecord(sequence_id, sequence_text, alphabet=None):
@@ -18,21 +18,8 @@ def seqrecord(sequence_id, sequence_text, alphabet=None):
     """
     return SeqRecord(Seq(sequence_text, alphabet), id=sequence_id)
 
-class MagickWrapMixin(object):
-    """
-    Mix-in which automates creating a MagickWrap instance.
-    """
 
-    def setUp(self):
-        self.infile = StringIO.StringIO()
-        self.outfile = StringIO.StringIO()
-        self.instance = magickwrap.MagickWrap(tempfile.gettempdir(),
-                [self.infile], self.outfile)
-
-    def tearDown(self):
-        pass
-
-class PatternReplaceTestCase(MagickWrapMixin, unittest.TestCase):
+class PatternReplaceTestCase(unittest.TestCase):
 
     def create_sequences(self):
         return [
@@ -49,12 +36,12 @@ class PatternReplaceTestCase(MagickWrapMixin, unittest.TestCase):
         super(PatternReplaceTestCase, self).tearDown()
 
     def test_pattern_replace_none(self):
-        result = self.instance._name_replace(self.sequences, 'ZZZ', 'MATCH')
+        result = transform.name_replace(self.sequences, 'ZZZ', 'MATCH')
         result = list(result)
         self.assertEqual(self.sequences, result)
 
     def test_pattern_replace_static(self):
-        result = self.instance._name_replace(self.sequences, '_REPLACE_',
+        result = transform.name_replace(self.sequences, '_REPLACE_',
                 '_DONE_')
         result = list(result)
         expected = self.create_sequences()
@@ -65,7 +52,7 @@ class PatternReplaceTestCase(MagickWrapMixin, unittest.TestCase):
         """
         Substitutions are case insensitive
         """
-        result = self.instance._name_replace(self.sequences, '_replace_',
+        result = transform.name_replace(self.sequences, '_replace_',
                 '_DONE_')
         result = list(result)
         expected = self.create_sequences()
@@ -76,14 +63,14 @@ class PatternReplaceTestCase(MagickWrapMixin, unittest.TestCase):
         """
         Make sure capturing groups work
         """
-        result = self.instance._name_replace(self.sequences, '_(repl)ace_',
+        result = transform.name_replace(self.sequences, '_(repl)ace_',
                 '_DONE-\\1_')
         result = list(result)
         expected = self.create_sequences()
         expected[1].id = 'test_DONE-repl_2'
         self.assertEqual(self.sequences, result)
 
-class SqueezeTestCase(MagickWrapMixin, unittest.TestCase):
+class SqueezeTestCase(unittest.TestCase):
 
     def setUp(self):
         super(SqueezeTestCase, self).setUp()
@@ -95,7 +82,7 @@ class SqueezeTestCase(MagickWrapMixin, unittest.TestCase):
         ]
 
     def test_basic_squeeze(self):
-        result = list(self.instance._squeeze(self.sequences,
+        result = list(transform.squeeze(self.sequences,
             [False, False, True, False, False]))
 
         self.assertEqual([4, 4, 4], [len(i) for i in result])
@@ -109,7 +96,7 @@ class SqueezeTestCase(MagickWrapMixin, unittest.TestCase):
         self.assertEqual([str(i.seq) for i in expected],
                 [str(i.seq) for i in result])
 
-class SeqPatternTestCase(MagickWrapMixin, unittest.TestCase):
+class SeqPatternTestCase(unittest.TestCase):
 
     def setUp(self):
         super(SeqPatternTestCase, self).setUp()
@@ -124,16 +111,16 @@ class SeqPatternTestCase(MagickWrapMixin, unittest.TestCase):
                 ('^AC', [self.sequences[0]])]
 
     def test_include(self):
-        result = self.instance._seq_include(self.sequences, '^$')
+        result = transform.seq_include(self.sequences, '^$')
 
         for regex, expected in self.tests:
-            result = list(self.instance._seq_include(self.sequences, regex))
+            result = list(transform.seq_include(self.sequences, regex))
             self.assertEqual(expected, result)
 
     def test_exclude(self):
-        result = self.instance._seq_include(self.sequences, '^$')
+        result = transform.seq_include(self.sequences, '^$')
 
         for regex, expected_include in self.tests:
             expected = [i for i in self.sequences if i not in expected_include]
-            result = list(self.instance._seq_exclude(self.sequences, regex))
+            result = list(transform.seq_exclude(self.sequences, regex))
             self.assertEqual(expected, result)
