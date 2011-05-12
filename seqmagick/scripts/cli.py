@@ -168,6 +168,16 @@ def add_arguments(subparser):
     """
     Add shared arguments to the convert or mogrify subparser.
     """
+    file_mods = subparser.add_argument_group("Sequence File Modification")
+    file_mods.add_argument('--line-wrap', dest='line_wrap', metavar='N',
+        type=int, help='Adjust line wrap for sequence strings.  '
+        'When N is 0, all line breaks are removed. Only fasta files '
+        'are supported for the output format.')
+    file_mods.add_argument('--sort', dest='sort',
+        choices=['length-asc', 'length-desc', 'name-asc', 'name-desc'],
+        help='Perform sorting by length or name, ascending or descending. '
+        'ASCII sorting is performed for names')
+
     seq_mods = subparser.add_argument_group("Sequence Modificaton")
     seq_mods.add_argument('--cut', dest='cut', metavar="start:end",
         type=cut_range, help='1-indexed start and end positions for '
@@ -246,14 +256,6 @@ def add_arguments(subparser):
         action='store_true', help='Strip ranges from sequences IDs, '
         'matching </x-y>')
 
-    subparser.add_argument('--line-wrap', dest='line_wrap', metavar='N',
-        type=int, help='Adjust line wrap for sequence strings.  '
-        'When N is 0, all line breaks are removed. Only fasta files '
-        'are supported for the output format.')
-    subparser.add_argument('--sort', dest='sort',
-        choices=['length-asc', 'length-desc', 'name-asc', 'name-desc'],
-        help='Perform sorting by length or name, ascending or descending. '
-        'ASCII sorting is performed for names')
 
     format_group = subparser.add_argument_group('Format Options')
     format_group.add_argument('--input-format', metavar='Format',
