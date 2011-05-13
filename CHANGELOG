@@ -1,0 +1,12 @@
+0.2.0alpha
+==========
+
+* Refactoring
+* Added hyphenation to multi-word command line options (e.g.
+  --deduplicatetaxa -> --deduplicate-taxa)
+* Add support for .needle, .sff formats
+* Close GH-4
+
+0.1.0
+=====
+Initial release
