@@ -30,7 +30,7 @@ def action(arguments):
         bn = os.path.basename(input_file)
         # Generate a temporary file
         with tempfile.NamedTemporaryFile(prefix='smagick', suffix=bn,
-                close=False) as tf:
+                delete=False) as tf:
             temp_name = tf.name
 
         convert.transform_file(input_file, temp_name, arguments)

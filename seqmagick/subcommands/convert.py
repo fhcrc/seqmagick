@@ -4,7 +4,6 @@ Convert between sequence formats
 import logging
 import os
 import os.path
-import shutil
 
 from Bio import SeqIO
 from Bio.SeqIO import FastaIO
@@ -184,7 +183,7 @@ def transform_file(source_file, destination_file, arguments):
     if arguments.dash_gap:
         records = transform.dashes_cleanup(records)
 
-    if arguments.first_name_capture:
+    if arguments.first_name:
         records = transform.first_name_capture(records)
     if arguments.upper:
         records = transform.upper_sequences(records)
@@ -226,7 +225,7 @@ def transform_file(source_file, destination_file, arguments):
                 "at the moment.")
 
     if arguments.head:
-        records = transform.head(records, head)
+        records = transform.head(records, arguments.head)
 
     if arguments.strip_range:
         records = transform.strip_range(records)
@@ -245,8 +244,7 @@ def transform_file(source_file, destination_file, arguments):
         records = transform.translate(records, arguments.translate)
 
     if arguments.squeeze:
-        if self.verbose:
-            print 'Performing squeeze, which requires a new iterator for the first pass.'
+        logging.info("Performing squeeze")
         gaps = []
         # Need to iterate an additional time to determine which
         # gaps are share between all sequences in an alignment.
@@ -270,10 +268,10 @@ def transform_file(source_file, destination_file, arguments):
     if (arguments.line_wrap is not None and destination_file_type == 'fasta'
             and source_file_type == 'fasta'):
         logging.info("Attempting to write fasta with %d line breaks.",
-                line_wrap)
+                arguments.line_wrap)
 
         with open(destination_file, "w") as handle:
-            writer = FastaIO.FastaWriter(handle, wrap=line_wrap)
+            writer = FastaIO.FastaWriter(handle, wrap=arguments.line_wrap)
             writer.write_file(records)
     else:
         # Mogrify requires writing all changes to a temporary file by default,
