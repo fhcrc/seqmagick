@@ -1,6 +1,7 @@
 """
 Functions to transform / filter sequences
 """
+import itertools
 import logging
 import re
 import string
@@ -291,13 +292,7 @@ def head(records, head):
     """
     logging.info('Applying _head generator: '
                  'limiting results to top ' + str(head) + ' records.')
-    count = 0
-    for record in records:
-        if count < head:
-            count += 1
-            yield record
-        else:
-            break
+    return itertools.islice(records, head)
 
 
 def tail(records, tail, record_count):
