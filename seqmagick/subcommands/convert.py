@@ -1,6 +1,7 @@
 """
 Convert between sequence formats
 """
+import argparse
 import logging
 import os
 import os.path
@@ -68,6 +69,7 @@ def add_options(parser):
          'by sequence content, keep the first instance seen')
     seq_select.add_argument('--deduplicated-sequences-file', action='store',
         metavar='FILE', dest='deduplicate_sequences', default=False,
+        type=argparse.FileType('w'),
         help='Write all of the deduplicated sequences to a file')
 
     seq_select.add_argument('--deduplicate-taxa', action='store_true',

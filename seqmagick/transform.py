@@ -48,9 +48,9 @@ def deduplicate_sequences(records, out_file):
         sequences.append(record.id)
 
     if out_file is not None:
-        with open(out_file, 'w') as fobj:
+        with out_file:
             for sequences in checksum_sequences.itervalues():
-                fobj.write('%s\n' % (' '.join(sequences),))
+                out_file.write('%s\n' % (' '.join(sequences),))
 
 
 def deduplicate_taxa(records):
