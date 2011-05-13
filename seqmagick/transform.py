@@ -60,7 +60,12 @@ def deduplicate_taxa(records):
         # Default to full ID, split if | is found.
         taxid = record.id
         if '|' in record.id:
-            taxid = int(record.id.split("|")[0])
+            try:
+                taxid = int(record.id.split("|")[0])
+            except:
+                # If we couldn't parse an integer from the ID, just fall back
+                # on the ID
+                pass
         if taxid in taxa:
             continue
         taxa.add(taxid)
