@@ -1,5 +1,5 @@
 """
-Tests for seqmagick.magickwrap
+Tests for seqmagick.transform
 """
 
 import StringIO
