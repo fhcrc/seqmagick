@@ -181,8 +181,10 @@ def transform_file(source_file, destination_file, arguments):
     if arguments.min_length:
         records = transform.min_length_discard(records, arguments.min_length)
 
-    if arguments.deduplicate_sequences:
-        records = transform.deduplicate_sequences(records)
+    if (arguments.deduplicate_sequences or
+            arguments.deduplicate_sequences is None):
+        records = transform.deduplicate_sequences(
+            records, arguments.deduplicate_sequences)
 
     if arguments.deduplicate_taxa:
         records = transform.deduplicate_taxa(records)
