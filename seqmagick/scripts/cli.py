@@ -7,6 +7,7 @@ import sys
 from seqmagick import __version__ as version
 from seqmagick import subcommands
 
+
 def main(argv):
     action, arguments = parse_arguments(argv)
 
@@ -40,7 +41,7 @@ def parse_arguments(argv):
             help="Print the version number and exit")
     parser.add_argument('-v', '--verbose', dest='verbosity',
             action='count', default=1,
-            help="Be verbose")
+            help="Be more verbose. Specify -vv or -vvv for even more")
     parser.add_argument('-q', '--quiet', action='store_const', const=0,
             dest='verbosity', help="Suppress output")
 

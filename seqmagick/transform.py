@@ -1,6 +1,7 @@
 """
 Functions to transform / filter sequences
 """
+import collections
 import itertools
 import logging
 import re
@@ -26,7 +27,7 @@ def dashes_cleanup(records):
         yield record
 
 
-def deduplicate_sequences(records):
+def deduplicate_sequences(records, out_file):
     """
     Remove any duplicate records with identical sequences, keep the first
     instance seen and discard additional occurences.
@@ -34,13 +35,18 @@ def deduplicate_sequences(records):
 
     logging.info('Applying _deduplicate_sequences generator: '
                  'removing any duplicate records with identical sequences.')
-    checksums = set()
+    checksum_sequences = collections.defaultdict(list)
     for record in records:
         checksum = seguid(record.seq)
-        if checksum in checksums:
-            continue
-        checksums.add(checksum)
-        yield record
+        sequences = checksum_sequences[checksum]
+        if not sequences:
+            yield record
+        sequences.append(record.id)
+
+    if out_file is not None:
+        with out_file:
+            for sequences in checksum_sequences.itervalues():
+                out_file.write('%s\n' % (' '.join(sequences),))
 
 
 def deduplicate_taxa(records):

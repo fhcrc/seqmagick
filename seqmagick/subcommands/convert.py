@@ -1,6 +1,7 @@
 """
 Convert between sequence formats
 """
+import argparse
 import logging
 import os
 import os.path
@@ -61,13 +62,21 @@ def add_options(parser):
         help='Translate the sequences to upper case')
 
     seq_select = parser.add_argument_group("Record Selection")
-    seq_select.add_argument('--deduplicate-sequences', action='store_true',
-        dest='deduplicate_sequences', help='Remove any duplicate sequences '
-        'by sequence content, keep the first instance seen')
+
+    seq_select.add_argument('--deduplicate-sequences',
+        action='store_const', const=None, default=False,
+         dest='deduplicate_sequences', help='Remove any duplicate sequences '
+         'by sequence content, keep the first instance seen')
+    seq_select.add_argument('--deduplicated-sequences-file', action='store',
+        metavar='FILE', dest='deduplicate_sequences', default=False,
+        type=argparse.FileType('w'),
+        help='Write all of the deduplicated sequences to a file')
+
     seq_select.add_argument('--deduplicate-taxa', action='store_true',
         dest='deduplicate_taxa',
         help='Remove any duplicate sequences by ID, keep the first '
         'instance seen')
+
     seq_select.add_argument('--head', metavar='N', dest='head', type=int,
         help='Trim down to top N sequences')
     seq_select.add_argument('--max-length', dest='max_length', metavar='N',
@@ -174,8 +183,10 @@ def transform_file(source_file, destination_file, arguments):
     if arguments.min_length:
         records = transform.min_length_discard(records, arguments.min_length)
 
-    if arguments.deduplicate_sequences:
-        records = transform.deduplicate_sequences(records)
+    if (arguments.deduplicate_sequences or
+            arguments.deduplicate_sequences is None):
+        records = transform.deduplicate_sequences(
+            records, arguments.deduplicate_sequences)
 
     if arguments.deduplicate_taxa:
         records = transform.deduplicate_taxa(records)
