@@ -212,9 +212,13 @@ def add_arguments(subparser):
         help='Translate the sequences to upper case')
 
     seq_select = subparser.add_argument_group("Record Selection")
-    seq_select.add_argument('--deduplicate-sequences', action='store_true',
+    seq_select.add_argument('--deduplicate-sequences',
+        action='store_const', const=None, default=False,
         dest='deduplicate_sequences', help='Remove any duplicate sequences '
         'by sequence content, keep the first instance seen')
+    seq_select.add_argument('--deduplicated-sequences-file', action='store',
+        metavar='FILE', dest='deduplicate_sequences', default=False,
+        help='Write all of the deduplicated sequences to a file')
     seq_select.add_argument('--deduplicate-taxa', action='store_true',
         dest='deduplicate_taxa',
         help='Remove any duplicate sequences by ID, keep the first '

@@ -192,8 +192,9 @@ class MagickWrap(object):
             if min_length:
                 records = transform.min_length_discard(records, min_length)
 
-            if deduplicate_sequences:
-                records = transform.deduplicate_sequences(records)
+            if deduplicate_sequences or deduplicate_sequences is None:
+                records = transform.deduplicate_sequences(
+                    records, deduplicate_sequences)
 
             if deduplicate_taxa:
                 records = transform.deduplicate_taxa(records)

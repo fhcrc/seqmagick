@@ -3,9 +3,9 @@ Functions to transform / filter sequences
 """
 """
 """
-import csv
 import re
 import string
+import collections
 
 from Bio import SeqIO
 from Bio.Alphabet import generic_dna, generic_rna
@@ -32,20 +32,25 @@ def dashes_cleanup(records):
         yield record
 
 
-def deduplicate_sequences(records):
+def deduplicate_sequences(records, out_file):
     """
     Remove any duplicate records with identical sequences, keep the first
     instance seen and discard additional occurences.
     """
     if verbose: print 'Applying _deduplicate_sequences generator: ' + \
                            'removing any duplicate records with identical sequences.'
-    checksums = set()
+    checksum_sequences = collections.defaultdict(list)
     for record in records:
         checksum = seguid(record.seq)
-        if checksum in checksums:
-            continue
-        checksums.add(checksum)
-        yield record
+        sequences = checksum_sequences[checksum]
+        if not sequences:
+            yield record
+        sequences.append(record.id)
+
+    if out_file is not None:
+        with open(out_file, 'w') as fobj:
+            for sequences in checksum_sequences.itervalues():
+                fobj.write('%s\n' % (' '.join(sequences),))
 
 
 def deduplicate_taxa(records):
