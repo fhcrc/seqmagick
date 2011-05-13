@@ -321,6 +321,10 @@ def squeeze(records, gaps):
     sequence_length = len(gaps)
     for record in records:
         sequence = list(str(record.seq))
+        if len(sequence) != sequence_length:
+            raise ValueError("Unexpected sequence length: {0} != {1} "
+                    "Is this an alignment?".format(len(sequence),
+                                                   sequence_length))
         squeezed = []
         position = 0
         while (position < sequence_length):
