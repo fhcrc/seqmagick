@@ -1,9 +1,7 @@
 """
 Functions to transform / filter sequences
 """
-"""
-"""
-import csv
+import logging
 import re
 import string
 
@@ -13,18 +11,13 @@ from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 from Bio.SeqUtils.CheckSum import seguid
 
-# Temporary
-verbose = False
-debug = False
-
 
 def dashes_cleanup(records):
     """
     Take an alignment and convert any undesirable characters such as ? or ~ to
     -.
     """
-    if verbose: print 'Applying _dashes_cleanup generator: ' + \
-                           'converting any ? or ~ characters to -.'
+    logging.info("Applying _dashes_cleanup: converting any ? or ~ to -.")
     translation_table = string.maketrans("?~", "--")
     for record in records:
         record.seq = Seq(str(record.seq).translate(translation_table),
@@ -37,8 +30,9 @@ def deduplicate_sequences(records):
     Remove any duplicate records with identical sequences, keep the first
     instance seen and discard additional occurences.
     """
-    if verbose: print 'Applying _deduplicate_sequences generator: ' + \
-                           'removing any duplicate records with identical sequences.'
+
+    logging.info('Applying _deduplicate_sequences generator: '
+                 'removing any duplicate records with identical sequences.')
     checksums = set()
     for record in records:
         checksum = seguid(record.seq)
@@ -53,8 +47,8 @@ def deduplicate_taxa(records):
     Remove any duplicate records with identical IDs, keep the first
     instance seen and discard additional occurences.
     """
-    if verbose: print 'Applying _deduplicate_taxa generator: ' + \
-                           'removing any duplicate records with identical IDs.'
+    logging.info('Applying _deduplicate_taxa generator: ' + \
+                 'removing any duplicate records with identical IDs.')
     taxa = set()
     for record in records:
         # Default to full ID, split if | is found.
@@ -65,7 +59,8 @@ def deduplicate_taxa(records):
             except:
                 # If we couldn't parse an integer from the ID, just fall back
                 # on the ID
-                pass
+                logging.warn("Unable to parse integer taxid from %s",
+                        taxid)
         if taxid in taxa:
             continue
         taxa.add(taxid)
@@ -77,9 +72,9 @@ def first_name_capture(records):
     Take only the first whitespace-delimited word as the name of the sequence.
     Essentially removes any extra text from the sequence's description.
     """
-    if verbose:
-        print 'Applying _first_name_capture generator: ' + \
-              'making sure ID only contains the first whitespace-delimited word.'
+    logging.info('Applying _first_name_capture generator: '
+                 'making sure ID only contains the first whitespace-delimited '
+                 'word.')
     whitespace = re.compile(r'\s+')
     for record in records:
         if whitespace.search(record.description):
@@ -117,8 +112,8 @@ def lower_sequences(records):
     """
     Convert sequences to all lowercase.
     """
-    if verbose: print 'Applying _lower_sequences generator: ' + \
-                           'converting sequences to all lowercase.'
+    logging.info('Applying _lower_sequences generator: '
+                 'converting sequences to all lowercase.')
     for record in records:
         yield record.lower()
 
@@ -127,16 +122,20 @@ def upper_sequences(records):
     """
     Convert sequences to all uppercase.
     """
-    if verbose: print 'Applying _upper_sequences generator: ' + \
-                           'converting sequences to all uppercase.'
+    logging.info('Applying _upper_sequences generator: '
+                 'converting sequences to all uppercase.')
     for record in records:
         yield record.upper()
 
 
 def prune_empty(records):
+    """
+    Remove any sequences which are entirely gaps ('-')
+    """
     for record in records:
         if not all(c == '-' for c in str(record.seq)):
             yield record
+
 
 def _reverse_annotations(old_record, new_record):
     """
@@ -162,8 +161,8 @@ def reverse_sequences(records):
     """
     Reverse the order of sites in sequences.
     """
-    if verbose: print 'Applying _reverse_sequences generator: ' + \
-                           'reversing the order of sites in sequences.'
+    logging.info('Applying _reverse_sequences generator: '
+                 'reversing the order of sites in sequences.')
     for record in records:
         rev_record = SeqRecord(record.seq[::-1], id=record.id,
                                name=record.name,
@@ -178,8 +177,8 @@ def reverse_complement_sequences(records):
     """
     Transform sequences into reverse complements.
     """
-    if verbose: print 'Applying _reverse_complement_sequences generator: ' + \
-                           'transforming sequences into reverse complements.'
+    logging.info('Applying _reverse_complement_sequences generator: '
+                 'transforming sequences into reverse complements.')
     for record in records:
         rev_record = SeqRecord(record.seq.reverse_complement(),
                                id=record.id, name=record.name,
@@ -194,8 +193,8 @@ def ungap_sequences(records):
     """
     Remove gaps from sequences, given an alignment.
     """
-    if verbose: print 'Applying _ungap_sequences generator: ' + \
-                           'removing gaps from the alignment.'
+    logging.info('Applying _ungap_sequences generator: '
+                 'removing gaps from the alignment.')
     for record in records:
         yield SeqRecord(record.seq.ungap("-"), id=record.id,
                         description=record.description)
@@ -205,9 +204,9 @@ def name_append_suffix(records, suffix):
     """
     Given a set of sequences, append a suffix for each sequence's name.
     """
-    if verbose: print 'Applying _name_append_suffix generator: ' + \
-                           'Appending suffix ' + suffix + ' to all ' + \
-                           'sequence IDs.'
+    logging.info('Applying _name_append_suffix generator: '
+                 'Appending suffix ' + suffix + ' to all '
+                 'sequence IDs.')
     for record in records:
         yield SeqRecord(record.seq, id=record.id+suffix,
                         description=record.description)
@@ -217,9 +216,9 @@ def name_insert_prefix(records, prefix):
     """
     Given a set of sequences, insert a prefix for each sequence's name.
     """
-    if verbose: print 'Applying _name_insert_prefix generator: ' + \
-                           'Inserting prefix ' + prefix + ' for all ' + \
-                           'sequence IDs.'
+    logging.info('Applying _name_insert_prefix generator: '
+                 'Inserting prefix ' + prefix + ' for all '
+                 'sequence IDs.')
     for record in records:
         yield SeqRecord(record.seq, id=prefix+record.id,
                         description=record.description)
@@ -231,8 +230,9 @@ def name_include(records, filter_regex):
     Given a set of sequences, filter out any sequences with names
     that do not match the specified regular expression.  Ignore case.
     """
-    if verbose: print 'Applying _name_include generator: ' + \
-                           'including only IDs matching ' + filter_regex + ' in results.'
+    logging.info('Applying _name_include generator: '
+                 'including only IDs matching ' + filter_regex +
+                 ' in results.')
     regex = re.compile(filter_regex, re.I)
     for record in records:
         if regex.search(record.id):
@@ -244,8 +244,8 @@ def name_exclude(records, filter_regex):
     Given a set of sequences, filter out any sequences with names
     that match the specified regular expression.  Ignore case.
     """
-    if verbose: print 'Applying _name_exclude generator: ' + \
-                           'excluding IDs matching ' + filter_regex + ' in results.'
+    logging.info('Applying _name_exclude generator: '
+                 'excluding IDs matching ' + filter_regex + ' in results.')
     regex = re.compile(filter_regex, re.I)
     for record in records:
         if not regex.search(record.id):
@@ -289,8 +289,8 @@ def head(records, head):
     """
     Limit results to the top N records.
     """
-    if verbose: print 'Applying _head generator: ' + \
-                           'limiting results to top ' + str(head) + ' records.'
+    logging.info('Applying _head generator: '
+                 'limiting results to top ' + str(head) + ' records.')
     count = 0
     for record in records:
         if count < head:
@@ -304,8 +304,8 @@ def tail(records, tail, record_count):
     """
     Limit results to the bottom N records.
     """
-    if verbose: print 'Applying _tail generator: ' + \
-                           'limiting results to bottom ' + str(tail) + ' records.'
+    logging.info('Applying _tail generator: '
+                 'limiting results to bottom ' + str(tail) + ' records.')
     position = 0
     start = record_count - tail
     for record in records:
@@ -320,9 +320,9 @@ def squeeze(records, gaps):
     """
     Remove any gaps that are present in the same position across all sequences in an alignment.
     """
-    if verbose: print 'Applying _squeeze generator: ' + \
-                           'removing any gaps that are present ' + \
-                           'in the same position across all sequences in an alignment.'
+    logging.info('Applying _squeeze generator: '
+                 'removing any gaps that are present '
+                 'in the same position across all sequences in an alignment.')
     sequence_length = len(gaps)
     for record in records:
         sequence = list(str(record.seq))
@@ -345,8 +345,8 @@ def strip_range(records):
     Cut off trailing /<start>-<stop> ranges from IDs.  Ranges must be 1-indexed and
     the stop integer must not be less than the start integer.
     """
-    if verbose: print 'Applying _strip_range generator: ' + \
-                           'removing /<start>-<stop> ranges from IDs'
+    logging.info('Applying _strip_range generator: '
+                 'removing /<start>-<stop> ranges from IDs')
     # Split up and be greedy.
     cut_regex = re.compile(r"(?P<id>.*)\/(?P<start>\d+)\-(?P<stop>\d+)")
     for record in records:
@@ -369,8 +369,8 @@ def transcribe(records, transcribe):
         dna2rna
         rna2dna
     """
-    if verbose: print 'Applying _transcribe generator: ' + \
-                           'operation to perform is ' + transcribe + '.'
+    logging.info('Applying _transcribe generator: '
+                 'operation to perform is ' + transcribe + '.')
     for record in records:
         sequence = str(record.seq)
         description = record.description
@@ -396,8 +396,8 @@ def translate(records, translate):
         rna2protein
         rna2proteinstop
     """
-    if verbose: print 'Applying _translation generator: ' + \
-                           'operation to perform is ' + translate + '.'
+    logging.info('Applying _translation generator: '
+                 'operation to perform is ' + translate + '.')
     for record in records:
         sequence = str(record.seq)
         description = record.description
@@ -418,15 +418,14 @@ def max_length_discard(records, max_length):
     """
     Discard any records that are longer than max_length.
     """
-    if verbose: print 'Applying _max_length_discard generator: ' + \
-                           'discarding records longer than ' + \
-                           str(max_length) + '.'
+    logging.info('Applying _max_length_discard generator: '
+                 'discarding records longer than '
+                 '.')
     for record in records:
         if len(record) > max_length:
-            if debug:
-                print 'DEBUG: discarding long sequence: ' + \
-                record.id + ' length=' + str(len(record))
-            continue
+            # Discard
+            logging.debug('Discarding long sequence: %s, length=%d',
+                record.id, len(record))
         else:
             yield record
 
@@ -435,15 +434,12 @@ def min_length_discard(records, min_length):
     """
     Discard any records that are shorter than min_length.
     """
-    if verbose: print 'Applying _min_length_discard generator: ' + \
-                           'discarding records shorter than ' + \
-                           str(min_length) + '.'
+    logging.info('Applying _min_length_discard generator: '
+                 'discarding records shorter than %d.', min_length)
     for record in records:
         if len(record) < min_length:
-            if debug:
-                print 'DEBUG: discarding short sequence: ' + \
-                record.id + ' length=' + str(len(record))
-            continue
+            logging.debug('Discarding short sequence: %s, length=%d',
+                record.id, len(record))
         else:
             yield record
 
@@ -477,12 +473,13 @@ def sort_length(source_file, source_file_type, direction=1):
     """
     direction_text = 'ascending' if direction == 1 else 'descending'
 
-    if verbose: print 'Indexing sequences by length: ' + direction_text
+    logging.info('Indexing sequences by length: %s', direction_text)
 
     # Adapted from the Biopython tutorial example.
 
     #Get the lengths and ids, and sort on length
-    len_and_ids = sorted((len(rec), rec.id) for rec in SeqIO.parse(source_file, source_file_type))
+    len_and_ids = sorted((len(rec), rec.id)
+                         for rec in SeqIO.parse(source_file, source_file_type))
 
     if direction == 0:
         ids = reversed([seq_id for (length, seq_id) in len_and_ids])
@@ -501,7 +498,7 @@ def sort_name(source_file, source_file_type, direction=1):
     """
     direction_text = 'ascending' if direction == 1 else 'descending'
 
-    if verbose: print 'Indexing sequences by name: ' + direction_text
+    logging.info("Indexing sequences by name: %s", direction_text)
 
     # Adapted from the Biopython tutorial example.
 
