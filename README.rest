@@ -88,6 +88,8 @@ These can be stacked on top of one another::
       --deduplicate-sequences
                             Remove any duplicate sequences by sequence content,
                             keep the first instance seen
+      --deduplicated-sequences-file FILE
+                            Write the IDs of the deduplicated sequences to a file
       --deduplicate-taxa    Remove any duplicate sequences by ID, keep the first
                             instance seen
       --head N              Trim down to top N sequences
