@@ -65,7 +65,12 @@ def deduplicate_taxa(records):
         # Default to full ID, split if | is found.
         taxid = record.id
         if '|' in record.id:
-            taxid = int(record.id.split("|")[0])
+            try:
+                taxid = int(record.id.split("|")[0])
+            except:
+                # If we couldn't parse an integer from the ID, just fall back
+                # on the ID
+                pass
         if taxid in taxa:
             continue
         taxa.add(taxid)
@@ -326,6 +331,10 @@ def squeeze(records, gaps):
     sequence_length = len(gaps)
     for record in records:
         sequence = list(str(record.seq))
+        if len(sequence) != sequence_length:
+            raise ValueError("Unexpected sequence length: {0} != {1} "
+                    "Is this an alignment?".format(len(sequence),
+                                                   sequence_length))
         squeezed = []
         position = 0
         while (position < sequence_length):
