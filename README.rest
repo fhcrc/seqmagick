@@ -5,21 +5,24 @@ seqmagick
 Motivation
 ==========
 
-We often have to convert between sequence formats and do little tasks on them, and it's not worth writing scripts for that.
-Seqmagick is a kickass little utility to expose the file format conversion in Biopython in a convenient way.
+We often have to convert between sequence formats and do little tasks on them,
+and it's not worth writing scripts for that.  Seqmagick is a kickass little
+utility to expose the file format conversion in Biopython in a convenient way.
 Instead of having a big mess of scripts, there is one that takes arguments.
 
 The code
 ========
 
-A command line tool to do little sequence manipulations in the spirit of imagemagick_.
+A command line tool to do little sequence manipulations in the spirit of
+imagemagick_.
 
-In particular, the format conversion specification happens by suffix. 
-Writing::
+In particular, the format conversion specification happens by suffix unless
+you specify otherwise. Writing::
 
   seqmagick convert x.fasta y.phy
 
-converts the FASTA file to phylip format. Of course.
+converts the FASTA file to phylip format. Of course. See the `BioPython
+SeqIO wiki page`_ for a list of supported types.
 
 In general the interface is in the format::
 
@@ -44,53 +47,84 @@ muscle
 
 
 The real action for these commands happens in the options.
-These can be stacked on top of one another.
+These can be stacked on top of one another::
 
---cut start:end       Start and end positions for cutting sequences, : separated. Includes last item.
+    optional arguments:
+      -h, --help            show this help message and exit
+      --tmp TMP_DIR         Temporary directory for working file. Default is /tmp.
+      --debug               Enable debug output
+      --verbose             Enable verbose output
 
---dashgap             Change . and : into - for all sequences
+    Sequence File Modification:
+      --line-wrap N         Adjust line wrap for sequence strings. When N is 0,
+                            all line breaks are removed. Only fasta files are
+                            supported for the output format.
+      --sort {length-asc,length-desc,name-asc,name-desc}
+                            Perform sorting by length or name, ascending or
+                            descending. ASCII sorting is performed for names
 
---deduplicateseqs     Remove any duplicate sequences by sequence content, keep the first instance seen
+    Sequence Modificaton:
+      --cut start:end       1-indexed start and end positions for cutting
+                            sequences, : separated. Includes last item.
+      --dash-gap            Change . and : into - for all sequences
+      --lower               Translate the sequences to lower case
+      --reverse             Reverse the order of sites in sequences
+      --reverse-complement  Convert sequences into reverse complements
+      --squeeze             Remove any gaps that are present in the same position
+                            across all sequences in an alignment
+      --transcribe {dna2rna,rna2dna}
+                            Transcription and back transcription for generic DNA
+                            and RNA. Source sequences must be the correct alphabet
+                            or this action will likely produce incorrect results.
+      --translate {dna2protein,rna2protein,dna2proteinstop,rna2proteinstop}
+                            Translate from generic DNA/RNA to proteins. Options
+                            with "stop" suffix will NOT translate through stop
+                            codons .Source sequences must be the correct alphabet
+                            or this action will likely produce incorrect results.
+      --ungap               Remove gaps in the sequence alignment
+      --upper               Translate the sequences to upper case
 
---deduplicatetaxa     Remove any duplicate sequences by ID, keep the first instance seen
+    Record Selection:
+      --deduplicate-sequences
+                            Remove any duplicate sequences by sequence content,
+                            keep the first instance seen
+      --deduplicated-sequences-file FILE
+                            Write the IDs of the deduplicated sequences to a file
+      --deduplicate-taxa    Remove any duplicate sequences by ID, keep the first
+                            instance seen
+      --head N              Trim down to top N sequences
+      --max-length N        Discard any sequences beyond the specified maximum
+                            length. This operation occurs *before* all length-
+                            changing options such as cut and squeeze.
+      --min-length N        Discard any sequences less than the specified minimum
+                            length. This operation occurs *before* all length-
+                            changing options such as cut and squeeze.
+      --pattern-include regex
+                            Filter the sequences by regular expression in name
+      --pattern-exclude regex
+                            Filter out sequences by regular expression in name
+      --prune-empty         Prune sequences containing only gaps ('-')
+      --seq-pattern-include regex
+                            Filter the sequences by regular expression in sequence
+      --seq-pattern-exclude regex
+                            Filter out sequences by regular expression in sequence
+      --tail N              Trim down to bottom N sequences
 
---ungap               Remove gaps in the sequence alignment
+    Sequence ID Modification:
+      --first-name          Take only the first whitespace-delimited word as the
+                            name of the sequence
+      --name-suffix SUFFIX  Append a suffix to all IDs.
+      --name-prefix PREFIX  Insert a prefix for all IDs.
+      --pattern-replace search_pattern replace_pattern
+                            Replace regex pattern "search_pattern" with
+                            "replace_pattern" in sequence ID
+      --strip-range         Strip ranges from sequences IDs, matching </x-y>
 
---firstname           Take only the first whitespace-delimited word as the name of the sequence
-
---head N              Trim down to top N sequences
-
---pattern-include regex  Filter the sequences by regular expression in name
-
---pattern-exclude regex  Filter out sequences by regular expression in name
-
---linewrap LINEWRAP   Adjust line wrap for sequence strings. Useful for viewing an alignment when setting to 0 which has no line breaks. Only fasta files are supported.
-
---lower               Translate the sequences to lower case
-
---reverse             Reverse the order of sites in sequences
-
---reversecomplement   Convert sequences into reverse complements
-
---sort {length-asc,length-desc,name-asc,name-desc} Perform sorting by length or name, ascending or descending. ASCII sorting is performed for names
-
---striprange          Strip ranges from sequences IDs, matching </x-y>
-
---squeeze             Remove any gaps that are present in the same position across all sequences in an alignment
-
---tail N              Trim down to bottom N sequences
-
---translate destination_type Translate between amino acids and nucleotides, use "aa" or "nuc" as destination type
-
---upper               Translate the sequences to upper case
-
---tmp TMP_DIR         Temporary directory for working file. Default is /tmp.
-
---debug               Enable debug output
-
---verbose             Enable verbose output
-
-We can specify some short options later.
+    Format Options:
+      --input-format Format
+                            Input file format (default: determine from extension)
+      --output-format Format
+                            Output file format (default: determine from extension)
 
 To refine or implement:
 
@@ -104,7 +138,7 @@ help
   e.g. seqmagick help convert
 
 info
-  Describe sequence files, with different output options. 
+  Describe sequence files, with different output options.
 
 muscle
   Create an alignment using Muscle.
@@ -115,5 +149,7 @@ check
   (or perhaps an alphabet)
   make sure that you are using IUPAC characters for AA or Nuc
 
+
 .. _imagemagick: http://www.imagemagick.org/script/command-line-tools.php
 
+.. _`BioPython SeqIO wiki page`: http://www.biopython.org/wiki/SeqIO#File_Formats

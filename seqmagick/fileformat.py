@@ -1,45 +1,37 @@
 """
+Mappings from file extensions to biopython types
 """
 
-# Define mappings in a dictionary with extension : BioPython_file_type.  Defined outside
-# of the class so static methods can access it.
-extension_to_type = { '.aln' : 'clustal',
-                      '.fa' : 'fasta',
-                      '.faa' : 'fasta',
-                      '.fasta' : 'fasta',
-                      '.fastq' : 'fastq',
-                      '.ffn' : 'fasta',
-                      '.fna' : 'fasta',
-                      '.frn' : 'fasta',
-                      '.gb' : 'genbank',
-                      '.gbk' : 'genbank',
-                      '.phy' : 'phylip',
-                      '.phylip' : 'phylip',
-                      '.sff' : 'sff',
-                      '.sth' : 'stockholm',
-                      '.sto' : 'stockholm',
-                      }
+# Define mappings in a dictionary with extension : BioPython_file_type.
+EXTENSION_TO_TYPE = {'.aln': 'clustal',
+                     '.fa': 'fasta',
+                     '.faa': 'fasta',
+                     '.fasta': 'fasta',
+                     '.fastq': 'fastq',
+                     '.ffn': 'fasta',
+                     '.fna': 'fasta',
+                     '.frn': 'fasta',
+                     '.gb': 'genbank',
+                     '.gbk': 'genbank',
+                     '.needle': 'emboss',
+                     '.phy': 'phylip',
+                     '.phylip': 'phylip',
+                     '.sff': 'sff',
+                     '.sth': 'stockholm',
+                     '.sto': 'stockholm',
+                     }
 
 
+class UnknownExtensionError(ValueError):
+    pass
 
-class FileFormat():
+
+def lookup_file_type(extension):
     """
-    A class that maps file extensions to BioPython file formats.
+    Convert extension to lower case and look up the corresponding BioPython file type.
     """
-
-    @staticmethod
-    def lookup_file_type(extension):
-        """
-        Convert extension to lower case and look up the corresponding BioPython file type.
-        """
-        lower = extension.lower()
-        if (lower not in extension_to_type):
-            raise Exception, "SeqMagick does not know how to handle files with extensions like this: " + extension
-        else:
-            return extension_to_type[lower]
-
-    def __init__(self):
-        """
-        Constructor - left for now, but all methods may end up being static.
-        """
-        pass
+    try:
+        return EXTENSION_TO_TYPE[extension.lower()]
+    except KeyError:
+        raise UnknownExtensionError("SeqMagick does not know how to handle " +
+                "files with extensions like this: " + extension)
