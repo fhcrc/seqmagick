@@ -124,3 +124,34 @@ class SeqPatternTestCase(unittest.TestCase):
             expected = [i for i in self.sequences if i not in expected_include]
             result = list(transform.seq_exclude(self.sequences, regex))
             self.assertEqual(expected, result)
+
+
+class HeadTestCase(unittest.TestCase):
+    """
+    Test for transform.head
+    """
+
+    def setUp(self):
+        self.sequences = [seqrecord('sequence{0}'.format(i), 'A'*(i+1))
+                          for i in xrange(100)]
+
+    def test_zero(self):
+        result = list(transform.head(self.sequences, 0))
+        self.assertEquals([], result)
+
+    def test_more_seqs_than_available(self):
+        """
+        Specifying more sequences than are in input records should return
+        them all
+        """
+        result = list(transform.head(self.sequences, 10000))
+        self.assertEquals(self.sequences, result)
+
+    def test_values(self):
+        """
+        Try specifying some values.
+        """
+        for h in xrange(len(self.sequences) + 1):
+            result = list(transform.head(self.sequences, h))
+            self.assertEquals(h, len(result))
+            self.assertEquals(self.sequences[:h], result)
