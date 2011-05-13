@@ -83,7 +83,7 @@ class SqueezeTestCase(unittest.TestCase):
 
     def test_basic_squeeze(self):
         result = list(transform.squeeze(self.sequences,
-            [False, False, True, False, False]))
+            [False, False, True, False, False, True]))
 
         self.assertEqual([4, 4, 4], [len(i) for i in result])
         self.assertEqual([i.id for i in self.sequences], [i.id for i in result])
