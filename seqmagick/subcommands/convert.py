@@ -2,9 +2,11 @@
 Convert between sequence formats
 """
 import argparse
+import inspect
 import logging
 import os
 import os.path
+import sys
 
 from Bio import SeqIO
 from Bio.SeqIO import FastaIO
@@ -30,6 +32,13 @@ def add_options(parser):
         'ASCII sorting is performed for names')
 
     seq_mods = parser.add_argument_group("Sequence Modificaton")
+    seq_mods.add_argument('--apply-function', type=module_function,
+            metavar='/path/to/module.py:function_name',
+            help="""Specify a custom function to apply to the input sequences,
+            specified as /path/to/module:function_name. Function should accept
+            an iterable of Bio.SeqRecord objects, and yield SeqRecords.
+            Specify more than one to chain.""",
+            default=[], action='append')
     seq_mods.add_argument('--cut', dest='cut', metavar="start:end",
         type=common.cut_range, help='1-indexed start and end positions for '
         'cutting sequences, : separated.  Includes last item.')
@@ -191,6 +200,10 @@ def transform_file(source_file, destination_file, arguments):
     if arguments.deduplicate_taxa:
         records = transform.deduplicate_taxa(records)
 
+    if arguments.apply_function:
+        for apply_function in arguments.apply_function:
+            records = apply_function(records)
+
     if arguments.dash_gap:
         records = transform.dashes_cleanup(records)
 
@@ -294,6 +307,43 @@ def transform_file(source_file, destination_file, arguments):
         logging.info("Applying transformations, writing to %s",
                 destination_file)
         SeqIO.write(records, destination_file, destination_file_type)
+
+
+def module_function(string):
+    """
+    Load a function from a python module using a module, function name
+    specification of format:
+        /path/to/x[.py]:function_name
+    """
+    parts = string.split(':')
+    if len(parts) != 2:
+        raise ValueError("Illegal specification. Should be module:function")
+    module_path, function_name = parts
+
+    # Get directory
+    module_dir = os.path.dirname(module_path)
+    module_name = os.path.basename(os.path.splitext(module_path)[0])
+
+    # Add directory containing the module to the path
+    sys.path.insert(0, module_dir)
+
+    try:
+        # Import the module
+        module = __import__(module_name)
+        function = getattr(module, function_name)
+        # Get a list of free arguments
+        args, varargs, keywords, defaults = inspect.getargspec(function)
+        free_arg_count = len(args) - len(defaults or [])
+
+        if free_arg_count != 1:
+            raise argparse.ArgumentTypeError(
+                    "Unsupported function {0}: Function must take "
+                    "one required argument. {0} has {1}".format(function_name,
+                                                                free_arg_count))
+        return function
+    finally:
+        # Restore the path
+        sys.path.pop(0)
 
 
 def action(arguments):
