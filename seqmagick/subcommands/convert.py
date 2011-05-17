@@ -2,15 +2,11 @@
 Convert between sequence formats
 """
 import argparse
-import inspect
 import logging
-import os
 import os.path
-import sys
 
 from Bio import SeqIO
 from Bio.SeqIO import FastaIO
-
 from seqmagick import transform
 from seqmagick.fileformat import lookup_file_type
 
@@ -35,7 +31,7 @@ def add_options(parser):
     seq_mods.add_argument('--apply-function', type=module_function,
             metavar='/path/to/module.py:function_name',
             help="""Specify a custom function to apply to the input sequences,
-            specified as /path/to/module:function_name. Function should accept
+            specified as /path/to/file.py:function_name. Function should accept
             an iterable of Bio.SeqRecord objects, and yield SeqRecords.
             Specify more than one to chain.""",
             default=[], action='append')
@@ -311,39 +307,31 @@ def transform_file(source_file, destination_file, arguments):
 
 def module_function(string):
     """
-    Load a function from a python module using a module, function name
+    Load a function from a python module using a file name, function name
     specification of format:
-        /path/to/x[.py]:function_name
+        /path/to/x.py:function_name
     """
     parts = string.split(':')
     if len(parts) != 2:
         raise ValueError("Illegal specification. Should be module:function")
     module_path, function_name = parts
 
-    # Get directory
-    module_dir = os.path.dirname(module_path)
-    module_name = os.path.basename(os.path.splitext(module_path)[0])
-
-    # Add directory containing the module to the path
-    sys.path.insert(0, module_dir)
+    # Import the module
+    module_vars = {}
+    execfile(module_path, module_vars)
 
     try:
-        # Import the module
-        module = __import__(module_name)
-        function = getattr(module, function_name)
-        # Get a list of free arguments
-        args, varargs, keywords, defaults = inspect.getargspec(function)
-        free_arg_count = len(args) - len(defaults or [])
+        function = module_vars[function_name]
+    except KeyError:
+        raise argparse.ArgumentTypeError("{0} has no attribute '{1}'".format(
+            module_path, function_name))
 
-        if free_arg_count != 1:
-            raise argparse.ArgumentTypeError(
-                    "Unsupported function {0}: Function must take "
-                    "one required argument. {0} has {1}".format(function_name,
-                                                                free_arg_count))
-        return function
-    finally:
-        # Restore the path
-        sys.path.pop(0)
+    # Must be callable
+    if not callable(function):
+        raise argparse.ArgumentTypeError("{0} is not callable.".format(
+            function_name))
+
+    return function
 
 
 def action(arguments):
