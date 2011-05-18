@@ -4,11 +4,9 @@ Find a primer sequence in a gapped alignment, trim to amplicon
 import argparse
 import itertools
 
-from Bio import Alphabet
+from Bio import Alphabet, SeqIO, pairwise2
 from Bio.Alphabet import IUPAC
-from Bio import SeqIO
 from Bio.Seq import Seq
-from Bio import pairwise2
 
 
 def build_parser(parser):
@@ -27,9 +25,10 @@ def build_parser(parser):
             help='Alignment format (default: %(default)s)')
     parser.add_argument('--include-primers', default=False,
             help='Include the primers in the output (default: %(default)s)')
-    parser.add_argument('--min-relative-score', type=proportion, default=0.80,
-            help="Minimum relative score to consider a match "
-                 "(default: %(default)s)")
+    parser.add_argument('--max-hamming-distance', type=positive(int),
+            default=1, help="""Maximum Hamming distance between primer and
+            alignment site (default: %(default)s)""")
+
 
 def ungap_index_map(sequence, gap_chars='-'):
     """
@@ -46,6 +45,7 @@ def ungap_index_map(sequence, gap_chars='-'):
                  for ungapped, gapped in zip(ungap_indexes,
                                              xrange(len(sequence)))
                  if ungapped is not None)
+
 
 def gap_index_map(sequence, gap_chars='-'):
     """
@@ -66,7 +66,9 @@ def hamming_distance(s1, s2):
     if not len(s1) == len(s2):
         raise ValueError("String lengths are not equal")
 
+    # Number of non-matching characters:
     return sum(c1 != c2 for c1, c2 in zip(s1, s2))
+
 
 class PrimerNotFound(Exception):
     pass
@@ -84,19 +86,35 @@ class PrimerAligner(object):
         self.gap_open = gap_open
         self.gap_extend = gap_extend
 
-    def align(self, sequence, relative_score=False):
+    def align(self, sequence):
+        """
+        Aligns the primer to the given query sequence, returning a tuple of:
+
+            hamming_distance, start, end
+
+        Where hamming distance is the distance between the primer and aligned
+        sequence, and start and end give the start and end index of the primer
+        relative to the input sequence.
+        """
         seq_aln, primer_aln, score, start, end = \
-                pairwise2.align.localms(str(sequence), str(self.primer),
+                pairwise2.align.globalms(str(sequence), str(self.primer),
                         self.match, self.difference, self.gap_open,
                         self.gap_extend, one_alignment_only=True)[0]
 
         # Get an ungapped mapping on the sequence
         index_map = gap_index_map(seq_aln)
+        ungap_map = ungap_index_map(primer_aln)
 
-        relative_score = score / float(self.max_score)
+        # Trim to primer
+        start = ungap_map[0]
+        end = ungap_map[len(self.primer) - 1]
+
+        ham_dist = hamming_distance(seq_aln[start:end+1],
+                primer_aln[start:end+1])
+        #assert primer_aln[start:end].replace('-', '') == str(self.primer)
 
         # TODO: handle start or end being gap
-        return score, relative_score, index_map[start], index_map[end]
+        return ham_dist, index_map[start], index_map[end]
 
     @property
     def max_score(self):
@@ -111,19 +129,21 @@ def iupac_ambiguous_sequence(string):
     return Seq(string, IUPAC.ambiguous_dna)
 
 
-def proportion(string):
-    f = float(string)
-    if not 0.0 < f <= 1.0:
-        raise argparse.ArgumentTypeError("Invalid proportion")
+def positive(target_type):
+    def inner(string):
+        value = target_type(string)
+        if not value >= 0:
+            raise argparse.ArgumentTypeError("Invalid positive number")
 
 
 def locate_primers(sequences, forward_primer, reverse_primer,
-        reverse_complement, score_threshold):
+        reverse_complement, max_hamming_distance):
     """
     Find forward and reverse primers in a set of sequences, return two tuples:
     (forward_start, forward_end), (reverse_start, reverse_end)
     """
-    forward_loc = reverse_loc = None
+    forward_loc = None
+    reverse_loc = None
 
     # Reverse complement the reverse primer, if appropriate
     if reverse_complement:
@@ -135,27 +155,29 @@ def locate_primers(sequences, forward_primer, reverse_primer,
     for sequence in sequences:
         index_map = ungap_index_map(sequence.seq)
         if forward_loc is None:
-            score, relative_score, start, end = \
+            ham_dist, start, end = \
                     forward_aligner.align(sequence.seq.ungap())
-            if relative_score >= score_threshold:
+            if ham_dist <= max_hamming_distance:
                 forward_loc = index_map[start], index_map[end]
-        elif reverse_loc is None:
-            score, relative_score, start, end = \
+        if reverse_loc is None:
+            ham_dist, start, end = \
                     reverse_aligner.align(sequence.seq.ungap())
-            if relative_score >= score_threshold:
+            if ham_dist <= max_hamming_distance:
                 reverse_loc = index_map[start], index_map[end]
-        else:
+        if forward_loc and reverse_loc:
             # Both found:
             return forward_loc, reverse_loc
 
+    # missed the forward or reverse primer:
     if not forward_loc:
         raise PrimerNotFound(forward_primer)
     else:
         raise PrimerNotFound(reverse_primer)
 
+
 def action(arguments):
     """
-
+    Trim the alignment as specified
     """
     # Load the alignment
     with arguments.source_file:
@@ -167,7 +189,7 @@ def action(arguments):
         (forward_start, forward_end), (reverse_start, reverse_end) = \
                 locate_primers(sequences, arguments.forward_primer,
                         arguments.reverse_primer, arguments.reverse_complement,
-                        arguments.min_relative_score)
+                        arguments.max_hamming_distance)
 
         # Generate a slice
         if arguments.include_primers:

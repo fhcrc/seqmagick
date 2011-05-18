@@ -4,6 +4,10 @@ Tests for primer trim
 
 import unittest
 
+from Bio import Alphabet
+from Bio.Seq import Seq
+from Bio.SeqRecord import SeqRecord
+
 from seqmagick.subcommands import primer_trim
 
 class PrimerAlignerTestCase(unittest.TestCase):
@@ -19,23 +23,20 @@ class PrimerAlignerTestCase(unittest.TestCase):
     def test_align_exact(self):
         sequence = ('ACTCTGTGTCACTTTAAACTGCATTTGAATGGAAGAGTAATAGTAGCAATAACGGCA'
                     'CTGATCAG')
-        score, relative_score, start, end = self.instance.align(sequence)
-        self.assertEquals(1.0, relative_score)
-        self.assertEquals(self.instance.max_score, score)
+        hamming_distance, start, end = self.instance.align(sequence)
+        self.assertEquals(0, hamming_distance)
         self.assertEquals(16, start)
-        self.assertEquals(32, end)
+        self.assertEquals(31, end)
 
     def test_align_gap(self):
         sequence = ('ACTCTGTGTCACTTTAAACTGCATTGAATGGAAGAGTAATAGTAGCAATAACGGCA'
                     'CTGATCAG')
-        score, relative_score, start, end = self.instance.align(sequence)
-        max_score = self.instance.max_score
-        # Expected: maximum - 1 match - gapopen
-        expected_score = max_score - 10 - 5
-        self.assertEquals(expected_score / max_score, relative_score)
-        self.assertEquals(expected_score, score)
+        hamming_distance, start, end = self.instance.align(sequence)
+        expected_distance = 1
+        self.assertEquals(expected_distance, hamming_distance)
         self.assertEquals(16, start)
-        self.assertEquals(31, end)
+        self.assertEquals(30, end)
+
 
 class HammingDistanceTestCase(unittest.TestCase):
 
@@ -57,4 +58,40 @@ class HammingDistanceTestCase(unittest.TestCase):
         s1 = 'ACGT'
         s2 = 'AGGT'
         self.assertEquals(1, primer_trim.hamming_distance(s1, s2))
+
+def _alignment_record(sequence):
+    return SeqRecord(Seq(sequence,
+        alphabet=Alphabet.Gapped(Alphabet.generic_dna)))
+
+class LocatePrimersTestCase(unittest.TestCase):
+    """
+    Test for locate primers
+    """
+
+    def setUp(self):
+        self.sequences = [_alignment_record('--A--ACTGGACGTATTC-CCCC')]
+
+    def test_basic(self):
+        forward = 'TGG'
+        reverse = 'TTC'
+
+        forward_idx, reverse_idx = primer_trim.locate_primers(self.sequences,
+                forward, reverse, False, 1)
+
+        self.assertEquals((7, 9), forward_idx)
+        self.assertEquals((15, 17), reverse_idx)
+
+    def test_no_forward(self):
+        forward='GGGGGG'
+        reverse = 'TTC'
+        self.assertRaises(primer_trim.PrimerNotFound,
+                primer_trim.locate_primers, self.sequences, forward, reverse,
+                False, 1)
+
+    def test_no_reverse(self):
+        forward='TGG'
+        reverse = 'GGGG'
+        self.assertRaises(primer_trim.PrimerNotFound,
+                primer_trim.locate_primers, self.sequences, forward, reverse,
+                False, 1)
 
