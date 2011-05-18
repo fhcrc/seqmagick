@@ -11,4 +11,5 @@ setup(name='seqmagick',
       packages=['seqmagick', 'seqmagick.scripts', 'seqmagick.test',
                 'seqmagick.subcommands'],
       scripts=['scripts/seqmagick'],
+      requires=['Python (>= 2.7)', 'biopython (>=1.54)'],
       )
