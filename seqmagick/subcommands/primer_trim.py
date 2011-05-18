@@ -10,6 +10,7 @@ from Bio.Seq import Seq
 
 
 def build_parser(parser):
+    actions = {'trim': trim, 'isolate': isolate_region}
     parser.add_argument('source_file', help="Source alignment file",
             type=argparse.FileType('r'))
     parser.add_argument('output_file', help="Destination trimmed file",
@@ -24,10 +25,13 @@ def build_parser(parser):
     parser.add_argument('--alignment-format', default='fasta',
             help='Alignment format (default: %(default)s)')
     parser.add_argument('--include-primers', default=False,
-            help='Include the primers in the output (default: %(default)s)')
+            action="store_true", help='''Include the primers in the output
+            (default: %(default)s)''')
     parser.add_argument('--max-hamming-distance', type=positive(int),
             default=1, help="""Maximum Hamming distance between primer and
             alignment site (default: %(default)s)""")
+    parser.add_argument('--prune-action', choices=actions.keys(),
+            default='trim', help="Action to take (default: %(default)s)")
 
 
 def ungap_index_map(sequence, gap_chars='-'):
@@ -175,6 +179,24 @@ def locate_primers(sequences, forward_primer, reverse_primer,
         raise PrimerNotFound(reverse_primer)
 
 
+def trim(sequences, start, end):
+    return (sequence[start:end] for sequence in sequences)
+
+
+def isolate_region(sequences, start, end, gap_char='-'):
+    """
+    Replace regions before and after start:end with gap chars
+    """
+    for sequence in sequences:
+        seq = sequence.seq
+        start_gap = gap_char * start
+        end_gap = gap_char * (len(seq) - end)
+        seq = Seq(start_gap + str(seq[start:end]) + end_gap,
+                alphabet=seq.alphabet)
+        sequence.seq = seq
+        yield sequence
+
+
 def action(arguments):
     """
     Trim the alignment as specified
@@ -205,7 +227,7 @@ def action(arguments):
                 arguments.alignment_format,
                 alphabet=Alphabet.Gapped(Alphabet.single_letter_alphabet))
 
-        sequences = (i[start:end] for i in sequences)
+        transformed_sequences = arguments.prune_action(sequences, start, end)
         with arguments.output_file:
-            SeqIO.write(sequences, arguments.output_file,
+            SeqIO.write(transformed_sequences, arguments.output_file,
                     arguments.alignment_format)
