@@ -78,6 +78,13 @@ class PrimerNotFound(Exception):
     pass
 
 
+class PrimerOrderError(Exception):
+    def __init__(self, forward_indexes, reverse_indexes):
+        super(PrimerOrderError, self).__init__(
+                "Reverse primer before forward primer: {0} > {1}".format(
+                    forward_indexes, reverse_indexes))
+
+
 class PrimerAligner(object):
     """
     Get positions of pairwise alignments of a primer to a sequence.
@@ -169,10 +176,13 @@ def locate_primers(sequences, forward_primer, reverse_primer,
             if ham_dist <= max_hamming_distance:
                 reverse_loc = index_map[start], index_map[end]
         if forward_loc and reverse_loc:
-            # Both found:
+            # Both found
+            # Check order
+            if forward_loc[0] > reverse_loc[0]:
+                raise PrimerOrderError(forward_loc[0], reverse_loc[0])
             return forward_loc, reverse_loc
 
-    # missed the forward or reverse primer:
+    # Did not find either the forward or reverse primer:
     if not forward_loc:
         raise PrimerNotFound(forward_primer)
     else:
@@ -180,6 +190,9 @@ def locate_primers(sequences, forward_primer, reverse_primer,
 
 
 def trim(sequences, start, end):
+    """
+    Slice the input sequences from start to end
+    """
     return (sequence[start:end] for sequence in sequences)
 
 
@@ -187,6 +200,11 @@ def isolate_region(sequences, start, end, gap_char='-'):
     """
     Replace regions before and after start:end with gap chars
     """
+    # Check arguments
+    if end <= start:
+        raise ValueError("End must be greater than start ({0} !> {1})".format(
+            end, start))
+
     for sequence in sequences:
         seq = sequence.seq
         start_gap = gap_char * start

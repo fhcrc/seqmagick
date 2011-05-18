@@ -95,6 +95,18 @@ class LocatePrimersTestCase(unittest.TestCase):
                 primer_trim.locate_primers, self.sequences, forward, reverse,
                 False, 1)
 
+    def test_bad_order(self):
+        """
+        Should fail if reverse primer occurs before forward primer
+        """
+        reverse = 'TGG'
+        forward = 'TTC'
+
+        self.assertRaises(primer_trim.PrimerOrderError,
+                primer_trim.locate_primers, self.sequences,
+                forward, reverse, False, 1)
+
+
 class IsolateRegionTestCase(unittest.TestCase):
 
     def setUp(self):
@@ -123,3 +135,8 @@ class IsolateRegionTestCase(unittest.TestCase):
         actual = [str(s.seq) for s in actual]
         self.assertEquals(expected, actual)
 
+    def test_invalid(self):
+        self.assertRaises(ValueError, primer_trim.isolate_region(
+                self.sequences, 5, 5).next)
+        self.assertRaises(ValueError, primer_trim.isolate_region(
+                self.sequences, 10, 5).next)
