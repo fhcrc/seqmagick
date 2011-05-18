@@ -11,6 +11,26 @@ from Bio.Seq import Seq
 from Bio import pairwise2
 
 
+def build_parser(parser):
+    parser.add_argument('source_file', help="Source alignment file",
+            type=argparse.FileType('r'))
+    parser.add_argument('output_file', help="Destination trimmed file",
+            type=argparse.FileType('w'))
+    parser.add_argument('forward_primer',
+            help="The forward primer used", type=iupac_ambiguous_sequence)
+    parser.add_argument('reverse_primer',
+            help="The reverse primer used", type=iupac_ambiguous_sequence)
+    parser.add_argument('--reverse-complement', default=False,
+            action='store_true', help="""Reverse primer is 5' to 3' (requires
+            reverse reverse complement.""", dest="reverse_complement")
+    parser.add_argument('--alignment-format', default='fasta',
+            help='Alignment format (default: %(default)s)')
+    parser.add_argument('--include-primers', default=False,
+            help='Include the primers in the output (default: %(default)s)')
+    parser.add_argument('--min-relative-score', type=proportion, default=0.80,
+            help="Minimum relative score to consider a match "
+                 "(default: %(default)s)")
+
 def ungap_index_map(sequence, gap_chars='-'):
     """
     Returns a dict mapping from an index in the ungapped sequence to an index
@@ -38,6 +58,15 @@ def gap_index_map(sequence, gap_chars='-'):
     return dict((v, k)
                 for k, v in ungap_index_map(sequence, gap_chars).items())
 
+
+def hamming_distance(s1, s2):
+    """
+    Returns the hamming distance between two strings.
+    """
+    if not len(s1) == len(s2):
+        raise ValueError("String lengths are not equal")
+
+    return sum(c1 != c2 for c1, c2 in zip(s1, s2))
 
 class PrimerNotFound(Exception):
     pass
@@ -77,33 +106,15 @@ class PrimerAligner(object):
         return len(self.primer) * self.match
 
 
+# Types for argparse
 def iupac_ambiguous_sequence(string):
     return Seq(string, IUPAC.ambiguous_dna)
+
 
 def proportion(string):
     f = float(string)
     if not 0.0 < f <= 1.0:
         raise argparse.ArgumentTypeError("Invalid proportion")
-
-
-def build_parser(parser):
-    parser.add_argument('source_file', help="Source alignment file",
-            type=argparse.FileType('r'))
-    parser.add_argument('output_file', help="Destination trimmed file",
-            type=argparse.FileType('w'))
-    parser.add_argument('forward_primer',
-            help="The forward primer used", type=iupac_ambiguous_sequence)
-    parser.add_argument('reverse_primer',
-            help="The reverse primer used", type=iupac_ambiguous_sequence)
-    parser.add_argument('--reverse-complement', default=False,
-            action='store_true', help="""Reverse primer is 5' to 3' (requires
-            reverse reverse complement.""", dest="reverse_complement")
-    parser.add_argument('--alignment-format', default='fasta',
-            help='Alignment format (default: %(default)s)')
-    parser.add_argument('--include-primers', default=False,
-            help='Include the primers in the output (default: %(default)s)')
-    parser.add_argument('--min-relative-score', type=proportion, default=0.80,
-            help="Minimum relative score to consider a match (default: %(default)s)")
 
 
 def locate_primers(sequences, forward_primer, reverse_primer,

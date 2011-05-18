@@ -36,3 +36,25 @@ class PrimerAlignerTestCase(unittest.TestCase):
         self.assertEquals(expected_score, score)
         self.assertEquals(16, start)
         self.assertEquals(31, end)
+
+class HammingDistanceTestCase(unittest.TestCase):
+
+    def test_unequal_length(self):
+        s1 = 'test'
+        s2 = 'te'
+        self.assertRaises(ValueError, primer_trim.hamming_distance, s1, s2)
+
+    def test_no_difference(self):
+        s1 = s2 = 'test'
+        self.assertEquals(0, primer_trim.hamming_distance(s1, s2))
+
+    def test_all_different(self):
+        s1 = 'test'
+        s2 = 'ACGT'
+        self.assertEquals(4, primer_trim.hamming_distance(s1, s2))
+
+    def test_basic(self):
+        s1 = 'ACGT'
+        s2 = 'AGGT'
+        self.assertEquals(1, primer_trim.hamming_distance(s1, s2))
+
