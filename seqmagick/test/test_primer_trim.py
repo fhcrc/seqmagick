@@ -1,7 +1,7 @@
 """
 Tests for primer trim
 """
-
+import argparse
 import unittest
 
 from Bio import Alphabet
@@ -140,3 +140,15 @@ class IsolateRegionTestCase(unittest.TestCase):
                 self.sequences, 5, 5).next)
         self.assertRaises(ValueError, primer_trim.isolate_region(
                 self.sequences, 10, 5).next)
+
+class PositiveValueTestCase(unittest.TestCase):
+
+    def test_negative(self):
+        self.assertRaises(argparse.ArgumentTypeError,
+                primer_trim.positive_value(int), '-1')
+
+    def test_positive(self):
+        self.assertEquals(1, primer_trim.positive_value(int)('1'))
+
+    def test_zero(self):
+        self.assertEquals(0, primer_trim.positive_value(int)('0'))

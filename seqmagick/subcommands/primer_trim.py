@@ -27,13 +27,14 @@ def build_parser(parser):
     parser.add_argument('--include-primers', default=False,
             action="store_true", help='''Include the primers in the output
             (default: %(default)s)''')
-    parser.add_argument('--max-hamming-distance', type=positive(int),
+    parser.add_argument('--max-hamming-distance', type=positive_value(int),
             default=1, help="""Maximum Hamming distance between primer and
             alignment site (default: %(default)s)""")
     parser.add_argument('--prune-action', choices=actions.keys(),
             default='trim', help="Action to take (default: %(default)s)")
 
 
+# Sequence-related functions
 def ungap_index_map(sequence, gap_chars='-'):
     """
     Returns a dict mapping from an index in the ungapped sequence to an index
@@ -140,11 +141,18 @@ def iupac_ambiguous_sequence(string):
     return Seq(string, IUPAC.ambiguous_dna)
 
 
-def positive(target_type):
+def positive_value(target_type):
+    """
+    Wraps target_type in a function that requires the parsed argument
+    be >= 0
+    """
     def inner(string):
         value = target_type(string)
         if not value >= 0:
-            raise argparse.ArgumentTypeError("Invalid positive number")
+            raise argparse.ArgumentTypeError("Invalid positive_value number")
+        return value
+
+    return inner
 
 
 def locate_primers(sequences, forward_primer, reverse_primer,
@@ -202,7 +210,7 @@ def isolate_region(sequences, start, end, gap_char='-'):
     """
     # Check arguments
     if end <= start:
-        raise ValueError("End must be greater than start ({0} !> {1})".format(
+        raise ValueError("start of slice must precede end ({0} !> {1})".format(
             end, start))
 
     for sequence in sequences:
@@ -239,13 +247,15 @@ def action(arguments):
             start = forward_end + 1
             end = reverse_start
 
-        # Rewind
+        # Rewind the input file
         arguments.source_file.seek(0)
         sequences = SeqIO.parse(arguments.source_file,
                 arguments.alignment_format,
                 alphabet=Alphabet.Gapped(Alphabet.single_letter_alphabet))
 
+        # Apply the transformation
         transformed_sequences = arguments.prune_action(sequences, start, end)
+
         with arguments.output_file:
             SeqIO.write(transformed_sequences, arguments.output_file,
                     arguments.alignment_format)
