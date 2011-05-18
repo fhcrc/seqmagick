@@ -114,17 +114,33 @@ def locate_primers(sequences, forward_primer, reverse_primer,
     """
     forward_loc = reverse_loc = None
 
+    # Reverse complement the reverse primer, if appropriate
+    if reverse_complement:
+        reverse_primer = reverse_primer.reverse_complement()
+
     forward_aligner = PrimerAligner(forward_primer)
     reverse_aligner = PrimerAligner(reverse_primer)
 
-    # Reverse complement the reverse primer, if appropriate
-    if reverse_complement:
-        reverse_primer.reverse_complement()
-
     for sequence in sequences:
-        pass
-    raise NotImplementedError()
+        index_map = ungap_index_map(sequence.seq)
+        if forward_loc is None:
+            score, relative_score, start, end = \
+                    forward_aligner.align(sequence.seq.ungap())
+            if relative_score >= score_threshold:
+                forward_loc = index_map[start], index_map[end]
+        elif reverse_loc is None:
+            score, relative_score, start, end = \
+                    reverse_aligner.align(sequence.seq.ungap())
+            if relative_score >= score_threshold:
+                reverse_loc = index_map[start], index_map[end]
+        else:
+            # Both found:
+            return forward_loc, reverse_loc
 
+    if not forward_loc:
+        raise PrimerNotFound(forward_primer)
+    else:
+        raise PrimerNotFound(reverse_primer)
 
 def action(arguments):
     """
@@ -137,9 +153,26 @@ def action(arguments):
                 alphabet=Alphabet.Gapped(Alphabet.single_letter_alphabet))
 
         # Locate primers
-        forward_start, forward_end, reverse_start, reverse_end = \
+        (forward_start, forward_end), (reverse_start, reverse_end) = \
                 locate_primers(sequences, arguments.forward_primer,
                         arguments.reverse_primer, arguments.reverse_complement,
                         arguments.min_relative_score)
 
-    raise NotImplementedError()
+        # Generate a slice
+        if arguments.include_primers:
+            start = forward_start
+            end = reverse_end + 1
+        else:
+            start = forward_end + 1
+            end = reverse_start
+
+        # Rewind
+        arguments.source_file.seek(0)
+        sequences = SeqIO.parse(arguments.source_file,
+                arguments.alignment_format,
+                alphabet=Alphabet.Gapped(Alphabet.single_letter_alphabet))
+
+        sequences = (i[start:end] for i in sequences)
+        with arguments.output_file:
+            SeqIO.write(sequences, arguments.output_file,
+                    arguments.alignment_format)
