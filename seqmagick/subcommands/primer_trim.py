@@ -8,9 +8,11 @@ from Bio import Alphabet, SeqIO, pairwise2
 from Bio.Alphabet import IUPAC
 from Bio.Seq import Seq
 
+from seqmagick import transform
+
 
 def build_parser(parser):
-    actions = {'trim': trim, 'isolate': isolate_region}
+    actions = {'trim': trim, 'isolate': transform.isolate_region}
     parser.add_argument('source_file', help="Source alignment file",
             type=argparse.FileType('r'))
     parser.add_argument('output_file', help="Destination trimmed file",
@@ -149,7 +151,8 @@ def positive_value(target_type):
     def inner(string):
         value = target_type(string)
         if not value >= 0:
-            raise argparse.ArgumentTypeError("Invalid positive_value number")
+            raise argparse.ArgumentTypeError("Invalid positive number: " +
+                    string)
         return value
 
     return inner
@@ -202,25 +205,6 @@ def trim(sequences, start, end):
     Slice the input sequences from start to end
     """
     return (sequence[start:end] for sequence in sequences)
-
-
-def isolate_region(sequences, start, end, gap_char='-'):
-    """
-    Replace regions before and after start:end with gap chars
-    """
-    # Check arguments
-    if end <= start:
-        raise ValueError("start of slice must precede end ({0} !> {1})".format(
-            end, start))
-
-    for sequence in sequences:
-        seq = sequence.seq
-        start_gap = gap_char * start
-        end_gap = gap_char * (len(seq) - end)
-        seq = Seq(start_gap + str(seq[start:end]) + end_gap,
-                alphabet=seq.alphabet)
-        sequence.seq = seq
-        yield sequence
 
 
 def action(arguments):

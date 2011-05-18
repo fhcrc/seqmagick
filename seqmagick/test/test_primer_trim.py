@@ -107,40 +107,6 @@ class LocatePrimersTestCase(unittest.TestCase):
                 forward, reverse, False, 1)
 
 
-class IsolateRegionTestCase(unittest.TestCase):
-
-    def setUp(self):
-        self.sequences = [_alignment_record('--A--ACTGGACGTATTC-CCCC'),
-                          _alignment_record('--AGCACTGGA---ATTC-CCCC')]
-
-    def test_no_isolation(self):
-        result = list(primer_trim.isolate_region(self.sequences, 0,
-            len(self.sequences[0])))
-
-        self.assertEquals(self.sequences, result)
-
-    def test_single_loc(self):
-        start = 2
-        end = 3
-        result = list(primer_trim.isolate_region(self.sequences, start, end))
-        for seq in result:
-            self.assertEqual('--A--------------------', str(seq.seq))
-
-    def test_middle(self):
-        expected = ['--A--ACTGGA------------', '--AGCACTGGA------------']
-        start = 1
-        end = 11
-
-        actual = list(primer_trim.isolate_region(self.sequences, start, end))
-        actual = [str(s.seq) for s in actual]
-        self.assertEquals(expected, actual)
-
-    def test_invalid(self):
-        self.assertRaises(ValueError, primer_trim.isolate_region(
-                self.sequences, 5, 5).next)
-        self.assertRaises(ValueError, primer_trim.isolate_region(
-                self.sequences, 10, 5).next)
-
 class PositiveValueTestCase(unittest.TestCase):
 
     def test_negative(self):

@@ -91,6 +91,25 @@ def first_name_capture(records):
             yield record
 
 
+def isolate_region(sequences, start, end, gap_char='-'):
+    """
+    Replace regions before and after start:end with gap chars
+    """
+    # Check arguments
+    if end <= start:
+        raise ValueError("start of slice must precede end ({0} !> {1})".format(
+            end, start))
+
+    for sequence in sequences:
+        seq = sequence.seq
+        start_gap = gap_char * start
+        end_gap = gap_char * (len(seq) - end)
+        seq = Seq(start_gap + str(seq[start:end]) + end_gap,
+                alphabet=seq.alphabet)
+        sequence.seq = seq
+        yield sequence
+
+
 def cut_sequences(records, start, end):
     """
     Cut sequences given a one-based range.  Includes last item.
