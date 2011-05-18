@@ -3,12 +3,10 @@ Convert between sequence formats
 """
 import argparse
 import logging
-import os
 import os.path
 
 from Bio import SeqIO
 from Bio.SeqIO import FastaIO
-
 from seqmagick import transform
 from seqmagick.fileformat import lookup_file_type
 
@@ -30,6 +28,13 @@ def add_options(parser):
         'ASCII sorting is performed for names')
 
     seq_mods = parser.add_argument_group("Sequence Modificaton")
+    seq_mods.add_argument('--apply-function', type=module_function,
+            metavar='/path/to/module.py:function_name',
+            help="""Specify a custom function to apply to the input sequences,
+            specified as /path/to/file.py:function_name. Function should accept
+            an iterable of Bio.SeqRecord objects, and yield SeqRecords.
+            Specify more than one to chain.""",
+            default=[], action='append')
     seq_mods.add_argument('--cut', dest='cut', metavar="start:end",
         type=common.cut_range, help='1-indexed start and end positions for '
         'cutting sequences, : separated.  Includes last item.')
@@ -191,6 +196,10 @@ def transform_file(source_file, destination_file, arguments):
     if arguments.deduplicate_taxa:
         records = transform.deduplicate_taxa(records)
 
+    if arguments.apply_function:
+        for apply_function in arguments.apply_function:
+            records = apply_function(records)
+
     if arguments.dash_gap:
         records = transform.dashes_cleanup(records)
 
@@ -294,6 +303,35 @@ def transform_file(source_file, destination_file, arguments):
         logging.info("Applying transformations, writing to %s",
                 destination_file)
         SeqIO.write(records, destination_file, destination_file_type)
+
+
+def module_function(string):
+    """
+    Load a function from a python module using a file name, function name
+    specification of format:
+        /path/to/x.py:function_name
+    """
+    parts = string.split(':')
+    if len(parts) != 2:
+        raise ValueError("Illegal specification. Should be module:function")
+    module_path, function_name = parts
+
+    # Import the module
+    module_vars = {}
+    execfile(module_path, module_vars)
+
+    try:
+        function = module_vars[function_name]
+    except KeyError:
+        raise argparse.ArgumentTypeError("{0} has no attribute '{1}'".format(
+            module_path, function_name))
+
+    # Must be callable
+    if not callable(function):
+        raise argparse.ArgumentTypeError("{0} is not callable.".format(
+            function_name))
+
+    return function
 
 
 def action(arguments):

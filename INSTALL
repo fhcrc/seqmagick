@@ -1,9 +1,11 @@
-To install system-wide, run:
-sudo python setup.py install
+First, install BioPython (http://www.biopython.org). NumPy (which parts of
+BioPython depend on) is not required for seqmagick to function. Once done,
+install system-wide with:
+
+    sudo python setup.py install
 
 To install for a specific version of python:
-/path/to/python setup.py install
+    /path/to/python setup.py install
 
 Yet another installation option:
-python setup.py install --home=/home/username/local
-
+    python setup.py install --home=/home/username/local

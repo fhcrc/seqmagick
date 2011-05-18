@@ -1,3 +1,5 @@
+* Add BioPython as dependency (closes GH-7)
+
 0.2.0alpha
 ==========
 
