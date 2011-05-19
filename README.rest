@@ -42,23 +42,21 @@ In general the interface is in the format::
 
 with <cmd> being one of:
 
-check
-  check integrity of a file. Not yet implemented.
-
 convert
-  convert a b will convert a to b
+  ``convert a b`` will convert ``a`` to ``b``. Optional transformations can be
+  added.
 
 info
-  describe a sequence file
+  describe sequence file(s)
 
 mogrify
-  mogrify modifies in place
+  Modify a sequence file in place
 
 muscle
   create an alignment using muscle.
 
 
-The real action for these commands happens in the options.
+The real action for ``convert`` and ``mogrify`` happens in the options.
 These can be stacked on top of one another::
 
     optional arguments:
@@ -138,23 +136,8 @@ These can be stacked on top of one another::
       --output-format Format
                             Output file format (default: determine from extension)
 
-To refine or implement:
-
---translate     if it's nucleotide, take to AA, and vice versa
---wrap          interleave a phylip file or wrap a fasta file
-
-Other commands:
-
-help
-  seqmagick help <action>
-  e.g. seqmagick help convert
-
-info
-  Describe sequence files, with different output options.
-
-muscle
-  Create an alignment using Muscle.
-
+Possibly to implement:
+----------------------
 check
   check integrity of files
   should take --DNA --AA arguments to check if the file is one of these types

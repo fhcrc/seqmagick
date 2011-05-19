@@ -60,7 +60,7 @@ def _summarize_file(source_file):
     min_length = sys.maxint
     max_length = 0
     sequence_count = 0
-    file_type = fileformat.lookup_file_type(
+    file_type = fileformat.from_extension(
             os.path.splitext(source_file)[1])
 
     # Get an iterator and analyze the data.

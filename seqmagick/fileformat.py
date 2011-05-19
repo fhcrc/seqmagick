@@ -1,6 +1,7 @@
 """
 Mappings from file extensions to biopython types
 """
+import os.path
 
 # Define mappings in a dictionary with extension : BioPython_file_type.
 EXTENSION_TO_TYPE = {'.aln': 'clustal',
@@ -26,12 +27,24 @@ class UnknownExtensionError(ValueError):
     pass
 
 
-def lookup_file_type(extension):
+def from_extension(extension):
     """
-    Convert extension to lower case and look up the corresponding BioPython file type.
+    Look up the BioPython file type corresponding with input extension.
+
+    Lookup is case insensitive; the extension is presumed to start with a '.'
     """
+    if not extension.startswith('.'):
+        raise ValueError("Extensions must begin with a period.")
     try:
         return EXTENSION_TO_TYPE[extension.lower()]
     except KeyError:
         raise UnknownExtensionError("SeqMagick does not know how to handle " +
                 "files with extensions like this: " + extension)
+
+
+def from_filename(file_name):
+    """
+    Lookup the BioPython file type corresponding to an input file name.
+    """
+    extension = os.path.splitext(file_name)[1]
+    return from_extension(extension)
