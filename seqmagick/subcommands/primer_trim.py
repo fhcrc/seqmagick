@@ -8,7 +8,7 @@ from Bio import Alphabet, SeqIO, pairwise2
 from Bio.Alphabet import IUPAC
 from Bio.Seq import Seq
 
-from seqmagick import transform
+from seqmagick import transform, fileformat
 
 
 def build_parser(parser):
@@ -19,13 +19,19 @@ def build_parser(parser):
             type=argparse.FileType('w'))
     parser.add_argument('forward_primer',
             help="The forward primer used", type=iupac_ambiguous_sequence)
-    parser.add_argument('reverse_primer',
-            help="The reverse primer used", type=iupac_ambiguous_sequence)
-    parser.add_argument('--reverse-complement', default=False,
-            action='store_true', help="""Reverse primer is 5' to 3' (requires
-            reverse reverse complement.""", dest="reverse_complement")
-    parser.add_argument('--alignment-format', default='fasta',
-            help='Alignment format (default: %(default)s)')
+    parser.add_argument('reverse_primer', help="""The reverse primer used. By
+            default the reverse primer is assumed to be a subsequence of the
+            top strand (that is, the reverse complement of an actual downstream
+            PCR primer). Use --reverse-is-revgcomp if this is not the case.""",
+            type=iupac_ambiguous_sequence)
+    parser.add_argument('--reverse-is-revcomp', default=False,
+            action='store_true', help="""Reverse primer is written as the
+            reverse complement of the top strand (default: %(default)s)""",
+            dest="reverse_complement")
+    parser.add_argument('--source-format', default=None,
+            help='Alignment format (default: detect from extension')
+    parser.add_argument('--output-format', default=None,
+            help='Alignment format (default: detect from extension')
     parser.add_argument('--include-primers', default=False,
             action="store_true", help='''Include the primers in the output
             (default: %(default)s)''')
@@ -33,7 +39,11 @@ def build_parser(parser):
             default=1, help="""Maximum Hamming distance between primer and
             alignment site (default: %(default)s)""")
     parser.add_argument('--prune-action', choices=actions.keys(),
-            default='trim', help="Action to take (default: %(default)s)")
+            default='trim',
+            help="""Action to take. Options are trim (trim to the region
+            defined by the two primers, decreasing the width of the alignment),
+            or isolate (convert all characters outside the primer-defined area
+            to gaps). default: %(default)s""")
 
 
 # Sequence-related functions
@@ -211,10 +221,15 @@ def action(arguments):
     """
     Trim the alignment as specified
     """
+    # Determine file format for input and output
+    source_format = (arguments.source_format or
+            fileformat.from_filename(arguments.source_file.name))
+    output_format = (arguments.output_format or
+            fileformat.from_filename(arguments.output_file.name))
+
     # Load the alignment
     with arguments.source_file:
-        sequences = SeqIO.parse(arguments.source_file,
-                arguments.alignment_format,
+        sequences = SeqIO.parse(arguments.source_file, source_format,
                 alphabet=Alphabet.Gapped(Alphabet.single_letter_alphabet))
 
         # Locate primers
@@ -223,7 +238,7 @@ def action(arguments):
                         arguments.reverse_primer, arguments.reverse_complement,
                         arguments.max_hamming_distance)
 
-        # Generate a slice
+        # Generate slice indexes
         if arguments.include_primers:
             start = forward_start
             end = reverse_end + 1
@@ -242,4 +257,4 @@ def action(arguments):
 
         with arguments.output_file:
             SeqIO.write(transformed_sequences, arguments.output_file,
-                    arguments.alignment_format)
+                    output_format)
