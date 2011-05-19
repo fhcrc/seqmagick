@@ -22,7 +22,7 @@ def build_parser(parser):
     parser.add_argument('reverse_primer', help="""The reverse primer used. By
             default the reverse primer is assumed to be a subsequence of the
             top strand (that is, the reverse complement of an actual downstream
-            PCR primer). Use --reverse-is-revgcomp if this is not the case.""",
+            PCR primer). Use --reverse-is-revcomp if this is not the case.""",
             type=iupac_ambiguous_sequence)
     parser.add_argument('--reverse-is-revcomp', default=False,
             action='store_true', help="""Reverse primer is written as the
@@ -37,7 +37,9 @@ def build_parser(parser):
             (default: %(default)s)''')
     parser.add_argument('--max-hamming-distance', type=positive_value(int),
             default=1, help="""Maximum Hamming distance between primer and
-            alignment site (default: %(default)s)""")
+            alignment site (default: %(default)s). IUPAC ambiguous bases in the
+            primer matching unambiguous bases in the alignment are not
+            penalized""")
     parser.add_argument('--prune-action', choices=actions.keys(),
             default='trim',
             help="""Action to take. Options are trim (trim to the region
@@ -76,7 +78,29 @@ def gap_index_map(sequence, gap_chars='-'):
                 for k, v in ungap_index_map(sequence, gap_chars).items())
 
 
-def hamming_distance(s1, s2):
+def _iupac_ambiguous_equal(ambig_base, unambig_base):
+    """
+    Tests two bases for equality, accounting for IUPAC ambiguous DNA
+
+    ambiguous base may be IUPAC ambiguous, unambiguous must be one of ACGT
+    """
+    iupac_translation = {'A': 'A', 'C': 'C', 'G': 'G',
+            'T': 'T', 'U': 'U', 'R': 'AG', 'Y': 'CT',
+            'S': 'GC', 'W': 'AT', 'K': 'GT', 'M': 'AC',
+            'B': 'CGT', 'D': 'AGT', 'H': 'ACT', 'V': 'ACG',
+            'N': 'ACGT', '-': '-'}
+    for i in (ambig_base, unambig_base):
+        if not len(i) == 1:
+            raise ValueError("only one base may be passed.")
+
+    return unambig_base.upper() in iupac_translation[ambig_base.upper()]
+
+
+def equal(b1, b2):
+    return b1 == b2
+
+
+def hamming_distance(s1, s2, equality_function=equal):
     """
     Returns the hamming distance between two strings.
     """
@@ -84,7 +108,7 @@ def hamming_distance(s1, s2):
         raise ValueError("String lengths are not equal")
 
     # Number of non-matching characters:
-    return sum(c1 != c2 for c1, c2 in zip(s1, s2))
+    return sum(not equality_function(c1, c2) for c1, c2 in zip(s1, s2))
 
 
 class PrimerNotFound(Exception):
@@ -133,8 +157,8 @@ class PrimerAligner(object):
         start = ungap_map[0]
         end = ungap_map[len(self.primer) - 1]
 
-        ham_dist = hamming_distance(seq_aln[start:end+1],
-                primer_aln[start:end+1])
+        ham_dist = hamming_distance(primer_aln[start:end+1],
+                seq_aln[start:end+1], _iupac_ambiguous_equal)
         #assert primer_aln[start:end].replace('-', '') == str(self.primer)
 
         # TODO: handle start or end being gap

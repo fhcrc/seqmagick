@@ -59,6 +59,15 @@ class HammingDistanceTestCase(unittest.TestCase):
         s2 = 'AGGT'
         self.assertEquals(1, primer_trim.hamming_distance(s1, s2))
 
+    def test_ambiguous(self):
+        s1 = 'ACYT'
+        s2 = 'ACCT'
+        self.assertEquals(0, primer_trim.hamming_distance(s1, s2,
+            primer_trim._iupac_ambiguous_equal))
+        s2 = 'ACTT'
+        self.assertEquals(0, primer_trim.hamming_distance(s1, s2,
+            primer_trim._iupac_ambiguous_equal))
+
 def _alignment_record(sequence):
     return SeqRecord(Seq(sequence,
         alphabet=Alphabet.Gapped(Alphabet.generic_dna)))
