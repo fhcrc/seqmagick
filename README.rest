@@ -10,6 +10,18 @@ and it's not worth writing scripts for that.  Seqmagick is a kickass little
 utility to expose the file format conversion in Biopython in a convenient way.
 Instead of having a big mess of scripts, there is one that takes arguments.
 
+Installation
+============
+
+First, you'll need to install `BioPython`_. NumPy (which parts of BioPython
+depend on) is not required for seqmagick to function. Once done, install
+with::
+
+    git clone git://github.com/fhcrc/seqmagick.git
+    cd seqmagick
+    python setup.py install
+
+
 The code
 ========
 
@@ -153,3 +165,4 @@ check
 .. _imagemagick: http://www.imagemagick.org/script/command-line-tools.php
 
 .. _`BioPython SeqIO wiki page`: http://www.biopython.org/wiki/SeqIO#File_Formats
+.. _`BioPython`: http://www.biopython.org/

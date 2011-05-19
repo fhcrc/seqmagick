@@ -1,2 +1,4 @@
 *.pyc
-src/seqmagick/build/
+build/
+dist/
+MANIFEST
