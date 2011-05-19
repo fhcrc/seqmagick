@@ -8,7 +8,7 @@ import os.path
 from Bio import SeqIO
 from Bio.SeqIO import FastaIO
 from seqmagick import transform
-from seqmagick.fileformat import lookup_file_type
+from seqmagick.fileformat import from_extension
 
 import common
 
@@ -151,11 +151,11 @@ def transform_file(source_file, destination_file, arguments):
 
     # Get just the file name, useful for naming the temporary file.
     file_ext = os.path.splitext(source_file)[1]
-    source_file_type = (arguments.input_format or lookup_file_type(file_ext))
+    source_file_type = (arguments.input_format or from_extension(file_ext))
 
     output_ext = os.path.splitext(destination_file)[1]
     destination_file_type = (arguments.output_format or
-            lookup_file_type(output_ext))
+            from_extension(output_ext))
 
     # Get an iterator.
     sorters = {'length': transform.sort_length,
