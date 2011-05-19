@@ -1,12 +1,14 @@
 * Add BioPython as dependency (closes GH-7)
+* Add primer-trim subcommand
+* Add option to apply custom function(s) to sequences
 
-0.2.0alpha
-==========
+0.2.0
+=====
 
 * Refactoring
 * Added hyphenation to multi-word command line options (e.g.
   --deduplicatetaxa -> --deduplicate-taxa)
-* Add support for .needle, .sff formats
+* Add support for .needle, .sff formats`A
 * Close GH-4
 
 0.1.0
