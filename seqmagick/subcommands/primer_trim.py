@@ -11,8 +11,8 @@ from Bio.Seq import Seq
 from seqmagick import transform, fileformat
 
 
+
 def build_parser(parser):
-    actions = {'trim': trim, 'isolate': transform.isolate_region}
     parser.add_argument('source_file', help="Source alignment file",
             type=argparse.FileType('r'))
     parser.add_argument('output_file', help="Destination trimmed file",
@@ -40,7 +40,7 @@ def build_parser(parser):
             alignment site (default: %(default)s). IUPAC ambiguous bases in the
             primer matching unambiguous bases in the alignment are not
             penalized""")
-    parser.add_argument('--prune-action', choices=actions.keys(),
+    parser.add_argument('--prune-action', choices=_ACTIONS.keys(),
             default='trim',
             help="""Action to take. Options are trim (trim to the region
             defined by the two primers, decreasing the width of the alignment),
@@ -241,6 +241,10 @@ def trim(sequences, start, end):
     return (sequence[start:end] for sequence in sequences)
 
 
+# Prune actions
+_ACTIONS = {'trim': trim, 'isolate': transform.isolate_region}
+
+
 def action(arguments):
     """
     Trim the alignment as specified
@@ -273,11 +277,12 @@ def action(arguments):
         # Rewind the input file
         arguments.source_file.seek(0)
         sequences = SeqIO.parse(arguments.source_file,
-                arguments.alignment_format,
+                source_format,
                 alphabet=Alphabet.Gapped(Alphabet.single_letter_alphabet))
 
         # Apply the transformation
-        transformed_sequences = arguments.prune_action(sequences, start, end)
+        prune_action = _ACTIONS[arguments.prune_action]
+        transformed_sequences = prune_action(sequences, start, end)
 
         with arguments.output_file:
             SeqIO.write(transformed_sequences, arguments.output_file,
