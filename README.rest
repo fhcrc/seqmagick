@@ -57,6 +57,10 @@ mogrify
 muscle
   create an alignment using muscle.
 
+primer-trim
+  Trim alignment to the region specified by forward and reverse primer 
+  sequences.
+
 
 The real action for these commands happens in the options.
 These can be stacked on top of one another::
