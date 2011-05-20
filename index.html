@@ -1,0 +1,289 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>seqmagick &mdash; seqmagick v0.2.0 documentation</title>
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="seqmagick v0.2.0 documentation" href="#" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li><a href="#">seqmagick v0.2.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="seqmagick">
+<h1>seqmagick<a class="headerlink" href="#seqmagick" title="Permalink to this headline">¶</a></h1>
+<p>Contents:</p>
+<div class="toctree-wrapper compound">
+<ul class="simple">
+</ul>
+</div>
+<div class="section" id="motivation">
+<h2>Motivation<a class="headerlink" href="#motivation" title="Permalink to this headline">¶</a></h2>
+<p>We often have to convert between sequence formats and do little tasks on them,
+and it&#8217;s not worth writing scripts for that.  Seqmagick is a kickass little
+utility built in the spirit of <a class="reference external" href="http://www.imagemagick.org/script/command-line-tools.php">imagemagick</a> to expose the file format
+conversion in Biopython in a convenient way.  Instead of having a big mess of
+scripts, there is one that takes arguments.</p>
+</div>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<p>First, you&#8217;ll need to install <a class="reference external" href="http://www.biopython.org/">BioPython</a>. NumPy (which parts of BioPython
+depend on) is not required for <tt class="docutils literal"><span class="pre">seqmagick</span></tt> to function. Once done, install
+with:</p>
+<div class="highlight-python"><pre>pip install seqmagick</pre>
+</div>
+<p>Get the bleeding edge version <a class="reference external" href="https://github.com/fhcrc/seqmagick/zipball/master">here</a>, or clone our
+repository:</p>
+<div class="highlight-python"><pre>git clone git://github.com/fhcrc/seqmagick.git</pre>
+</div>
+</div>
+<div class="section" id="use">
+<h2>Use<a class="headerlink" href="#use" title="Permalink to this headline">¶</a></h2>
+<p>Seqmagick can be used to query information about sequence files, convert
+between types, and modify sequence files.  All functions are accessed through
+<tt class="docutils literal"><span class="pre">seqmagick</span> <span class="pre">&lt;subcommand&gt;</span></tt></p>
+</div>
+<div class="section" id="subcommands">
+<h2>Subcommands<a class="headerlink" href="#subcommands" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="info">
+<h2><tt class="docutils literal"><span class="pre">info</span></tt><a class="headerlink" href="#info" title="Permalink to this headline">¶</a></h2>
+<p><tt class="docutils literal"><span class="pre">seqmagick</span> <span class="pre">info</span></tt> describes one or more sequence files:</p>
+<div class="highlight-python"><pre>$ seqmagick info examples/*.fasta
+
+name                      alignment  min_len  max_len  avg_len  num_seqs
+examples/aligned.fasta    TRUE       9797     9797     9797.00  15
+examples/dewrapped.fasta  TRUE       240      240      240.00   148
+examples/range.fasta      TRUE       119      119      119.00   2
+examples/test.fasta       FALSE      972      9719     1573.67  15
+examples/wrapped.fasta    FALSE      120      237      178.50   2</pre>
+</div>
+</div>
+<div class="section" id="convert-and-mogrify">
+<h2><tt class="docutils literal"><span class="pre">convert</span></tt> and <tt class="docutils literal"><span class="pre">mogrify</span></tt><a class="headerlink" href="#convert-and-mogrify" title="Permalink to this headline">¶</a></h2>
+<p>Convert and mogrify achieve similar goals. <tt class="docutils literal"><span class="pre">convert</span></tt> performs some operation
+on a file (from changing format to something more complicated) and writes to a
+new file. <tt class="docutils literal"><span class="pre">mogrify</span></tt> modifies a file in place, and would not normally be used
+to convert formats.</p>
+<div class="section" id="basic-conversion">
+<h3>Basic Conversion<a class="headerlink" href="#basic-conversion" title="Permalink to this headline">¶</a></h3>
+<p>seqmagick can be used to convert between any two file types BioPython
+supported. For a full list of supported types, see the <a class="reference external" href="http://www.biopython.org/wiki/SeqIO#File_Formats">BioPython SeqIO wiki page</a>.</p>
+<p>By default, file type is inferred from file extension, so:</p>
+<div class="highlight-python"><pre>seqmagick convert a.fasta a.sto</pre>
+</div>
+<p>converts an existing file <tt class="docutils literal"><span class="pre">a.fasta</span></tt> from FASTA to Stockholm format. Neat! But there&#8217;s more.</p>
+</div>
+<div class="section" id="sequence-modification">
+<h3>Sequence Modification<a class="headerlink" href="#sequence-modification" title="Permalink to this headline">¶</a></h3>
+<p>A wealth of options await you when you&#8217;re ready to do something slightly more complicated with your sequences.</p>
+<p>Let&#8217;s say I want a few of my sequences:</p>
+<div class="highlight-python"><pre>$ seqmagick convert --head 5 examples/test.fasta examples/test.head.fasta
+$ seqmagick info examples/test*.fasta
+name                      alignment  min_len  max_len  avg_len  num_seqs
+examples/test.fasta       FALSE      972      9719     1573.67  15
+examples/test.head.fasta  FALSE      978      990      984.00   5</pre>
+</div>
+<p>Or I want to remove any gaps, reverse complement, select the last 5 sequences, and remove any duplicates from an alignment in place:</p>
+<div class="highlight-python"><pre>seqmagick mogrify --tail 5 --reverse-complement --ungap --deduplicate-sequences examples/test.fasta examples/test.fasta</pre>
+</div>
+<p>You can even define your own functions in python and use them via <tt class="docutils literal"><span class="pre">--apply-function</span></tt>.</p>
+<p>The full set of options to <tt class="docutils literal"><span class="pre">mogrify</span></tt> and <tt class="docutils literal"><span class="pre">convert</span></tt> are:</p>
+<p>Sequence File Modification:</p>
+<div class="highlight-python"><pre>--line-wrap N         Adjust line wrap for sequence strings. When N is 0,
+                      all line breaks are removed. Only fasta files are
+                      supported for the output format.
+--sort {length-asc,length-desc,name-asc,name-desc}
+                      Perform sorting by length or name, ascending or
+                      descending. ASCII sorting is performed for names</pre>
+</div>
+<p>Sequence Modificaton:</p>
+<div class="highlight-python"><pre>--apply-function /path/to/module.py:function_name
+                      Specify a custom function to apply to the input
+                      sequences, specified as
+                      /path/to/file.py:function_name. Function should accept
+                      an iterable of Bio.SeqRecord objects, and yield
+                      SeqRecords. Specify more than one to chain.
+--cut start:end       1-indexed start and end positions for cutting
+                      sequences, : separated. Includes last item.
+--dash-gap            Change . and : into - for all sequences
+--lower               Translate the sequences to lower case
+--reverse             Reverse the order of sites in sequences
+--reverse-complement  Convert sequences into reverse complements
+--squeeze             Remove any gaps that are present in the same position
+                      across all sequences in an alignment
+--transcribe {dna2rna,rna2dna}
+                      Transcription and back transcription for generic DNA
+                      and RNA. Source sequences must be the correct alphabet
+                      or this action will likely produce incorrect results.
+--translate {dna2protein,rna2protein,dna2proteinstop,rna2proteinstop}
+                      Translate from generic DNA/RNA to proteins. Options
+                      with "stop" suffix will NOT translate through stop
+                      codons .Source sequences must be the correct alphabet
+                      or this action will likely produce incorrect results.
+--ungap               Remove gaps in the sequence alignment
+--upper               Translate the sequences to upper case</pre>
+</div>
+<p>Record Selection:</p>
+<div class="highlight-python"><pre>--deduplicate-sequences
+                      Remove any duplicate sequences by sequence content,
+                      keep the first instance seen
+--deduplicated-sequences-file FILE
+                      Write all of the deduplicated sequences to a file
+--deduplicate-taxa    Remove any duplicate sequences by ID, keep the first
+                      instance seen
+--head N              Trim down to top N sequences
+--max-length N        Discard any sequences beyond the specified maximum
+                      length. This operation occurs *before* all length-
+                      changing options such as cut and squeeze.
+--min-length N        Discard any sequences less than the specified minimum
+                      length. This operation occurs *before* all length-
+                      changing options such as cut and squeeze.
+--pattern-include regex
+                      Filter the sequences by regular expression in name
+--pattern-exclude regex
+                      Filter out sequences by regular expression in name
+--prune-empty         Prune sequences containing only gaps ('-')
+--seq-pattern-include regex
+                      Filter the sequences by regular expression in sequence
+--seq-pattern-exclude regex
+                      Filter out sequences by regular expression in sequence
+--tail N              Trim down to bottom N sequences</pre>
+</div>
+<p>Sequence ID Modification:</p>
+<div class="highlight-python"><pre>--first-name          Take only the first whitespace-delimited word as the
+                      name of the sequence
+--name-suffix SUFFIX  Append a suffix to all IDs.
+--name-prefix PREFIX  Insert a prefix for all IDs.
+--pattern-replace search_pattern replace_pattern
+                      Replace regex pattern "search_pattern" with
+                      "replace_pattern" in sequence ID
+--strip-range         Strip ranges from sequences IDs, matching &lt;/x-y&gt;</pre>
+</div>
+<p>Format Options:</p>
+<div class="highlight-python"><pre>--input-format Format
+                      Input file format (default: determine from extension)
+--output-format Format
+                      Output file format (default: determine from extension)</pre>
+</div>
+</div>
+</div>
+<div class="section" id="primer-trim">
+<h2><tt class="docutils literal"><span class="pre">primer-trim</span></tt><a class="headerlink" href="#primer-trim" title="Permalink to this headline">¶</a></h2>
+<p><tt class="docutils literal"><span class="pre">primer-trim</span></tt> trims an alignment to a region defined by a set of forward and
+reverse primers.</p>
+<div class="section" id="possibly-to-implement">
+<h3>Possibly to implement:<a class="headerlink" href="#possibly-to-implement" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt>check</dt>
+<dd>check integrity of files
+should take &#8211;DNA &#8211;AA arguments to check if the file is one of these types
+(or perhaps an alphabet)
+make sure that you are using IUPAC characters for AA or Nuc</dd>
+</dl>
+</div>
+</div>
+<div class="section" id="indices-and-tables">
+<h2>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><a class="reference internal" href="genindex.html"><em>Index</em></a></li>
+<li><a class="reference internal" href="py-modindex.html"><em>Module Index</em></a></li>
+<li><a class="reference internal" href="search.html"><em>Search Page</em></a></li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="#">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">seqmagick</a><ul>
+<li><a class="reference internal" href="#motivation">Motivation</a></li>
+<li><a class="reference internal" href="#installation">Installation</a></li>
+<li><a class="reference internal" href="#use">Use</a></li>
+<li><a class="reference internal" href="#subcommands">Subcommands</a></li>
+<li><a class="reference internal" href="#info"><tt class="docutils literal"><span class="pre">info</span></tt></a></li>
+<li><a class="reference internal" href="#convert-and-mogrify"><tt class="docutils literal"><span class="pre">convert</span></tt> and <tt class="docutils literal"><span class="pre">mogrify</span></tt></a><ul>
+<li><a class="reference internal" href="#basic-conversion">Basic Conversion</a></li>
+<li><a class="reference internal" href="#sequence-modification">Sequence Modification</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#primer-trim"><tt class="docutils literal"><span class="pre">primer-trim</span></tt></a><ul>
+<li><a class="reference internal" href="#possibly-to-implement">Possibly to implement:</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
+</ul>
+</li>
+</ul>
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/index.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li><a href="#">seqmagick v0.2.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Matsen Group.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+  </body>
+</html>
