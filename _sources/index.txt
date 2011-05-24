@@ -248,14 +248,6 @@ Output can be in comma-separated, tab-separated, or aligned formats. See
 ``primer-trim`` trims an alignment to a region defined by a set of forward and
 reverse primers.  See ``seqmagick primer-trim -h`` for details.
 
-Possibly to implement:
-----------------------
-check
-  check integrity of files
-  should take --DNA --AA arguments to check if the file is one of these types
-  (or perhaps an alphabet)
-  make sure that you are using IUPAC characters for AA or Nuc
-
 
 .. _imagemagick: http://www.imagemagick.org/script/command-line-tools.php
 .. _`BioPython SeqIO wiki page`: http://www.biopython.org/wiki/SeqIO#File_Formats
