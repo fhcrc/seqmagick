@@ -1,3 +1,4 @@
+* Change default output format to 'align' for TTYs in seqmagick info
 * Add BioPython as dependency (closes GH-7)
 * Add primer-trim subcommand
 * Add option to apply custom function(s) to sequences

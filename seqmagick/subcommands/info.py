@@ -19,37 +19,77 @@ def build_parser(parser):
             type=argparse.FileType('w'), default=sys.stdout,
             metavar='destination_file',
             help='Output destination. Default: STDOUT')
-    parser.add_argument('--format', dest='output_format', default='tab',
-        choices=('tab', 'csv', 'align'), help='''Specify output format
-        as tab-delimited, CSV or aligned in a borderless table.
-        Default is tab-delimited''')
-    parser.add_argument('--width', dest='width', type=int, default=30,
-         help='''Specify width of columns when --format is set to align.
-         Defaults to a width of %(default)s.  Any output exceeding the column
-         width will be truncated.''')
+    parser.add_argument('--format', dest='output_format',
+        choices=('tab', 'csv', 'align'), help='''Specify output format as
+        tab-delimited, CSV or aligned in a borderless table.  Default is
+        tab-delimited if the output is directed to a file, aligned if output to
+        the console.''')
 
-
-def _print_file_info(row, output_format, handle, width):
+class SeqInfoWriter(object):
     """
-    Write out information that describes a sequence file.
+    Base writer for sequence files
     """
-    if 'tab' in output_format:
-        handle.write("\t".join(row) + "\n")
-    elif 'csv' in output_format:
-        writer = csv.writer(handle, delimiter=',', quotechar='"',
-                            quoting=csv.QUOTE_NONNUMERIC)
-        writer.writerow(row)
-    elif 'align' in output_format:
-        row = map(lambda s: s.ljust(width)[:width], row)
-        handle.write("".join(row) + "\n")
 
+    def __init__(self, sequence_files, output):
+        self.sequence_files = sequence_files
+        self.output = output
+
+    def write_row(self, row):
+        raise NotImplementedError("Override in subclass")
+
+    def write_header(self, header):
+        self.write_row(header)
+
+    def write(self):
+        header = ('name', 'alignment', 'min_len', 'max_len', 'avg_len',
+                  'num_seqs')
+        self.write_header(header)
+        for source_file in self.sequence_files:
+            row = summarize_sequence_file(source_file)
+            self.write_row(row)
+
+class CsvSeqInfoWriter(SeqInfoWriter):
+    delimiter = ','
+    def __init__(self, sequence_files, output):
+        super(CsvSeqInfoWriter, self).__init__(sequence_files, output)
+        self.writer = csv.writer(self.output, delimiter=self.delimiter,
+                lineterminator='\n')
+
+    def write_row(self, row):
+        # To cope with header
+        if hasattr(row, '_replace'):
+            row = row._replace(avg_len='{0:.2f}'.format(row.avg_len))
+        self.writer.writerow(row)
+
+class TsvSeqInfoWriter(CsvSeqInfoWriter):
+    delimiter = '\t'
+
+class AlignedSeqInfoWriter(SeqInfoWriter):
+    def __init__(self, sequence_files, output):
+        super(AlignedSeqInfoWriter, self).__init__(sequence_files, output)
+        self.max_name_length = max(len(os.path.basename(f))
+                                   for f in self.sequence_files)
+
+    def write_header(self, header):
+        fmt = ('{0:' + str(self.max_name_length + 1) + 's}{1:10s}'
+                '{2:>10s}{3:>10s}{4:>10s}{5:>10s}')
+        print >> self.output, fmt.format(*header)
+
+    def write_row(self, row):
+        fmt = ('{name:' + str(self.max_name_length + 1) + 's}{alignment:10s}'
+                '{min_len:10d}{max_len:10d}{avg_len:10.2f}{num_seqs:10d}')
+        print >> self.output, fmt.format(**row._asdict())
+
+
+_WRITERS = {'csv': CsvSeqInfoWriter, 'tab': TsvSeqInfoWriter, 'align':
+        AlignedSeqInfoWriter}
 
 _HEADERS = ('name', 'alignment', 'min_len', 'max_len', 'avg_len',
               'num_seqs')
 _SeqFileInfo = collections.namedtuple('SeqFileInfo', _HEADERS)
 
 
-def _summarize_file(source_file):
+def summarize_sequence_file(source_file):
     """
     Summarizes a sequence file, returning a tuple containing the name,
     whether the file is an alignment, minimum sequence length, maximum
@@ -73,7 +113,7 @@ def _summarize_file(source_file):
             if sequence_length != max_length:
                 is_alignment = False
 
-        # Work on determining the length of the longest sequence.
+        # Lengths
         if sequence_length > max_length:
             max_length = sequence_length
         if sequence_length < min_length:
@@ -90,33 +130,25 @@ def _summarize_file(source_file):
     if avg_length is None:
         min_length = max_length = avg_length = 0
 
-    return _SeqFileInfo(source_file, str(is_alignment).upper(),
-            str(min_length), str(max_length), '{0:.2f}'.format(avg_length),
-            str(sequence_count))
+    return _SeqFileInfo(source_file, str(is_alignment).upper(), min_length,
+            max_length, avg_length, sequence_count)
 
 def action(arguments):
     """
-    Given one more more sequence files, determine if the file is an
-    alignment, the maximum sequence length and the total number of
-    sequences.  Provides different output formats including tab
-    (tab-delimited), csv and align (aligned as if part of a borderless
-    table).
+    Given one more more sequence files, determine if the file is an alignment,
+    the maximum sequence length and the total number of sequences.  Provides
+    different output formats including tab (tab-delimited), csv and align
+    (aligned as if part of a borderless table).
     """
     handle = arguments.destination_file
     output_format = arguments.output_format
-    width = arguments.width
+    if not output_format:
+        try:
+            output_format = 'align' if handle.isatty() else 'tab'
+        except AttributeError:
+            output_format = 'tab'
 
-    # Create and write out the header row.
-    header = ('name', 'alignment', 'min_len', 'max_len', 'avg_len',
-              'num_seqs')
-
-    _print_file_info(header, output_format=output_format,
-                     handle=handle, width=width)
-
+    writer_cls = _WRITERS[output_format]
     with handle:
-        # Go through all source files passed in, one by one.
-        for source_file in arguments.source_files:
-            row = _summarize_file(source_file)
-
-            _print_file_info(row=row, output_format=output_format,
-                             handle=handle, width=width)
+        writer = writer_cls(arguments.source_files, handle)
+        writer.write()
