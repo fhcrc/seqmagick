@@ -5,6 +5,7 @@ import os.path
 
 # Define mappings in a dictionary with extension : BioPython_file_type.
 EXTENSION_TO_TYPE = {'.aln': 'clustal',
+                     '.afa': 'fasta',
                      '.fa': 'fasta',
                      '.faa': 'fasta',
                      '.fasta': 'fasta',
