@@ -2,8 +2,7 @@
 seqmagick
 =========
 
-Motivation
-==========
+http://fhcrc.github.com/seqmagick/
 
 We often have to convert between sequence formats and do little tasks on them,
 and it's not worth writing scripts for that.  Seqmagick is a kickass little
@@ -17,9 +16,7 @@ First, you'll need to install `BioPython`_. NumPy (which parts of BioPython
 depend on) is not required for seqmagick to function. Once done, install
 with::
 
-    git clone git://github.com/fhcrc/seqmagick.git
-    cd seqmagick
-    python setup.py install
+    pip install seqmagick
 
 
 The code
@@ -139,14 +136,6 @@ These can be stacked on top of one another::
                             Input file format (default: determine from extension)
       --output-format Format
                             Output file format (default: determine from extension)
-
-Possibly to implement:
-----------------------
-check
-  check integrity of files
-  should take --DNA --AA arguments to check if the file is one of these types
-  (or perhaps an alphabet)
-  make sure that you are using IUPAC characters for AA or Nuc
 
 
 .. _imagemagick: http://www.imagemagick.org/script/command-line-tools.php
