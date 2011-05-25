@@ -46,3 +46,21 @@ def typed_range(type_func, minimum, maximum):
                         minimum, maximum))
         return result
     return inner
+
+def partial_append_action(fn, argument_keys=None):
+    class PartialAppendAction(argparse.Action):
+        def __call__(self, parser, namespace, values, option_string=None):
+            items = getattr(namespace, self.dest, [])
+            if values is None:
+                values = []
+            elif not isinstance(values, list):
+                values = [values]
+
+            assert len(argument_keys or []) == len(values)
+
+            kwargs = dict(zip(argument_keys or [], values))
+            f = functools.partial(fn, **kwargs)
+            items.append(f)
+            setattr(namespace, self.dest, items)
+
+    return PartialAppendAction
