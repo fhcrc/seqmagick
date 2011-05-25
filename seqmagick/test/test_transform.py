@@ -196,3 +196,23 @@ class IsolateRegionTestCase(unittest.TestCase):
         self.assertRaises(ValueError, transform.isolate_region(
                 self.sequences, 10, 5).next)
 
+class MinUngapLengthTestCase(unittest.TestCase):
+
+    def setUp(self):
+        self.sequences = [_alignment_record('--AAC--'),
+                          _alignment_record('AAAA---'),
+                          _alignment_record('-------'),
+                          _alignment_record('ACGRAGT')]
+
+    def test_none_pass(self):
+        result = list(transform.min_ungap_length_discard(self.sequences, 8))
+        self.assertEquals([], result)
+
+    def test_all_pass(self):
+        result = list(transform.min_ungap_length_discard(self.sequences, 0))
+        self.assertEquals(self.sequences, result)
+
+    def test_partial(self):
+        result = transform.min_ungap_length_discard(self.sequences, 4)
+        self.assertEquals([self.sequences[1], self.sequences[3]], list(result))
+

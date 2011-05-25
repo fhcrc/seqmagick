@@ -183,6 +183,10 @@ Record Selection
       --min-length N        Discard any sequences less than the specified minimum
                             length. This operation occurs *before* all length-
                             changing options such as cut and squeeze.
+      --min-ungapped-length N
+                            Discard any sequences less than the specified minimum
+                            length, excluding gaps. This operation occurs *before*
+                            all length-changing options such as cut and squeeze.
       --pattern-include regex
                             Filter the sequences by regular expression in name
       --pattern-exclude regex

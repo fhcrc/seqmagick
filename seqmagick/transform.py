@@ -463,6 +463,14 @@ def min_length_discard(records, min_length):
         else:
             yield record
 
+def min_ungap_length_discard(records, min_length):
+    """
+    Discard any records that are shorter than min_length after removing gaps.
+    """
+    for record in records:
+        if len(record.seq.ungap('-')) >= min_length:
+            yield record
+
 
 # Begin squeeze-related functions
 

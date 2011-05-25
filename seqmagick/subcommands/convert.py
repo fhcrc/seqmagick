@@ -92,6 +92,10 @@ def add_options(parser):
         type=int, help='Discard any sequences less than the specified '
         'minimum length.  This operation occurs *before* all '
         'length-changing options such as cut and squeeze.')
+    seq_select.add_argument('--min-ungapped-length', metavar='N',
+        type=int, help="""Discard any sequences less than the specified minimum
+        length, excluding gaps. This operation occurs *before* all
+        length-changing options such as cut and squeeze.""")
     seq_select.add_argument('--pattern-include', metavar='regex',
         dest='pattern_include', help='Filter the sequences by '
         'regular expression in name')
@@ -187,6 +191,10 @@ def transform_file(source_file, destination_file, arguments):
 
     if arguments.min_length:
         records = transform.min_length_discard(records, arguments.min_length)
+
+    if arguments.min_ungapped_length:
+        records = transform.min_ungap_length_discard(records,
+                arguments.min_ungapped_length)
 
     if (arguments.deduplicate_sequences or
             arguments.deduplicate_sequences is None):
