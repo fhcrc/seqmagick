@@ -336,26 +336,50 @@ def tail(records, tail, record_count):
             yield record
 
 
-def squeeze(records, gaps):
+# Squeeze-related
+def gap_proportion(sequences, gap_chars='-'):
     """
-    Remove any gaps that are present in the same position across all sequences in an alignment.
+    Generates a list with the proportion of gaps by index in a set of
+    sequences.
     """
-    logging.info('Applying _squeeze generator: '
+    aln_len = None
+    gaps = []
+    for i, sequence in enumerate(sequences):
+        if aln_len is None:
+            aln_len = len(sequence)
+            gaps = [0] * aln_len
+        else:
+            if not len(sequence) == aln_len:
+                raise ValueError(("Unexpected sequence length {0}. Is this "
+                                  "an alignment?").format(len(sequence)))
+
+        # Update any gap positions in gap list
+        for j, char in enumerate(sequence.seq):
+            if char in gap_chars:
+                gaps[j] += 1
+
+    sequence_count = float(i + 1)
+    gap_props = [i / sequence_count for i in gaps]
+    return gap_props
+
+
+def squeeze(records, gap_threshold, sequence_iterator):
+    """
+    Remove any gaps that are present in the same position across all sequences
+    in an alignment.  Takes a second sequence iterator for determining gap
+    positions.
+    """
+    logging.info('Applying squeeze: '
                  'removing any gaps that are present '
                  'in the same position across all sequences in an alignment.')
-    sequence_length = len(gaps)
+
+    gap_proportions = gap_proportion(sequence_iterator)
+    keep_columns = [g < gap_threshold for g in gap_proportions]
+
     for record in records:
-        sequence = list(str(record.seq))
-        if len(sequence) != sequence_length:
-            raise ValueError("Unexpected sequence length: {0} != {1} "
-                    "Is this an alignment?".format(len(sequence),
-                                                   sequence_length))
-        squeezed = []
-        position = 0
-        while (position < sequence_length):
-            if bool(gaps[position]) is False:
-                squeezed.append(sequence[position])
-            position += 1
+        sequence = str(record.seq)
+        # Trim
+        squeezed = itertools.compress(sequence, keep_columns)
         yield SeqRecord(Seq(''.join(squeezed)), id=record.id,
                         description=record.description)
 
@@ -463,6 +487,7 @@ def min_length_discard(records, min_length):
         else:
             yield record
 
+
 def min_ungap_length_discard(records, min_length):
     """
     Discard any records that are shorter than min_length after removing gaps.
@@ -471,29 +496,6 @@ def min_ungap_length_discard(records, min_length):
         if len(record.seq.ungap('-')) >= min_length:
             yield record
 
-
-# Begin squeeze-related functions
-
-def _is_gap(character):
-    """
-    """
-    if character == '-':
-        return 1
-    else:
-        return 0
-
-
-def gap_check(gap, character):
-    """
-    Build up a gaps list that is used on all sequences
-    in an alignment.
-    """
-    # Skip any characters that have already been found
-    if gap == 0:
-        return gap
-    return int(bool(gap) & bool(_is_gap(character)))
-
-# End squeeze-related functions
 
 def sort_length(source_file, source_file_type, direction=1):
     """

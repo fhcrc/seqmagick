@@ -46,9 +46,16 @@ def add_options(parser):
         help='Reverse the order of sites in sequences')
     seq_mods.add_argument('--reverse-complement', dest='reverse_complement',
         action='store_true', help='Convert sequences into reverse complements')
-    seq_mods.add_argument('--squeeze', action='store_true', dest='squeeze',
-        help='Remove any gaps that are present in the same position '
-        'across all sequences in an alignment')
+    seq_mods.add_argument('--squeeze', action='store_const', dest='squeeze',
+            default=None,
+            const=1.0, help='''Remove any gaps that are present in the same
+            position across all sequences in an alignment (equivalent to
+            --squeeze-threshold=1.0)''')
+    seq_mods.add_argument('--squeeze-threshold', dest='squeeze',
+            action="store",
+            type=common.typed_range(float, 0.0, 1.0),
+            metavar='PROP', help="""Trim columns from an alignment which
+            have gaps in least the specified proportion of sequences.""")
     seq_mods.add_argument('--transcribe', dest='transcribe',
         choices=['dna2rna', 'rna2dna'],
         help='Transcription and back transcription for generic DNA and '
@@ -273,18 +280,8 @@ def transform_file(source_file, destination_file, arguments):
 
     if arguments.squeeze:
         logging.info("Performing squeeze")
-        gaps = []
-        # Need to iterate an additional time to determine which
-        # gaps are share between all sequences in an alignment.
-        for record in SeqIO.parse(source_file, source_file_type):
-            # Use numpy to prepopulate a gaps list.
-            if len(gaps) == 0:
-                gaps_length = len(record.seq)
-                #gaps = list(ones( (gaps_length), dtype=int16 ))
-                gaps = [1] * gaps_length
-            gaps = map(transform.gap_check, gaps, list(str(record.seq)))
-        records = transform.squeeze(records, gaps)
-        logging.debug("Squeeze gaps:\n%s", gaps)
+        records = transform.squeeze(records, arguments.squeeze,
+                                    SeqIO.parse(source_file, source_file_type))
 
     # cut needs to go after squeeze or the gaps list will no longer be relevent.
     # It is probably best not to use squeeze and cut together in most cases.

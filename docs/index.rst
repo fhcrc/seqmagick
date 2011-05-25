@@ -152,7 +152,11 @@ Sequence Modification
       --reverse             Reverse the order of sites in sequences
       --reverse-complement  Convert sequences into reverse complements
       --squeeze             Remove any gaps that are present in the same position
-                            across all sequences in an alignment
+                            across all sequences in an alignment (equivalent to
+                            --squeeze-threshold=1.0)
+      --squeeze-threshold PROP
+                            Trim columns from an alignment which have gaps in
+                            least the specified proportion of sequences.
       --transcribe {dna2rna,rna2dna}
                             Transcription and back transcription for generic DNA
                             and RNA. Source sequences must be the correct alphabet

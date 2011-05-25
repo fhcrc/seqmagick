@@ -72,6 +72,8 @@ class PatternReplaceTestCase(unittest.TestCase):
         expected[1].id = 'test_DONE-repl_2'
         self.assertEqual(self.sequences, result)
 
+
+
 class SqueezeTestCase(unittest.TestCase):
 
     def setUp(self):
@@ -83,9 +85,12 @@ class SqueezeTestCase(unittest.TestCase):
             seqrecord('sequence_3', '-T-AG-'),
         ]
 
+    def test_gap_proportion(self):
+        actual = transform.gap_proportion(self.sequences)
+        self.assertEquals([2./3, 0.0, 1.0, 0.0, 1./3, 1.0], actual)
+
     def test_basic_squeeze(self):
-        result = list(transform.squeeze(self.sequences,
-            [False, False, True, False, False, True]))
+        result = list(transform.squeeze(self.sequences, 1.0, self.sequences))
 
         self.assertEqual([4, 4, 4], [len(i) for i in result])
         self.assertEqual([i.id for i in self.sequences], [i.id for i in result])
@@ -97,6 +102,15 @@ class SqueezeTestCase(unittest.TestCase):
 
         self.assertEqual([str(i.seq) for i in expected],
                 [str(i.seq) for i in result])
+
+    def test_squeeze_none(self):
+        """
+        Threshold of 0.001 - nothing should be squeezed.
+        """
+        result = list(transform.squeeze(self.sequences, 1.01, self.sequences))
+        self.assertEqual([str(i.seq) for i in self.sequences],
+                [str(i.seq) for i in result])
+
 
 class SeqPatternTestCase(unittest.TestCase):
 

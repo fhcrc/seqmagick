@@ -2,6 +2,7 @@
 Common functions for subcommands
 """
 import argparse
+import functools
 import os
 import os.path
 
@@ -31,3 +32,17 @@ def sequence_file(sequence_file):
     else:
         raise argparse.ArgumentTypeError(sequence_file +
                 " not found or is not readable.")
+
+def typed_range(type_func, minimum, maximum):
+    """
+    Require variables to be of the specified type, between minimum and maximum
+    """
+    @functools.wraps(type_func)
+    def inner(string):
+        result = type_func(string)
+        if not result >= minimum and result <= maximum:
+            raise argparse.ArgumentTypeError(
+                    "Please provide a value between {0} and {1}".format(
+                        minimum, maximum))
+        return result
+    return inner
