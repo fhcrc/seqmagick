@@ -17,6 +17,7 @@ def add_options(parser):
     """
     Add optional arguments to the parser
     """
+    partial_action = common.partial_append_action
     file_mods = parser.add_argument_group("Sequence File Modification")
     file_mods.add_argument('--line-wrap', dest='line_wrap', metavar='N',
         type=int, help='Adjust line wrap for sequence strings.  '
@@ -38,14 +39,18 @@ def add_options(parser):
     seq_mods.add_argument('--cut', dest='cut', metavar="start:end",
         type=common.cut_range, help='1-indexed start and end positions for '
         'cutting sequences, : separated.  Includes last item.')
-    seq_mods.add_argument('--dash-gap', action='store_true', dest='dash_gap',
+    seq_mods.add_argument('--dash-gap',
+            action=partial_action(transform.dashes_cleanup), dest='transforms',
         help='Change . and : into - for all sequences')
-    seq_mods.add_argument('--lower', action='store_true', dest='lower',
-        help='Translate the sequences to lower case')
-    seq_mods.add_argument('--reverse', action='store_true', dest='reverse',
-        help='Reverse the order of sites in sequences')
-    seq_mods.add_argument('--reverse-complement', dest='reverse_complement',
-        action='store_true', help='Convert sequences into reverse complements')
+    seq_mods.add_argument('--lower',
+            action=partial_action(transform.lower_sequences),
+            dest='transforms', help='Translate the sequences to lower case')
+    seq_mods.add_argument('--reverse',
+            action=partial_action(transform.reverse_sequences),
+            dest='transforms', help='Reverse the order of sites in sequences')
+    seq_mods.add_argument('--reverse-complement', dest='transforms',
+            action=partial_action(transform.reverse_complement_sequences),
+            help='Convert sequences into reverse complements')
     seq_mods.add_argument('--squeeze', action='store_const', dest='squeeze',
             default=None,
             const=1.0, help='''Remove any gaps that are present in the same
@@ -68,10 +73,12 @@ def add_options(parser):
         '"stop" suffix will NOT translate through stop codons .'
         'Source sequences must be the correct alphabet or this action '
         'will likely produce incorrect results.')
-    seq_mods.add_argument('--ungap', action='store_true', dest='ungap',
-        help='Remove gaps in the sequence alignment')
-    seq_mods.add_argument('--upper', action='store_true', dest='upper',
-        help='Translate the sequences to upper case')
+    seq_mods.add_argument('--ungap',
+            action=partial_action(transform.ungap_sequences),
+            dest='transforms', help='Remove gaps in the sequence alignment')
+    seq_mods.add_argument('--upper',
+            action=partial_action(transform.upper_sequences),
+            dest='transforms', help='Translate the sequences to upper case')
 
     seq_select = parser.add_argument_group("Record Selection")
 

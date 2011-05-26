@@ -2,6 +2,7 @@
 Common functions for subcommands
 """
 import argparse
+import copy
 import functools
 import os
 import os.path
@@ -48,17 +49,52 @@ def typed_range(type_func, minimum, maximum):
     return inner
 
 def partial_append_action(fn, argument_keys=None):
+    """
+    Creates a new class extending argparse.Action, which appends a
+    partially-applied function to dest.
+
+    The optional argument_keys argument should either be None (no additional
+    arguments to fn) or an iterable of function keys to partially apply.
+    """
+    if isinstance(argument_keys, basestring):
+        argument_keys = [argument_keys]
+    argument_keys = argument_keys or []
+
     class PartialAppendAction(argparse.Action):
+        def __init__(self,
+                     option_strings,
+                     dest,
+                     const=None,
+                     default=None,
+                     required=False,
+                     help=None,
+                     type=None,
+                     metavar=None):
+            super(PartialAppendAction, self).__init__(
+                option_strings=option_strings,
+                dest=dest,
+                nargs=len(argument_keys),
+                const=const,
+                default=default,
+                required=required,
+                metavar=metavar,
+                type=type,
+                help=help)
+
         def __call__(self, parser, namespace, values, option_string=None):
-            items = getattr(namespace, self.dest, [])
+            items = copy.copy(getattr(namespace, self.dest, None)) or []
+
+            # If no value was set default to empty list
             if values is None:
                 values = []
             elif not isinstance(values, list):
                 values = [values]
 
-            assert len(argument_keys or []) == len(values)
+            if len(argument_keys) != len(values):
+                raise ValueError("Unexpected number of values")
 
-            kwargs = dict(zip(argument_keys or [], values))
+            # Generate keyword arguments for the input function
+            kwargs = dict(zip(argument_keys, values))
             f = functools.partial(fn, **kwargs)
             items.append(f)
             setattr(namespace, self.dest, items)

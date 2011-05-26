@@ -8,12 +8,11 @@ class PartialAppendTestCase(unittest.TestCase):
     def setUp(self):
         self.namespace = argparse.Namespace()
 
-
     def test_single_arg(self):
         def head(records, n):
             return records[:n]
 
-        a_cls = common.partial_append_action(head, ['n'])
+        a_cls = common.partial_append_action(head, 'n')
         a = a_cls([], 'functions')
 
         a(None, self.namespace, 2)
