@@ -91,58 +91,71 @@ def add_options(parser):
         type=argparse.FileType('w'),
         help='Write all of the deduplicated sequences to a file')
 
-    seq_select.add_argument('--deduplicate-taxa', action='store_true',
-        dest='deduplicate_taxa',
-        help='Remove any duplicate sequences by ID, keep the first '
-        'instance seen')
+    seq_select.add_argument('--deduplicate-taxa',
+            action=partial_action(transform.deduplicate_taxa),
+            dest='transforms', help="""Remove any duplicate sequences by ID,
+            keep the first instance seen""")
 
-    seq_select.add_argument('--head', metavar='N', dest='head', type=int,
-        help='Trim down to top N sequences')
-    seq_select.add_argument('--max-length', dest='max_length', metavar='N',
+    seq_select.add_argument('--head', metavar='N', dest='transforms', type=int,
+            action=partial_action(transform.head, 'head'), help="""Trim
+            down to top N sequences""")
+    seq_select.add_argument('--max-length', dest='transforms', metavar='N',
+        action=partial_action(transform.max_length_discard, 'max_length'),
         type=int, help='Discard any sequences beyond the specified '
         'maximum length.  This operation occurs *before* all '
         'length-changing options such as cut and squeeze.')
-    seq_select.add_argument('--min-length', dest='min_length', metavar='N',
-        type=int, help='Discard any sequences less than the specified '
-        'minimum length.  This operation occurs *before* all '
-        'length-changing options such as cut and squeeze.')
+    seq_select.add_argument('--min-length', dest='transforms', metavar='N',
+            action=partial_action(transform.min_length_discard, 'min_length'),
+            type=int, help="""Discard any sequences less than the specified
+            minimum length.  This operation occurs *before* all length-changing
+            options such as cut and squeeze.""")
     seq_select.add_argument('--min-ungapped-length', metavar='N',
-        type=int, help="""Discard any sequences less than the specified minimum
-        length, excluding gaps. This operation occurs *before* all
-        length-changing options such as cut and squeeze.""")
+            action=partial_action(transform.min_ungap_length_discard,
+                'min_length'), type=int, help="""Discard any sequences less
+                than the specified minimum length, excluding gaps. This
+                operation occurs *before* all length-changing options such as
+                cut and squeeze.""")
     seq_select.add_argument('--pattern-include', metavar='regex',
-        dest='pattern_include', help='Filter the sequences by '
-        'regular expression in name')
+            action=partial_action(transform.seq_include, 'filter_regex'),
+            dest='transforms', help="""Filter the sequences by regular
+            expression in name""")
     seq_select.add_argument('--pattern-exclude', metavar='regex',
-        dest='pattern_exclude', help='Filter out sequences by regular '
-        'expression in name')
-    seq_select.add_argument('--prune-empty', action="store_true", default=False,
-                        help="Prune sequences containing only gaps ('-')")
+            action=partial_action(transform.seq_exclude, 'filter_regex'),
+            dest='transforms', help="""Filter the sequences by regular
+            expression in name""")
+    seq_select.add_argument('--prune-empty',
+            action=partial_action(transform.prune_empty), dest='transforms',
+            help="Prune sequences containing only gaps ('-')")
     seq_select.add_argument('--seq-pattern-include', metavar='regex',
-        dest='seq_pattern_include', help='Filter the sequences by '
-        'regular expression in sequence')
+            action=partial_action(transform.seq_include, 'filter_regex'),
+            dest='transforms', help="""Filter the sequences by regular
+            expression in sequence""")
     seq_select.add_argument('--seq-pattern-exclude', metavar='regex',
-        dest='seq_pattern_exclude', help='Filter out sequences by regular '
-        'expression in sequence')
+            action=partial_action(transform.seq_exclude, 'filter_regex'),
+            dest='transforms', help="""Filter the sequences by regular
+            expression in sequence""")
     seq_select.add_argument('--tail', metavar='N', dest='tail', type=int,
         help='Trim down to bottom N sequences')
 
     id_mods = parser.add_argument_group("Sequence ID Modification")
-    id_mods.add_argument('--first-name', action='store_true',
-        dest='first_name',
-        help='Take only the first whitespace-delimited word as the '
-        'name of the sequence')
+    id_mods.add_argument('--first-name',
+            action=partial_action(transform.first_name_capture),
+            dest='transforms', help='''Take only the first whitespace-delimited
+            word as the name of the sequence''')
     id_mods.add_argument('--name-suffix', metavar='SUFFIX',
-        dest='name_suffix', help='Append a suffix to all IDs.')
+            action=partial_action(transform.name_append_suffix, 'suffix'),
+            dest='transforms', help='Append a suffix to all IDs.')
     id_mods.add_argument('--name-prefix', metavar='PREFIX',
-        dest='name_prefix', help='Insert a prefix for all IDs.')
+            action=partial_action(transform.name_insert_prefix, 'prefix'),
+            dest='transforms', help="""Insert a prefix for all
+            IDs.""")
     id_mods.add_argument('--pattern-replace', nargs=2,
                         metavar=('search_pattern', 'replace_pattern'),
                         help='Replace regex pattern "search_pattern" with '
                              '"replace_pattern" in sequence ID')
-    id_mods.add_argument('--strip-range', dest='strip_range',
-        action='store_true', help='Strip ranges from sequences IDs, '
-        'matching </x-y>')
+    id_mods.add_argument('--strip-range', dest='transforms',
+            action=partial_action(transform.strip_range), help="""Strip ranges
+            from sequences IDs, matching </x-y>""")
 
     format_group = parser.add_argument_group('Format Options')
     format_group.add_argument('--input-format', metavar='Format',
