@@ -300,7 +300,6 @@ def seq_include(records, filter_regex):
             yield record
 
 
-
 def seq_exclude(records, filter_regex):
     """
     Filter any sequences who's seq matches the filter. Ignore case.

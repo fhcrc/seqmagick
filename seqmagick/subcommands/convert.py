@@ -61,18 +61,19 @@ def add_options(parser):
             type=common.typed_range(float, 0.0, 1.0),
             metavar='PROP', help="""Trim columns from an alignment which
             have gaps in least the specified proportion of sequences.""")
-    seq_mods.add_argument('--transcribe', dest='transcribe',
-        choices=['dna2rna', 'rna2dna'],
-        help='Transcription and back transcription for generic DNA and '
-        'RNA. Source sequences must be the correct alphabet or this '
-        'action will likely produce incorrect results.')
-    seq_mods.add_argument('--translate', dest='translate',
-        choices=['dna2protein', 'rna2protein',
-                 'dna2proteinstop', 'rna2proteinstop'],
-        help='Translate from generic DNA/RNA to proteins. Options with '
-        '"stop" suffix will NOT translate through stop codons .'
-        'Source sequences must be the correct alphabet or this action '
-        'will likely produce incorrect results.')
+    seq_mods.add_argument('--transcribe', dest='transforms',
+            action=partial_action(transform.transcribe, 'transcribe'),
+            choices=('dna2rna', 'rna2dna'), help="""Transcription and back
+            transcription for generic DNA and RNA. Source sequences must be the
+            correct alphabet or this action will likely produce incorrect
+            results.""")
+    seq_mods.add_argument('--translate', dest='transforms',
+            action=partial_action(transform.translate, 'translate'),
+            choices=['dna2protein', 'rna2protein', 'dna2proteinstop',
+                'rna2proteinstop'], help="""Translate from generic DNA/RNA to
+            proteins. Options with "stop" suffix will NOT translate through
+            stop codons .  Source sequences must be the correct alphabet or
+            this action will likely produce incorrect results.""")
     seq_mods.add_argument('--ungap',
             action=partial_action(transform.ungap_sequences),
             dest='transforms', help='Remove gaps in the sequence alignment')
@@ -100,10 +101,10 @@ def add_options(parser):
             action=partial_action(transform.head, 'head'), help="""Trim
             down to top N sequences""")
     seq_select.add_argument('--max-length', dest='transforms', metavar='N',
-        action=partial_action(transform.max_length_discard, 'max_length'),
-        type=int, help='Discard any sequences beyond the specified '
-        'maximum length.  This operation occurs *before* all '
-        'length-changing options such as cut and squeeze.')
+            action=partial_action(transform.max_length_discard, 'max_length'),
+            type=int, help="""Discard any sequences beyond the specified
+            maximum length.  This operation occurs *before* all length-changing
+            options such as cut and squeeze.""")
     seq_select.add_argument('--min-length', dest='transforms', metavar='N',
             action=partial_action(transform.min_length_discard, 'min_length'),
             type=int, help="""Discard any sequences less than the specified
@@ -209,81 +210,20 @@ def transform_file(source_file, destination_file, arguments):
 
     logging.info('Setting up transform functions for file: %s', source_file)
 
-    # Deduplication occurs first, to get a checksum of the
-    # original sequence and to store the id field before any
-    # transformations occur.
-
-    if arguments.max_length:
-        records = transform.max_length_discard(records, arguments.max_length)
-
-    if arguments.min_length:
-        records = transform.min_length_discard(records, arguments.min_length)
-
-    if arguments.min_ungapped_length:
-        records = transform.min_ungap_length_discard(records,
-                arguments.min_ungapped_length)
+    # Apply all the transform functions in transforms
+    if arguments.transforms:
+        for function in arguments.transforms:
+            records = function(records)
 
     if (arguments.deduplicate_sequences or
             arguments.deduplicate_sequences is None):
         records = transform.deduplicate_sequences(
             records, arguments.deduplicate_sequences)
 
-    if arguments.deduplicate_taxa:
-        records = transform.deduplicate_taxa(records)
-
     if arguments.apply_function:
         for apply_function in arguments.apply_function:
             records = apply_function(records)
 
-    if arguments.dash_gap:
-        records = transform.dashes_cleanup(records)
-
-    if arguments.first_name:
-        records = transform.first_name_capture(records)
-    if arguments.upper:
-        records = transform.upper_sequences(records)
-
-    if arguments.lower:
-        records = transform.lower_sequences(records)
-
-    if arguments.prune_empty:
-        records = transform.prune_empty(records)
-
-    if arguments.reverse:
-        records = transform.reverse_sequences(records)
-
-    if arguments.reverse_complement:
-        records = transform.reverse_complement_sequences(records)
-
-    if arguments.ungap:
-        records = transform.ungap_sequences(records)
-
-    if arguments.name_prefix:
-        records = transform.name_insert_prefix(records, arguments.name_prefix)
-
-    if arguments.name_suffix:
-        records = transform.name_append_suffix(records, arguments.name_suffix)
-
-    if arguments.pattern_include:
-        records = transform.name_include(records, arguments.pattern_include)
-
-    if arguments.pattern_exclude:
-        records = transform.name_exclude(records, arguments.pattern_exclude)
-
-    if arguments.pattern_replace:
-        search_pattern, replace_pattern = arguments.pattern_replace
-        records = transform.name_replace(records, search_pattern,
-                replace_pattern)
-
-    if arguments.head and arguments.tail:
-        raise ValueError("Error: head and tail are mutually exclusive "
-                "at the moment.")
-
-    if arguments.head:
-        records = transform.head(records, arguments.head)
-
-    if arguments.strip_range:
-        records = transform.strip_range(records)
 
     if arguments.tail:
         # To know where to begin including records for tail, we need to count
