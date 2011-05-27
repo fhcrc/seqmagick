@@ -6,9 +6,14 @@ We often have to convert sequence files between formats and do little
 manipulations on them, and it's not worth writing scripts for that.
 ``seqmagick`` is a kickass little utility to expose the file format conversion
 in BioPython in a convenient way.  Instead of having a big mess of scripts,
-there is one that takes arguments.
+there is one that takes arguments::
 
-`Documentation`_.
+    seqmagick convert a.fasta b.phy    # convert from fasta to phylip
+    seqmagick mogrify --ungap a.fasta  # remove all gaps from a.fasta, in place
+    seqmagick info *.{fasta,sto}       # describe all FASTA and Stockholm 
+                                       # files in the current directory
+
+Want to learn more? Head to the `Documentation`_
 
 ``seqmagick`` is free software under the GPL v3.
 
