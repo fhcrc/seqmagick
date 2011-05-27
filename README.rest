@@ -2,143 +2,15 @@
 seqmagick
 =========
 
-http://fhcrc.github.com/seqmagick/
+We often have to convert sequence files between formats and do little
+manipulations on them, and it's not worth writing scripts for that.
+``seqmagick`` is a kickass little utility to expose the file format conversion
+in BioPython in a convenient way.  Instead of having a big mess of scripts,
+there is one that takes arguments.
 
-We often have to convert between sequence formats and do little tasks on them,
-and it's not worth writing scripts for that.  Seqmagick is a kickass little
-utility to expose the file format conversion in Biopython in a convenient way.
-Instead of having a big mess of scripts, there is one that takes arguments.
+`Documentation`_.
 
-Installation
-============
+``seqmagick`` is free software under the GPL v3.
 
-First, you'll need to install `BioPython`_. NumPy (which parts of BioPython
-depend on) is not required for seqmagick to function. Once done, install
-with::
+.. _`Documentation`: http://fhcrc.github.com/seqmagick/
 
-    pip install seqmagick
-
-
-The code
-========
-
-A command line tool to do little sequence manipulations in the spirit of
-imagemagick_.
-
-In particular, the format conversion specification happens by suffix unless
-you specify otherwise. Writing::
-
-  seqmagick convert x.fasta y.phy
-
-converts the FASTA file to phylip format. Of course. See the `BioPython
-SeqIO wiki page`_ for a list of supported types.
-
-In general the interface is in the format::
-
-  seqmagick <cmd>
-
-with <cmd> being one of:
-
-convert
-  ``convert a b`` will convert ``a`` to ``b``. Optional transformations can be
-  added.
-
-info
-  describe sequence file(s)
-
-mogrify
-  Modify a sequence file in place
-
-muscle
-  create an alignment using muscle.
-
-primer-trim
-  Trim alignment to the region specified by forward and reverse primer 
-  sequences.
-
-
-The real action for ``convert`` and ``mogrify`` happens in the options.
-These can be stacked on top of one another::
-
-    optional arguments:
-      -h, --help            show this help message and exit
-      --tmp TMP_DIR         Temporary directory for working file. Default is /tmp.
-      --debug               Enable debug output
-      --verbose             Enable verbose output
-
-    Sequence File Modification:
-      --line-wrap N         Adjust line wrap for sequence strings. When N is 0,
-                            all line breaks are removed. Only fasta files are
-                            supported for the output format.
-      --sort {length-asc,length-desc,name-asc,name-desc}
-                            Perform sorting by length or name, ascending or
-                            descending. ASCII sorting is performed for names
-
-    Sequence Modificaton:
-      --cut start:end       1-indexed start and end positions for cutting
-                            sequences, : separated. Includes last item.
-      --dash-gap            Change . and : into - for all sequences
-      --lower               Translate the sequences to lower case
-      --reverse             Reverse the order of sites in sequences
-      --reverse-complement  Convert sequences into reverse complements
-      --squeeze             Remove any gaps that are present in the same position
-                            across all sequences in an alignment
-      --transcribe {dna2rna,rna2dna}
-                            Transcription and back transcription for generic DNA
-                            and RNA. Source sequences must be the correct alphabet
-                            or this action will likely produce incorrect results.
-      --translate {dna2protein,rna2protein,dna2proteinstop,rna2proteinstop}
-                            Translate from generic DNA/RNA to proteins. Options
-                            with "stop" suffix will NOT translate through stop
-                            codons .Source sequences must be the correct alphabet
-                            or this action will likely produce incorrect results.
-      --ungap               Remove gaps in the sequence alignment
-      --upper               Translate the sequences to upper case
-
-    Record Selection:
-      --deduplicate-sequences
-                            Remove any duplicate sequences by sequence content,
-                            keep the first instance seen
-      --deduplicated-sequences-file FILE
-                            Write the IDs of the deduplicated sequences to a file
-      --deduplicate-taxa    Remove any duplicate sequences by ID, keep the first
-                            instance seen
-      --head N              Trim down to top N sequences
-      --max-length N        Discard any sequences beyond the specified maximum
-                            length. This operation occurs *before* all length-
-                            changing options such as cut and squeeze.
-      --min-length N        Discard any sequences less than the specified minimum
-                            length. This operation occurs *before* all length-
-                            changing options such as cut and squeeze.
-      --pattern-include regex
-                            Filter the sequences by regular expression in name
-      --pattern-exclude regex
-                            Filter out sequences by regular expression in name
-      --prune-empty         Prune sequences containing only gaps ('-')
-      --seq-pattern-include regex
-                            Filter the sequences by regular expression in sequence
-      --seq-pattern-exclude regex
-                            Filter out sequences by regular expression in sequence
-      --tail N              Trim down to bottom N sequences
-
-    Sequence ID Modification:
-      --first-name          Take only the first whitespace-delimited word as the
-                            name of the sequence
-      --name-suffix SUFFIX  Append a suffix to all IDs.
-      --name-prefix PREFIX  Insert a prefix for all IDs.
-      --pattern-replace search_pattern replace_pattern
-                            Replace regex pattern "search_pattern" with
-                            "replace_pattern" in sequence ID
-      --strip-range         Strip ranges from sequences IDs, matching </x-y>
-
-    Format Options:
-      --input-format Format
-                            Input file format (default: determine from extension)
-      --output-format Format
-                            Output file format (default: determine from extension)
-
-
-.. _imagemagick: http://www.imagemagick.org/script/command-line-tools.php
-
-.. _`BioPython SeqIO wiki page`: http://www.biopython.org/wiki/SeqIO#File_Formats
-.. _`BioPython`: http://www.biopython.org/
