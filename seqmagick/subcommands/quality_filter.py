@@ -93,6 +93,15 @@ class QualityScoreFilter(object):
 
 
 def ambiguous_base_filter(records, action):
+    """
+    Filter records, taking some action if 'N' is encountered in the sequence.
+
+    records - iterable of SeqRecord objects
+    action  - either 'truncate' (drop N and any sequence following) or 'drop'
+              (remove sequences with 'N's)
+    """
+    if action not in ('truncate', 'drop'):
+        raise ValueError("Unknown action: {0}".format(action))
     for record in records:
         nloc = record.seq.find('N')
         if nloc == -1:
@@ -102,8 +111,7 @@ def ambiguous_base_filter(records, action):
         elif action == 'drop':
             continue
         else:
-            raise ValueError("Unknown action: " + action)
-
+            assert False
 
 def action(arguments):
     qfilter = QualityScoreFilter(arguments.min_mean_quality,

@@ -71,3 +71,8 @@ class AmbiguousBaseFilterTestCase(unittest.TestCase):
         self.assertEquals(5, len(actual))
         self.assertEquals(['ACGT', '', '', 'ACGT', 'GG'],
                 [str(s.seq) for s in actual])
+
+    def test_invalid_action(self):
+
+        self.assertRaises(ValueError, quality_filter.ambiguous_base_filter(
+                self.records, 'other').next)
