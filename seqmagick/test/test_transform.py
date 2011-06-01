@@ -2,6 +2,7 @@
 Tests for seqmagick.transform
 """
 
+from cStringIO import StringIO
 import unittest
 
 from Bio import Alphabet
@@ -229,4 +230,28 @@ class MinUngapLengthTestCase(unittest.TestCase):
     def test_partial(self):
         result = transform.min_ungap_length_discard(self.sequences, 4)
         self.assertEquals([self.sequences[1], self.sequences[3]], list(result))
+
+class FilterFromFileTestCase(unittest.TestCase):
+
+    def setUp(self):
+        ids = """sequenceid1
+sequenceid2
+sequence id 4
+"""
+        self.handle = StringIO(ids)
+
+        self.sequences = [SeqRecord(Seq("AAA"), id="sequenceid1"),
+                SeqRecord(Seq("BBB"), id="sequenceid2"),
+                SeqRecord(Seq("CCC"), id="sequenceid3"),
+                SeqRecord(Seq("DDD"), id="sequence id 4"),
+                SeqRecord(Seq("EEE"), id="test sequence"), ]
+
+    def test_filter(self):
+        expected = [self.sequences[0], self.sequences[1], self.sequences[3]]
+        actual = list(transform.filter_from_file(self.sequences, self.handle))
+        self.assertEquals(3, len(actual))
+        self.assertEquals(expected, actual)
+
+    def test_ignore_case(self):
+        self.fail("To Write")
 

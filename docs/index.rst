@@ -180,6 +180,9 @@ Record Selection
                             Write all of the deduplicated sequences to a file
       --deduplicate-taxa    Remove any duplicate sequences by ID, keep the first
                             instance seen
+      --filter-from-file FILE
+                            Filter sequences, keeping only those sequence IDs in
+                            the specified file
       --head N              Trim down to top N sequences
       --max-length N        Discard any sequences beyond the specified maximum
                             length. This operation occurs *before* all length-

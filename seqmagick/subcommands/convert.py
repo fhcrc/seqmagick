@@ -89,6 +89,9 @@ def add_options(parser):
         help='Remove any duplicate sequences by ID, keep the first '
         'instance seen')
 
+    seq_select.add_argument('--filter-from-file', metavar='FILE',
+            type=argparse.FileType('r'), help="""Filter sequences, keeping only
+            those sequence IDs in the specified file""")
     seq_select.add_argument('--head', metavar='N', dest='head', type=int,
         help='Trim down to top N sequences')
     seq_select.add_argument('--max-length', dest='max_length', metavar='N',
@@ -184,7 +187,7 @@ def transform_file(source_file, destination_file, arguments):
 
 
     #########################################
-    # Apply generator functions to iterator.#
+    # Apply generator functions to iterator #
     #########################################
 
     logging.info('Setting up transform functions for file: %s', source_file)
@@ -218,8 +221,13 @@ def transform_file(source_file, destination_file, arguments):
     if arguments.dash_gap:
         records = transform.dashes_cleanup(records)
 
+    if arguments.filter_from_file:
+        records = transform.filter_from_file(records,
+                arguments.filter_from_file)
+
     if arguments.first_name:
         records = transform.first_name_capture(records)
+
     if arguments.upper:
         records = transform.upper_sequences(records)
 

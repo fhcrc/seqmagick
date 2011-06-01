@@ -2,7 +2,8 @@
 * Add BioPython as dependency (closes GH-7)
 * Add primer-trim subcommand
 * Add option to apply custom function(s) to sequences
-* Add new filtering options: --squeeze-threshold and --min-ungapped-length
+* Add new filtering options: --squeeze-threshold, --min-ungapped-length
+  --filter-from-file
 
 0.2.0
 =====
