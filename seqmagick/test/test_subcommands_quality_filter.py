@@ -43,3 +43,31 @@ class QualityFilterTestCase(unittest.TestCase):
         self.assertEquals(2, len(result))
         self.assertEquals('AC', str(result.seq))
 
+
+class AmbiguousBaseFilterTestCase(unittest.TestCase):
+    """
+    Tests for ambiguous_base_filter
+    """
+    def setUp(self):
+        self.records = [SeqRecord(Seq('ACGT')),
+                SeqRecord(Seq('NNNN')),
+                SeqRecord(Seq('NACT')),
+                SeqRecord(Seq('ACGTN')),
+                SeqRecord(Seq('GGNTTACT')),
+                ]
+
+    def test_drop(self):
+        """
+        Test that the first record (with no Ns) does not get filtered
+        """
+        actual = list(quality_filter.ambiguous_base_filter(self.records,
+            'drop'))
+        self.assertEquals(1, len(actual))
+        self.assertEquals(self.records[0], actual[0])
+
+    def test_truncate(self):
+        actual = list(quality_filter.ambiguous_base_filter(self.records,
+            'truncate'))
+        self.assertEquals(5, len(actual))
+        self.assertEquals(['ACGT', '', '', 'ACGT', 'GG'],
+                [str(s.seq) for s in actual])

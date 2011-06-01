@@ -29,6 +29,10 @@ def build_parser(parser):
             mean quality within the window drops below --min-mean-quality.
             0=use whole sequence. (default: %(default)s)""")
 
+    parser.add_argument('--ambiguous-action', choices=('truncate', 'drop'),
+            help="""Action to take on ambiguous base in sequence (N's).
+            Default: no action.""")
+
 def mean(sequence):
     return sum(sequence) / float(len(sequence))
 
@@ -88,6 +92,19 @@ class QualityScoreFilter(object):
                 yield filtered
 
 
+def ambiguous_base_filter(records, action):
+    for record in records:
+        nloc = record.seq.find('N')
+        if nloc == -1:
+            yield record
+        elif action == 'truncate':
+            yield record[:nloc]
+        elif action == 'drop':
+            continue
+        else:
+            raise ValueError("Unknown action: " + action)
+
+
 def action(arguments):
     qfilter = QualityScoreFilter(arguments.min_mean_quality,
             arguments.quality_window)
@@ -96,6 +113,9 @@ def action(arguments):
             sequences = QualityIO.PairedFastaQualIterator(
                     arguments.input_fasta, arguments.input_qual)
             filtered = qfilter.filter_records(sequences)
+            if arguments.ambiguous_action:
+                filtered = ambiguous_base_filter(filtered,
+                        arguments.ambiguous_action)
 
             with arguments.output_fasta:
                 count = SeqIO.write(filtered, arguments.output_fasta,
