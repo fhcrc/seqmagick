@@ -5,6 +5,7 @@
 * Add new filtering options: --squeeze-threshold, --min-ungapped-length
   --filter-from-file
 * Removed seqmagick muscle
+* Added new subcommand `quality-filter`
 
 0.2.0
 =====
