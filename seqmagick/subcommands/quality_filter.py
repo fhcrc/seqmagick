@@ -66,7 +66,8 @@ class BaseFilter(object):
     """
 
     def __init__(self):
-        self.passed = 0
+        self.passed_unchanged = 0
+        self.passed_changed = 0
         self.failed = 0
 
     def filter_record(self, record):
@@ -79,10 +80,18 @@ class BaseFilter(object):
         for record in records:
             filtered = self.filter_record(record)
             if filtered:
-                self.passed += 1
+                # Quick tracking whether the sequence was modified
+                if filtered == record:
+                    self.passed_unchanged += 1
+                else:
+                    self.passed_changed += 1
                 yield filtered
             else:
                 self.failed += 1
+
+    @property
+    def passed(self):
+        return self.passed_changed + self.passed_unchanged
 
     @property
     def total_filtered(self):
@@ -187,11 +196,11 @@ def action(arguments):
                 SeqIO.write(filtered, arguments.output_file,
                         output_type)
 
-    rpt_rows = [(f.name, f.passed, f.failed, f.total_filtered, f.proportion_passed)
-                for f in filters]
+    rpt_rows = [(f.name, f.passed_unchanged, f.passed_changed, f.failed,
+        f.total_filtered, f.proportion_passed) for f in filters]
 
     # Write report
     writer = csv.writer(sys.stdout, lineterminator='\n', delimiter='\t')
-    writer.writerow(('filter', 'passed', 'failed', 'total_processed',
-        'proportion_passed'))
+    writer.writerow(('filter', 'passed_unchanged', 'passed_changed', 'failed',
+        'total_processed', 'proportion_passed'))
     writer.writerows(rpt_rows)
