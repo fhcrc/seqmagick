@@ -4,6 +4,7 @@
 * Add option to apply custom function(s) to sequences
 * Add new filtering options: --squeeze-threshold, --min-ungapped-length
   --filter-from-file
+* Removed seqmagick muscle
 
 0.2.0
 =====
