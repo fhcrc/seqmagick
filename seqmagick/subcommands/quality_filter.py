@@ -1,5 +1,5 @@
 """
-BaseFilter reads based on quality scores
+Filter reads based on quality scores
 """
 
 import argparse
@@ -107,7 +107,7 @@ class QualityScoreFilter(BaseFilter):
 
     def filter_record(self, record):
         """
-        BaseFilter a single record
+        Filter a single record
 
         Returns None if the record failed.
         """
