@@ -4,13 +4,14 @@ BaseFilter reads based on quality scores
 
 import argparse
 import collections
+import csv
 import itertools
+import sys
 
 from Bio import SeqIO
 from Bio.SeqIO import QualityIO
 
 from seqmagick import fileformat
-
 
 def build_parser(parser):
     """
@@ -82,6 +83,14 @@ class BaseFilter(object):
                 yield filtered
             else:
                 self.failed += 1
+
+    @property
+    def total_filtered(self):
+        return self.passed + self.failed
+
+    @property
+    def proportion_passed(self):
+        return float(self.passed) / self.total_filtered
 
 
 class QualityScoreFilter(BaseFilter):
@@ -161,7 +170,7 @@ def action(arguments):
     qfilter = QualityScoreFilter(arguments.min_mean_quality,
             arguments.quality_window)
 
-    output_type = fileformat.from_filename(arguments.output_fasta.name)
+    output_type = fileformat.from_filename(arguments.output_file.name)
     filters = [qfilter]
     with arguments.input_fasta:
         with arguments.input_qual:
@@ -174,8 +183,15 @@ def action(arguments):
                 filtered = ambiguous_filter.filter_records(filtered)
                 filters.append(ambiguous_filter)
 
-            with arguments.output_fasta:
-                count = SeqIO.write(filtered, arguments.output_fasta,
+            with arguments.output_file:
+                SeqIO.write(filtered, arguments.output_file,
                         output_type)
 
-    print count
+    rpt_rows = [(f.name, f.passed, f.failed, f.total_filtered, f.proportion_passed)
+                for f in filters]
+
+    # Write report
+    writer = csv.writer(sys.stdout, lineterminator='\n', delimiter='\t')
+    writer.writerow(('filter', 'passed', 'failed', 'total_processed',
+        'proportion_passed'))
+    writer.writerows(rpt_rows)

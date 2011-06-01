@@ -63,16 +63,19 @@ class AmbiguousBaseFilterTestCase(unittest.TestCase):
         instance = quality_filter.AmbiguousBaseFilter('drop')
         actual = list(instance.filter_records(self.records))
         self.assertEquals(1, len(actual))
+        self.assertEquals(1, instance.passed)
+        self.assertEquals(4, instance.failed)
         self.assertEquals(self.records[0], actual[0])
 
     def test_truncate(self):
         instance = quality_filter.AmbiguousBaseFilter('truncate')
         actual = list(instance.filter_records(self.records))
         self.assertEquals(5, len(actual))
+        self.assertEquals(0, instance.failed)
+        self.assertEquals(5, instance.passed)
         self.assertEquals(['ACGT', '', '', 'ACGT', 'GG'],
                 [str(s.seq) for s in actual])
 
     def test_invalid_action(self):
-
         self.assertRaises(ValueError, quality_filter.AmbiguousBaseFilter,
                 'other')
