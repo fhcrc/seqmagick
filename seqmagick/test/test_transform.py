@@ -252,6 +252,7 @@ sequence id 4
         self.assertEquals(3, len(actual))
         self.assertEquals(expected, actual)
 
+    @unittest.skip("Not written")
     def test_ignore_case(self):
         self.fail("To Write")
 
