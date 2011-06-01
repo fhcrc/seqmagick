@@ -1,11 +1,10 @@
 """
-Filter reads based on quality scores
+BaseFilter reads based on quality scores
 """
 
 import argparse
 import collections
 import itertools
-import os.path
 
 from Bio import SeqIO
 from Bio.SeqIO import QualityIO
@@ -25,16 +24,16 @@ def build_parser(parser):
             help="""Output file. Format determined from extension.""")
     parser.add_argument('--min-mean-quality', metavar='QUALITY', type=float,
             default=25, help="""Minimum mean quality score for each read
-            (default: %(default)s""")
+            [default: %(default)s]""")
     parser.add_argument('--quality-window', type=int, metavar='WINDOW_SIZE',
             default=0, help="""Window size for truncating sequences.  When set
             to a non-zero value, sequences are truncated where the mean mean
             quality within the window drops below --min-mean-quality.
-            (default: %(default)s)""")
+            [default: %(default)s]""")
 
     parser.add_argument('--ambiguous-action', choices=('truncate', 'drop'),
             help="""Action to take on ambiguous base in sequence (N's).
-            Default: no action.""")
+            [default: no action]""")
 
 
 def mean(sequence):
@@ -60,21 +59,48 @@ def moving_average(iterable, n):
         yield s / float(n)
 
 
+class BaseFilter(object):
+    """
+    Base class for filters
+    """
 
-class QualityScoreFilter(object):
+    def __init__(self):
+        self.passed = 0
+        self.failed = 0
+
+    def filter_record(self, record):
+        raise NotImplementedError("Override in subclass")
+
+    def filter_records(self, records):
+        """
+        Apply the filter to records
+        """
+        for record in records:
+            filtered = self.filter_record(record)
+            if filtered:
+                self.passed += 1
+                yield filtered
+            else:
+                self.failed += 1
+
+
+class QualityScoreFilter(BaseFilter):
     """
     Quality score filter
     """
 
+    name = 'Quality Score Filter'
+
     def __init__(self, min_mean_score=25.0, window_size=0):
+        super(QualityScoreFilter, self).__init__()
         self.min_mean_score = min_mean_score
         self.window_size = window_size
 
     def filter_record(self, record):
         """
-        Filter a single record
+        BaseFilter a single record
 
-        Returns None
+        Returns None if the record failed.
         """
         quality_scores = record.letter_annotations['phred_quality']
 
@@ -97,34 +123,34 @@ class QualityScoreFilter(object):
 
         return record[:clip_right]
 
-    def filter_records(self, records):
-        """
-        Apply the filter to records
-        """
-        for record in records:
-            filtered = self.filter_record(record)
-            if filtered:
-                yield filtered
 
-
-def ambiguous_base_filter(records, action):
+class AmbiguousBaseFilter(BaseFilter):
     """
     Filter records, taking some action if 'N' is encountered in the sequence.
 
-    records - iterable of SeqRecord objects
     action  - either 'truncate' (drop N and any sequence following) or 'drop'
               (remove sequences with 'N's)
     """
-    if action not in ('truncate', 'drop'):
-        raise ValueError("Unknown action: {0}".format(action))
-    for record in records:
+
+    name = 'Ambiguous Base Filter'
+
+    def __init__(self, action):
+        super(AmbiguousBaseFilter, self).__init__()
+        if action not in ('truncate', 'drop'):
+            raise ValueError("Unknown action: {0}".format(action))
+        self.action = action
+
+    def filter_record(self, record):
+        """
+        Filter a record, truncating or dropping at an 'N'
+        """
         nloc = record.seq.find('N')
         if nloc == -1:
-            yield record
-        elif action == 'truncate':
-            yield record[:nloc]
-        elif action == 'drop':
-            continue
+            return record
+        elif self.action == 'truncate':
+            return record[:nloc]
+        elif self.action == 'drop':
+            return None
         else:
             assert False
 
@@ -136,17 +162,20 @@ def action(arguments):
             arguments.quality_window)
 
     output_type = fileformat.from_filename(arguments.output_fasta.name)
+    filters = [qfilter]
     with arguments.input_fasta:
         with arguments.input_qual:
             sequences = QualityIO.PairedFastaQualIterator(
                     arguments.input_fasta, arguments.input_qual)
             filtered = qfilter.filter_records(sequences)
             if arguments.ambiguous_action:
-                filtered = ambiguous_base_filter(filtered,
+                ambiguous_filter = AmbiguousBaseFilter(
                         arguments.ambiguous_action)
+                filtered = ambiguous_filter.filter_records(filtered)
+                filters.append(ambiguous_filter)
 
             with arguments.output_fasta:
                 count = SeqIO.write(filtered, arguments.output_fasta,
                         output_type)
 
-            print count
+    print count

@@ -60,19 +60,19 @@ class AmbiguousBaseFilterTestCase(unittest.TestCase):
         """
         Test that the first record (with no Ns) does not get filtered
         """
-        actual = list(quality_filter.ambiguous_base_filter(self.records,
-            'drop'))
+        instance = quality_filter.AmbiguousBaseFilter('drop')
+        actual = list(instance.filter_records(self.records))
         self.assertEquals(1, len(actual))
         self.assertEquals(self.records[0], actual[0])
 
     def test_truncate(self):
-        actual = list(quality_filter.ambiguous_base_filter(self.records,
-            'truncate'))
+        instance = quality_filter.AmbiguousBaseFilter('truncate')
+        actual = list(instance.filter_records(self.records))
         self.assertEquals(5, len(actual))
         self.assertEquals(['ACGT', '', '', 'ACGT', 'GG'],
                 [str(s.seq) for s in actual])
 
     def test_invalid_action(self):
 
-        self.assertRaises(ValueError, quality_filter.ambiguous_base_filter(
-                self.records, 'other').next)
+        self.assertRaises(ValueError, quality_filter.AmbiguousBaseFilter,
+                'other')

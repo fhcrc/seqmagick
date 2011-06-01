@@ -264,6 +264,31 @@ reverse primers.  See ``seqmagick primer-trim -h`` for details.
 .. _`BioPython SeqIO wiki page`: http://www.biopython.org/wiki/SeqIO#File_Formats
 .. _`BioPython`: http://www.biopython.org/
 
+``quality-filter``
+------------------
+
+``quality-filter`` truncates and removes sequences that don't match a set of
+quality criteria.  The subcommand takes a FASTA and quality score file, and
+writes the results to an output file::
+
+    positional arguments:
+      input_fasta           Input fasta file
+      input_qual            The quality scores associated with fasta_file
+      output_file           Output file. Format determined from extension.
+
+    optional arguments:
+      -h, --help            show this help message and exit
+      --min-mean-quality QUALITY
+                            Minimum mean quality score for each read (default: 25)
+      --quality-window WINDOW_SIZE
+                            Window size for truncating sequences. When set to a
+                            non-zero value, sequences are truncated where the mean
+                            mean quality within the window drops below --min-mean-
+                            quality. (default: 0)
+      --ambiguous-action {truncate,drop}
+                            Action to take on ambiguous base in sequence (N's).
+                            Default: no action.
+
 
 Indices and tables
 ==================
