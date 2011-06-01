@@ -213,6 +213,7 @@ def locate_primers(sequences, forward_primer, reverse_primer,
     """
     forward_loc = None
     reverse_loc = None
+    seq_length = None
 
     # Reverse complement the reverse primer, if appropriate
     if reverse_complement:
@@ -222,6 +223,11 @@ def locate_primers(sequences, forward_primer, reverse_primer,
     reverse_aligner = PrimerAligner(reverse_primer)
 
     for sequence in sequences:
+        if seq_length is None:
+            seq_length = len(sequence)
+        elif len(sequence) != seq_length:
+            raise ValueError(("Unexpected sequence length: {0}. "
+                    "Is this an alignment?").format(len(sequence)))
         index_map = ungap_index_map(sequence.seq)
         if forward_loc is None:
             ham_dist, start, end = \
