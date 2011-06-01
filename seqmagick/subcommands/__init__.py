@@ -1,4 +1,4 @@
-commands = 'convert', 'info', 'mogrify', 'muscle', 'primer_trim'
+commands = 'convert', 'info', 'mogrify', 'primer_trim'
 
 def itermodules(root=__name__):
     for command in commands:
