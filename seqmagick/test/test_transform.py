@@ -231,7 +231,7 @@ class MinUngapLengthTestCase(unittest.TestCase):
         result = transform.min_ungap_length_discard(self.sequences, 4)
         self.assertEquals([self.sequences[1], self.sequences[3]], list(result))
 
-class FilterFromFileTestCase(unittest.TestCase):
+class IncludeExcludeMixIn(object):
 
     def setUp(self):
         ids = """sequenceid1
@@ -246,13 +246,19 @@ sequence id 4
                 SeqRecord(Seq("DDD"), id="sequence id 4"),
                 SeqRecord(Seq("EEE"), id="test sequence"), ]
 
+
+class IncludeFromFileTestCase(IncludeExcludeMixIn, unittest.TestCase):
+
     def test_filter(self):
         expected = [self.sequences[0], self.sequences[1], self.sequences[3]]
-        actual = list(transform.filter_from_file(self.sequences, self.handle))
+        actual = list(transform.include_from_file(self.sequences, self.handle))
         self.assertEquals(3, len(actual))
         self.assertEquals(expected, actual)
 
-    @unittest.skip("Not written")
-    def test_ignore_case(self):
-        self.fail("To Write")
+class ExcludeFromFileTestCase(IncludeExcludeMixIn, unittest.TestCase):
 
+    def test_filter(self):
+        expected = [self.sequences[2], self.sequences[4]]
+        actual = list(transform.exclude_from_file(self.sequences, self.handle))
+        self.assertEquals(2, len(actual))
+        self.assertEquals(expected, actual)

@@ -3,7 +3,7 @@
 * Add primer-trim subcommand
 * Add option to apply custom function(s) to sequences
 * Add new filtering options: --squeeze-threshold, --min-ungapped-length
-  --filter-from-file
+  --include-from-file --exclude-from-file
 * Removed seqmagick muscle
 * Added new subcommand `quality-filter`
 

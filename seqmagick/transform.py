@@ -91,7 +91,7 @@ def first_name_capture(records):
             yield record
 
 
-def filter_from_file(records, handle):
+def include_from_file(records, handle):
     """
     Filter the records, keeping only sequences whose ID is contained in the
     handle.
@@ -100,6 +100,18 @@ def filter_from_file(records, handle):
 
     for record in records:
         if record.id.strip() in ids:
+            yield record
+
+
+def exclude_from_file(records, handle):
+    """
+    Filter the records, keeping only sequences whose ID is not contained in the
+    handle.
+    """
+    ids = set(i.strip() for i in handle)
+
+    for record in records:
+        if record.id.strip() not in ids:
             yield record
 
 

@@ -89,7 +89,10 @@ def add_options(parser):
         help='Remove any duplicate sequences by ID, keep the first '
         'instance seen')
 
-    seq_select.add_argument('--filter-from-file', metavar='FILE',
+    seq_select.add_argument('--exclude-from-file', metavar='FILE',
+            type=argparse.FileType('r'), help="""Filter sequences, removing
+            those sequence IDs in the specified file""")
+    seq_select.add_argument('--include-from-file', metavar='FILE',
             type=argparse.FileType('r'), help="""Filter sequences, keeping only
             those sequence IDs in the specified file""")
     seq_select.add_argument('--head', metavar='N', dest='head', type=int,
@@ -221,9 +224,13 @@ def transform_file(source_file, destination_file, arguments):
     if arguments.dash_gap:
         records = transform.dashes_cleanup(records)
 
-    if arguments.filter_from_file:
-        records = transform.filter_from_file(records,
-                arguments.filter_from_file)
+    if arguments.exclude_from_file:
+        records = transform.exclude_from_file(records,
+                arguments.exclude_from_file)
+
+    if arguments.include_from_file:
+        records = transform.include_from_file(records,
+                arguments.include_from_file)
 
     if arguments.first_name:
         records = transform.first_name_capture(records)
