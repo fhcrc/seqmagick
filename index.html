@@ -337,7 +337,38 @@ examples/wrapped.fasta    FALSE      120      237      178.50   2</pre>
 <div class="section" id="primer-trim">
 <h3><a class="toc-backref" href="#id13"><tt class="docutils literal"><span class="pre">primer-trim</span></tt></a><a class="headerlink" href="#primer-trim" title="Permalink to this headline">¶</a></h3>
 <p><tt class="docutils literal"><span class="pre">primer-trim</span></tt> trims an alignment to a region defined by a set of forward and
-reverse primers.  See <tt class="docutils literal"><span class="pre">seqmagick</span> <span class="pre">primer-trim</span> <span class="pre">-h</span></tt> for details.</p>
+reverse primers. Usage is as follows:</p>
+<div class="highlight-python"><pre>positional arguments:
+  source_file           Source alignment file
+  output_file           Destination trimmed file
+  forward_primer        The forward primer used
+  reverse_primer        The reverse primer used. By default the reverse primer
+                        is assumed to be a subsequence of the top strand (that
+                        is, the reverse complement of an actual downstream PCR
+                        primer). Use --reverse-is-revcomp if this is not the
+                        case.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --reverse-is-revcomp  Reverse primer is written as the reverse complement of
+                        the top strand (default: False)
+  --source-format SOURCE_FORMAT
+                        Alignment format (default: detect from extension
+  --output-format OUTPUT_FORMAT
+                        Alignment format (default: detect from extension
+  --include-primers     Include the primers in the output (default: False)
+  --max-hamming-distance MAX_HAMMING_DISTANCE
+                        Maximum Hamming distance between primer and alignment
+                        site (default: 1). IUPAC ambiguous bases in the primer
+                        matching unambiguous bases in the alignment are not
+                        penalized
+  --prune-action {trim,isolate}
+                        Action to take. Options are trim (trim to the region
+                        defined by the two primers, decreasing the width of
+                        the alignment), or isolate (convert all characters
+                        outside the primer-defined area to gaps). default:
+                        trim</pre>
+</div>
 </div>
 <div class="section" id="quality-filter">
 <h3><a class="toc-backref" href="#id14"><tt class="docutils literal"><span class="pre">quality-filter</span></tt></a><a class="headerlink" href="#quality-filter" title="Permalink to this headline">¶</a></h3>

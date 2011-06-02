@@ -258,7 +258,38 @@ Output can be in comma-separated, tab-separated, or aligned formats. See
 ---------------
 
 ``primer-trim`` trims an alignment to a region defined by a set of forward and
-reverse primers.  See ``seqmagick primer-trim -h`` for details.
+reverse primers. Usage is as follows::
+
+    positional arguments:
+      source_file           Source alignment file
+      output_file           Destination trimmed file
+      forward_primer        The forward primer used
+      reverse_primer        The reverse primer used. By default the reverse primer
+                            is assumed to be a subsequence of the top strand (that
+                            is, the reverse complement of an actual downstream PCR
+                            primer). Use --reverse-is-revcomp if this is not the
+                            case.
+
+    optional arguments:
+      -h, --help            show this help message and exit
+      --reverse-is-revcomp  Reverse primer is written as the reverse complement of
+                            the top strand (default: False)
+      --source-format SOURCE_FORMAT
+                            Alignment format (default: detect from extension
+      --output-format OUTPUT_FORMAT
+                            Alignment format (default: detect from extension
+      --include-primers     Include the primers in the output (default: False)
+      --max-hamming-distance MAX_HAMMING_DISTANCE
+                            Maximum Hamming distance between primer and alignment
+                            site (default: 1). IUPAC ambiguous bases in the primer
+                            matching unambiguous bases in the alignment are not
+                            penalized
+      --prune-action {trim,isolate}
+                            Action to take. Options are trim (trim to the region
+                            defined by the two primers, decreasing the width of
+                            the alignment), or isolate (convert all characters
+                            outside the primer-defined area to gaps). default:
+                            trim
 
 
 .. _imagemagick: http://www.imagemagick.org/script/command-line-tools.php
