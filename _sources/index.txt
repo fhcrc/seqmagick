@@ -28,9 +28,7 @@ conversion in Biopython in a convenient way.  Instead of having a big mess of
 scripts, there is one that takes arguments::
 
     seqmagick convert a.fasta b.phy    # convert from fasta to phylip
-
     seqmagick mogrify --ungap a.fasta  # remove all gaps from a.fasta, in place
-
     seqmagick info *.fasta             # describe all FASTA files in the current directory
 
 And more.
@@ -180,7 +178,10 @@ Record Selection
                             Write all of the deduplicated sequences to a file
       --deduplicate-taxa    Remove any duplicate sequences by ID, keep the first
                             instance seen
-      --filter-from-file FILE
+      --exclude-from-file FILE
+                            Filter sequences, removing those sequence IDs in the
+                            specified file
+      --include-from-file FILE
                             Filter sequences, keeping only those sequence IDs in
                             the specified file
       --head N              Trim down to top N sequences
