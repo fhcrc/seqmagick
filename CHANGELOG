@@ -1,3 +1,6 @@
+* Internal reorganization - transformations are converted to partial functions,
+  then applied.
+* Argument order now affects order of tranformation application.
 * Change default output format to 'align' for TTYs in seqmagick info
 * Add BioPython as dependency (closes GH-7)
 * Add primer-trim subcommand
