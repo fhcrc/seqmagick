@@ -69,8 +69,9 @@ def partial_append_action(fn, argument_keys=None):
                      required=False,
                      help=None,
                      type=None,
-                     choices=None,
-                     metavar=None):
+                     metavar=None,
+                     nargs=None,
+                     **kwargs):
             super(PartialAppendAction, self).__init__(
                 option_strings=option_strings,
                 dest=dest,
@@ -79,9 +80,7 @@ def partial_append_action(fn, argument_keys=None):
                 default=default,
                 required=required,
                 metavar=metavar,
-                choices=choices,
-                type=type,
-                help=help)
+                help=help, **kwargs)
 
         def __call__(self, parser, namespace, values, option_string=None):
             items = copy.copy(getattr(namespace, self.dest, None)) or []

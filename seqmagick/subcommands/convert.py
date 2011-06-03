@@ -114,20 +114,19 @@ def add_options(parser):
     seq_select.add_argument('--min-length', dest='transforms', metavar='N',
             action=partial_action(transform.min_length_discard, 'min_length'),
             type=int, help="""Discard any sequences less than the specified
-            minimum length.  This operation occurs *before* all length-changing
-            options such as cut and squeeze.""")
+            minimum length.  This operation occurs *before* cut and squeeze.""")
     seq_select.add_argument('--min-ungapped-length', metavar='N',
             action=partial_action(transform.min_ungap_length_discard,
                 'min_length'), type=int, help="""Discard any sequences less
                 than the specified minimum length, excluding gaps. This
-                operation occurs *before* all length-changing options such as
-                cut and squeeze.""")
+                operation occurs *before* cut and squeeze.""",
+                dest='transforms')
     seq_select.add_argument('--pattern-include', metavar='regex',
-            action=partial_action(transform.seq_include, 'filter_regex'),
+            action=partial_action(transform.name_include, 'filter_regex'),
             dest='transforms', help="""Filter the sequences by regular
             expression in name""")
     seq_select.add_argument('--pattern-exclude', metavar='regex',
-            action=partial_action(transform.seq_exclude, 'filter_regex'),
+            action=partial_action(transform.name_exclude, 'filter_regex'),
             dest='transforms', help="""Filter the sequences by regular
             expression in name""")
     seq_select.add_argument('--prune-empty',
@@ -157,9 +156,11 @@ def add_options(parser):
             dest='transforms', help="""Insert a prefix for all
             IDs.""")
     id_mods.add_argument('--pattern-replace', nargs=2,
-                        metavar=('search_pattern', 'replace_pattern'),
-                        help='Replace regex pattern "search_pattern" with '
-                             '"replace_pattern" in sequence ID')
+            metavar=('search_pattern', 'replace_pattern'),
+            action=partial_action(transform.name_replace, ('search_regex',
+                'replace_pattern')),
+            dest='transforms', help="""Replace regex pattern "search_pattern"
+            with "replace_pattern" in sequence ID""")
     id_mods.add_argument('--strip-range', dest='transforms',
             action=partial_action(transform.strip_range), help="""Strip ranges
             from sequences IDs, matching </x-y>""")
@@ -184,9 +185,7 @@ def build_parser(parser):
 
     return parser
 
-
 def transform_file(source_file, destination_file, arguments):
-
     # Get just the file name, useful for naming the temporary file.
     file_ext = os.path.splitext(source_file)[1]
     source_file_type = (arguments.input_format or from_extension(file_ext))
