@@ -3,13 +3,14 @@ Find a primer sequence in a gapped alignment, trim to amplicon
 """
 import argparse
 import itertools
+import logging
+import sys
 
 from Bio import Alphabet, SeqIO, pairwise2
 from Bio.Alphabet import IUPAC
 from Bio.Seq import Seq
 
 from seqmagick import transform, fileformat
-
 
 
 def build_parser(parser):
@@ -161,8 +162,20 @@ class PrimerAligner(object):
                 seq_aln[start:end+1], _iupac_ambiguous_equal)
         #assert primer_aln[start:end].replace('-', '') == str(self.primer)
 
-        # TODO: handle start or end being gap
-        return ham_dist, index_map[start], index_map[end]
+        # TODO: handle start or end being gap better. For now, just give up
+        # and return maxint for the hamming distance
+        if seq_aln[start:end+1].endswith('-'):
+            end = index_map[end-1] + 1
+            ham_dist = sys.maxint
+        else:
+            end = index_map[end]
+        if seq_aln[start:end+1].startswith('-'):
+            start = 0
+            ham_dist = sys.maxint
+        else:
+            start = index_map[start]
+
+        return ham_dist, start, end
 
     @property
     def max_score(self):
@@ -200,6 +213,7 @@ def locate_primers(sequences, forward_primer, reverse_primer,
     """
     forward_loc = None
     reverse_loc = None
+    seq_length = None
 
     # Reverse complement the reverse primer, if appropriate
     if reverse_complement:
@@ -209,17 +223,24 @@ def locate_primers(sequences, forward_primer, reverse_primer,
     reverse_aligner = PrimerAligner(reverse_primer)
 
     for sequence in sequences:
+        if seq_length is None:
+            seq_length = len(sequence)
+        elif len(sequence) != seq_length:
+            raise ValueError(("Unexpected sequence length: {0}. "
+                    "Is this an alignment?").format(len(sequence)))
         index_map = ungap_index_map(sequence.seq)
         if forward_loc is None:
             ham_dist, start, end = \
                     forward_aligner.align(sequence.seq.ungap())
             if ham_dist <= max_hamming_distance:
                 forward_loc = index_map[start], index_map[end]
+                logging.info("Forward: indexes %d to %d", *forward_loc)
         if reverse_loc is None:
             ham_dist, start, end = \
                     reverse_aligner.align(sequence.seq.ungap())
             if ham_dist <= max_hamming_distance:
                 reverse_loc = index_map[start], index_map[end]
+                logging.info("Reverse: indexes %d to %d", *reverse_loc)
         if forward_loc and reverse_loc:
             # Both found
             # Check order
@@ -238,6 +259,7 @@ def trim(sequences, start, end):
     """
     Slice the input sequences from start to end
     """
+    logging.info("Trimming from %d to %d", start, end)
     return (sequence[start:end] for sequence in sequences)
 
 

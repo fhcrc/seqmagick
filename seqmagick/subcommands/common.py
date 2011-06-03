@@ -69,6 +69,7 @@ def partial_append_action(fn, argument_keys=None):
                      required=False,
                      help=None,
                      type=None,
+                     choices=None,
                      metavar=None):
             super(PartialAppendAction, self).__init__(
                 option_strings=option_strings,
@@ -78,6 +79,7 @@ def partial_append_action(fn, argument_keys=None):
                 default=default,
                 required=required,
                 metavar=metavar,
+                choices=choices,
                 type=type,
                 help=help)
 

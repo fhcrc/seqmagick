@@ -91,12 +91,18 @@ def add_options(parser):
         metavar='FILE', dest='deduplicate_sequences', default=False,
         type=argparse.FileType('w'),
         help='Write all of the deduplicated sequences to a file')
-
     seq_select.add_argument('--deduplicate-taxa',
             action=partial_action(transform.deduplicate_taxa),
             dest='transforms', help="""Remove any duplicate sequences by ID,
             keep the first instance seen""")
-
+    seq_select.add_argument('--exclude-from-file', metavar='FILE',
+            type=argparse.FileType('r'), help="""Filter sequences, removing
+            those sequence IDs in the specified file""", dest='transforms',
+            action=partial_action(transform.exclude_from_file, 'handle'))
+    seq_select.add_argument('--include-from-file', metavar='FILE',
+            type=argparse.FileType('r'), help="""Filter sequences, keeping only
+            those sequence IDs in the specified file""", dest='transforms',
+            action=partial_action(transform.include_from_file, 'handle'))
     seq_select.add_argument('--head', metavar='N', dest='transforms', type=int,
             action=partial_action(transform.head, 'head'), help="""Trim
             down to top N sequences""")
@@ -231,12 +237,6 @@ def transform_file(source_file, destination_file, arguments):
         # file and additional time.
         record_count = sum(1 for record in SeqIO.parse(source_file, source_file_type))
         records = transform.tail(records, arguments.tail, record_count)
-
-    if arguments.transcribe:
-        records = transform.transcribe(records, arguments.transcribe)
-
-    if arguments.translate:
-        records = transform.translate(records, arguments.translate)
 
     if arguments.squeeze:
         logging.info("Performing squeeze")

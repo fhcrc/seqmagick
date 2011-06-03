@@ -2,6 +2,7 @@
 Tests for seqmagick.transform
 """
 
+from cStringIO import StringIO
 import unittest
 
 from Bio import Alphabet
@@ -230,3 +231,34 @@ class MinUngapLengthTestCase(unittest.TestCase):
         result = transform.min_ungap_length_discard(self.sequences, 4)
         self.assertEquals([self.sequences[1], self.sequences[3]], list(result))
 
+class IncludeExcludeMixIn(object):
+
+    def setUp(self):
+        ids = """sequenceid1
+sequenceid2
+sequence id 4
+"""
+        self.handle = StringIO(ids)
+
+        self.sequences = [SeqRecord(Seq("AAA"), id="sequenceid1"),
+                SeqRecord(Seq("BBB"), id="sequenceid2"),
+                SeqRecord(Seq("CCC"), id="sequenceid3"),
+                SeqRecord(Seq("DDD"), id="sequence id 4"),
+                SeqRecord(Seq("EEE"), id="test sequence"), ]
+
+
+class IncludeFromFileTestCase(IncludeExcludeMixIn, unittest.TestCase):
+
+    def test_filter(self):
+        expected = [self.sequences[0], self.sequences[1], self.sequences[3]]
+        actual = list(transform.include_from_file(self.sequences, self.handle))
+        self.assertEquals(3, len(actual))
+        self.assertEquals(expected, actual)
+
+class ExcludeFromFileTestCase(IncludeExcludeMixIn, unittest.TestCase):
+
+    def test_filter(self):
+        expected = [self.sequences[2], self.sequences[4]]
+        actual = list(transform.exclude_from_file(self.sequences, self.handle))
+        self.assertEquals(2, len(actual))
+        self.assertEquals(expected, actual)
