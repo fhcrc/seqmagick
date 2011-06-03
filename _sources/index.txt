@@ -28,9 +28,7 @@ conversion in Biopython in a convenient way.  Instead of having a big mess of
 scripts, there is one that takes arguments::
 
     seqmagick convert a.fasta b.phy    # convert from fasta to phylip
-
     seqmagick mogrify --ungap a.fasta  # remove all gaps from a.fasta, in place
-
     seqmagick info *.fasta             # describe all FASTA files in the current directory
 
 And more.
@@ -180,7 +178,10 @@ Record Selection
                             Write all of the deduplicated sequences to a file
       --deduplicate-taxa    Remove any duplicate sequences by ID, keep the first
                             instance seen
-      --filter-from-file FILE
+      --exclude-from-file FILE
+                            Filter sequences, removing those sequence IDs in the
+                            specified file
+      --include-from-file FILE
                             Filter sequences, keeping only those sequence IDs in
                             the specified file
       --head N              Trim down to top N sequences
@@ -257,12 +258,79 @@ Output can be in comma-separated, tab-separated, or aligned formats. See
 ---------------
 
 ``primer-trim`` trims an alignment to a region defined by a set of forward and
-reverse primers.  See ``seqmagick primer-trim -h`` for details.
+reverse primers. Usage is as follows::
+
+    positional arguments:
+      source_file           Source alignment file
+      output_file           Destination trimmed file
+      forward_primer        The forward primer used
+      reverse_primer        The reverse primer used. By default the reverse primer
+                            is assumed to be a subsequence of the top strand (that
+                            is, the reverse complement of an actual downstream PCR
+                            primer). Use --reverse-is-revcomp if this is not the
+                            case.
+
+    optional arguments:
+      -h, --help            show this help message and exit
+      --reverse-is-revcomp  Reverse primer is written as the reverse complement of
+                            the top strand (default: False)
+      --source-format SOURCE_FORMAT
+                            Alignment format (default: detect from extension
+      --output-format OUTPUT_FORMAT
+                            Alignment format (default: detect from extension
+      --include-primers     Include the primers in the output (default: False)
+      --max-hamming-distance MAX_HAMMING_DISTANCE
+                            Maximum Hamming distance between primer and alignment
+                            site (default: 1). IUPAC ambiguous bases in the primer
+                            matching unambiguous bases in the alignment are not
+                            penalized
+      --prune-action {trim,isolate}
+                            Action to take. Options are trim (trim to the region
+                            defined by the two primers, decreasing the width of
+                            the alignment), or isolate (convert all characters
+                            outside the primer-defined area to gaps). default:
+                            trim
 
 
 .. _imagemagick: http://www.imagemagick.org/script/command-line-tools.php
 .. _`BioPython SeqIO wiki page`: http://www.biopython.org/wiki/SeqIO#File_Formats
 .. _`BioPython`: http://www.biopython.org/
+
+``quality-filter``
+------------------
+
+``quality-filter`` truncates and removes sequences that don't match a set of
+quality criteria.  The subcommand takes a FASTA and quality score file, and
+writes the results to an output file::
+
+    positional arguments:
+      input_fasta           Input fasta file
+      input_qual            The quality scores associated with fasta_file
+      output_file           Output file. Format determined from extension.
+
+    optional arguments:
+      -h, --help            show this help message and exit
+      --min-mean-quality QUALITY
+                            Minimum mean quality score for each read (default: 25)
+      --quality-window WINDOW_SIZE
+                            Window size for truncating sequences. When set to a
+                            non-zero value, sequences are truncated where the mean
+                            mean quality within the window drops below --min-mean-
+                            quality. (default: 0)
+      --ambiguous-action {truncate,drop}
+                            Action to take on ambiguous base in sequence (N's).
+                            Default: no action.
+
+Supported File Extensions
+=========================
+
+By default, ``seqmagick`` infers the file type from extension. Currently mapped
+extensions are:
+
+.. include:: extensions.rst
+
+If an extension is not listed, you can either rename the file to a supported
+extension, or specify it manually via ``--input-format`` or ``--output-format``.
 
 
 Indices and tables
