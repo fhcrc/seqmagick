@@ -301,10 +301,10 @@ def transform_file(source_file, destination_file, arguments):
     # cut needs to go after squeeze or the gaps list will no longer be relevent.
     # It is probably best not to use squeeze and cut together in most cases.
     if arguments.cut:
-        start, end = arguments.cut
-        records = transform.cut_sequences(records, start=start, end=end)
+        records = transform.cut_sequences(records, arguments.cut)
 
-   # Only the fasta format is supported, as SeqIO.write does not have a 'wrap' parameter.
+    # Only the fasta format is supported, as SeqIO.write does not have a 'wrap'
+    # parameter.
     if (arguments.line_wrap is not None and destination_file_type == 'fasta'
             and source_file_type == 'fasta'):
         logging.info("Attempting to write fasta with %d line breaks.",

@@ -134,13 +134,12 @@ def isolate_region(sequences, start, end, gap_char='-'):
         yield sequence
 
 
-def cut_sequences(records, start, end):
+def cut_sequences(records, cut_slice):
     """
-    Cut sequences given a one-based range.  Includes last item.
+    Cut sequences given a slice.
     """
-    start = start - 1
     for record in records:
-        yield record[start:end]
+        yield record[cut_slice]
 
 
 def lower_sequences(records):

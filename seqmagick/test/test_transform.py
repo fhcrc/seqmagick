@@ -272,16 +272,16 @@ class CutTestCase(unittest.TestCase):
                 SeqRecord(Seq("EEE"), id="test sequence"), ]
 
     def test_no_sequences(self):
-        actual = list(transform.cut_sequences(self.sequences, 1, 0))
+        actual = list(transform.cut_sequences(self.sequences, slice(0, 0)))
         for sequence in actual:
             self.assertEqual(0, len(sequence))
 
     def test_full_sequence(self):
-        actual = list(transform.cut_sequences(self.sequences, 1, 3))
+        actual = list(transform.cut_sequences(self.sequences, slice(0, 3)))
         self.assertEqual(['AAA', 'BBB', 'DDD', 'EEE'], [str(s.seq) for s in
             actual])
 
     def test_cut_sequences(self):
-        actual = list(transform.cut_sequences(self.sequences, 1, 2))
+        actual = list(transform.cut_sequences(self.sequences, slice(0, 2)))
         self.assertEqual(['AA', 'BB', 'DD', 'EE'], [str(s.seq) for s in
             actual])

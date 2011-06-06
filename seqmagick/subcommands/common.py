@@ -9,17 +9,21 @@ import os.path
 def cut_range(string):
     """
     A custom argparse 'type' to deal with sequences ranges such as 5:500.
+
+    Returns a 0-based slice corresponding to the selection defined by the
     """
     value_range = string.split(':')
-    # We want integers, and something immutable.
-    value_range = tuple(map(int, value_range))
-
-    # Make sure the value range looks sane.
-    if (len(value_range) != 2 or value_range[0] < 1 or
-            value_range[0] > value_range[1]):
+    if len(value_range) != 2:
         msg = "{0} is not a valid, 1-indexed range.".format(string)
         raise argparse.ArgumentTypeError(msg)
-    return value_range
+
+    start, stop = tuple(map(int, value_range))
+    # Convert from 1-indexed to 0-indexed
+    start -= 1
+    if start < 0 or stop < start:
+        msg = "{0} is not a valid, 1-indexed range.".format(string)
+        raise argparse.ArgumentTypeError(msg)
+    return slice(start, stop)
 
 
 def sequence_file(sequence_file):
