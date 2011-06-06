@@ -10,6 +10,7 @@ from Bio import Alphabet, SeqIO, pairwise2
 from Bio.Alphabet import IUPAC
 from Bio.Seq import Seq
 
+import common
 from seqmagick import transform, fileformat
 
 
@@ -36,11 +37,11 @@ def build_parser(parser):
     parser.add_argument('--include-primers', default=False,
             action="store_true", help='''Include the primers in the output
             (default: %(default)s)''')
-    parser.add_argument('--max-hamming-distance', type=positive_value(int),
-            default=1, help="""Maximum Hamming distance between primer and
-            alignment site (default: %(default)s). IUPAC ambiguous bases in the
-            primer matching unambiguous bases in the alignment are not
-            penalized""")
+    parser.add_argument('--max-hamming-distance',
+            type=common.positive_value(int), default=1, help="""Maximum Hamming
+            distance between primer and alignment site (default: %(default)s).
+            IUPAC ambiguous bases in the primer matching unambiguous bases in
+            the alignment are not penalized""")
     parser.add_argument('--prune-action', choices=_ACTIONS.keys(),
             default='trim',
             help="""Action to take. Options are trim (trim to the region
@@ -188,21 +189,6 @@ class PrimerAligner(object):
 # Types for argparse
 def iupac_ambiguous_sequence(string):
     return Seq(string, IUPAC.ambiguous_dna)
-
-
-def positive_value(target_type):
-    """
-    Wraps target_type in a function that requires the parsed argument
-    be >= 0
-    """
-    def inner(string):
-        value = target_type(string)
-        if not value >= 0:
-            raise argparse.ArgumentTypeError("Invalid positive number: " +
-                    string)
-        return value
-
-    return inner
 
 
 def locate_primers(sequences, forward_primer, reverse_primer,

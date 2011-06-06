@@ -134,28 +134,12 @@ def isolate_region(sequences, start, end, gap_char='-'):
         yield sequence
 
 
-def cut_sequences(records, start, end):
+def cut_sequences(records, cut_slice):
     """
-    Cut sequences given a one-based range.  Includes last item.
+    Cut sequences given a slice.
     """
-    start = start - 1
     for record in records:
-        cut_record = SeqRecord(record.seq[start:end], id=record.id,
-                               name=record.name, description=record.description)
-
-        # Copy the annotations over
-        for k, v in record.annotations.items():
-            # Trim if appropriate
-            if isinstance(v, (tuple, list)) and len(v) == len(record):
-                v = v[start:end]
-            cut_record.annotations[k] = v
-
-        # Letter annotations must be lists / tuples / strings of the same
-        # length as the sequence
-        for k, v in record.letter_annotations.items():
-            cut_record.letter_annotations[k] = v[start:end]
-
-        yield cut_record
+        yield record[cut_slice]
 
 
 def lower_sequences(records):

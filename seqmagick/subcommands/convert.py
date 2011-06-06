@@ -36,9 +36,11 @@ def add_options(parser):
             an iterable of Bio.SeqRecord objects, and yield SeqRecords.
             Specify more than one to chain.""",
             default=[], action='append')
-    seq_mods.add_argument('--cut', dest='cut', metavar="start:end",
-        type=common.cut_range, help='1-indexed start and end positions for '
-        'cutting sequences, : separated.  Includes last item.')
+    seq_mods.add_argument('--cut', dest='transforms', metavar="start:end",
+            type=common.cut_range,
+            action=partial_action(transform.cut_sequences, 'cut_slice'),
+            help="""1-indexed start and end positions for cutting sequences, :
+            separated. Includes last item.""")
     seq_mods.add_argument('--dash-gap',
             action=partial_action(transform.dashes_cleanup), dest='transforms',
         help='Change . and : into - for all sequences')
@@ -242,13 +244,8 @@ def transform_file(source_file, destination_file, arguments):
         records = transform.squeeze(records, arguments.squeeze,
                                     SeqIO.parse(source_file, source_file_type))
 
-    # cut needs to go after squeeze or the gaps list will no longer be relevent.
-    # It is probably best not to use squeeze and cut together in most cases.
-    if arguments.cut:
-        start, end = arguments.cut
-        records = transform.cut_sequences(records, start=start, end=end)
-
-   # Only the fasta format is supported, as SeqIO.write does not have a 'wrap' parameter.
+    # Only the fasta format is supported, as SeqIO.write does not have a 'wrap'
+    # parameter.
     if (arguments.line_wrap is not None and destination_file_type == 'fasta'
             and source_file_type == 'fasta'):
         logging.info("Attempting to write fasta with %d line breaks.",

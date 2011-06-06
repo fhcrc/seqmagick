@@ -321,6 +321,17 @@ writes the results to an output file::
                             Action to take on ambiguous base in sequence (N's).
                             Default: no action.
 
+Supported File Extensions
+=========================
+
+By default, ``seqmagick`` infers the file type from extension. Currently mapped
+extensions are:
+
+.. include:: extensions.rst
+
+If an extension is not listed, you can either rename the file to a supported
+extension, or specify it manually via ``--input-format`` or ``--output-format``.
+
 
 Indices and tables
 ==================

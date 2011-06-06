@@ -24,7 +24,6 @@ def cut_range(string):
     if start < 0 or stop < start:
         msg = "{0} is not a valid, 1-indexed range.".format(string)
         raise argparse.ArgumentTypeError(msg)
-
     return slice(start, stop)
 
 
@@ -53,7 +52,7 @@ def typed_range(type_func, minimum, maximum):
         return result
     return inner
 
-
+<<<<<<< HEAD
 def partial_append_action(fn, argument_keys=None):
     """
     Creates a new class extending argparse.Action, which appends a
@@ -86,7 +85,6 @@ def partial_append_action(fn, argument_keys=None):
                 default=default,
                 required=required,
                 metavar=metavar,
-                type=type,
                 help=help, **kwargs)
 
         def __call__(self, parser, namespace, values, option_string=None):
@@ -110,7 +108,7 @@ def partial_append_action(fn, argument_keys=None):
             setattr(namespace, self.dest, items)
 
     return PartialAppendAction
-
+=======
 
 def positive_value(target_type):
     """
@@ -125,3 +123,4 @@ def positive_value(target_type):
         return value
 
     return inner
+>>>>>>> master

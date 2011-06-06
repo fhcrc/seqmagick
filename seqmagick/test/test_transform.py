@@ -262,3 +262,26 @@ class ExcludeFromFileTestCase(IncludeExcludeMixIn, unittest.TestCase):
         actual = list(transform.exclude_from_file(self.sequences, self.handle))
         self.assertEquals(2, len(actual))
         self.assertEquals(expected, actual)
+
+class CutTestCase(unittest.TestCase):
+
+    def setUp(self):
+        self.sequences = [SeqRecord(Seq("AAA"), id="sequenceid1"),
+                SeqRecord(Seq("BBB"), id="sequenceid2"),
+                SeqRecord(Seq("DDD"), id="sequence id 4"),
+                SeqRecord(Seq("EEE"), id="test sequence"), ]
+
+    def test_no_sequences(self):
+        actual = list(transform.cut_sequences(self.sequences, slice(0, 0)))
+        for sequence in actual:
+            self.assertEqual(0, len(sequence))
+
+    def test_full_sequence(self):
+        actual = list(transform.cut_sequences(self.sequences, slice(0, 3)))
+        self.assertEqual(['AAA', 'BBB', 'DDD', 'EEE'], [str(s.seq) for s in
+            actual])
+
+    def test_cut_sequences(self):
+        actual = list(transform.cut_sequences(self.sequences, slice(0, 2)))
+        self.assertEqual(['AA', 'BB', 'DD', 'EE'], [str(s.seq) for s in
+            actual])
