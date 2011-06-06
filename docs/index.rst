@@ -117,6 +117,19 @@ and remove any duplicates from an alignment in place::
 You can even define your own functions in python and use them via
 ``--apply-function``.
 
+.. note::
+  To maximize flexibility, most transformations passed as options to
+  ``mogrify`` and ``convert`` are processed *in order*, so::
+
+       seqmagick convert --min-length 50 --cut 1:5 a.fasta b.fasta
+
+  will work fine, but::
+
+       seqmagick convert --cut 1:5 --min-length 50 a.fasta b.fasta
+
+  will never return records, since the cutting transformation happens before
+  the minimum length predicate is applied.
+
 Command-line Arguments
 **********************
 
