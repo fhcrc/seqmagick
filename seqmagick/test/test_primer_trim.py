@@ -114,16 +114,3 @@ class LocatePrimersTestCase(unittest.TestCase):
         self.assertRaises(primer_trim.PrimerOrderError,
                 primer_trim.locate_primers, self.sequences,
                 forward, reverse, False, 1)
-
-
-class PositiveValueTestCase(unittest.TestCase):
-
-    def test_negative(self):
-        self.assertRaises(argparse.ArgumentTypeError,
-                primer_trim.positive_value(int), '-1')
-
-    def test_positive(self):
-        self.assertEquals(1, primer_trim.positive_value(int)('1'))
-
-    def test_zero(self):
-        self.assertEquals(0, primer_trim.positive_value(int)('0'))

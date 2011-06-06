@@ -17,7 +17,7 @@ def cut_range(string):
     # Make sure the value range looks sane.
     if (len(value_range) != 2 or value_range[0] < 1 or
             value_range[0] > value_range[1]):
-        msg = "%s is not a valid, 1-indexed range." % string
+        msg = "{0} is not a valid, 1-indexed range.".format(string)
         raise argparse.ArgumentTypeError(msg)
     return value_range
 
@@ -45,4 +45,19 @@ def typed_range(type_func, minimum, maximum):
                     "Please provide a value between {0} and {1}".format(
                         minimum, maximum))
         return result
+    return inner
+
+
+def positive_value(target_type):
+    """
+    Wraps target_type in a function that requires the parsed argument
+    be >= 0
+    """
+    def inner(string):
+        value = target_type(string)
+        if not value >= 0:
+            raise argparse.ArgumentTypeError("Invalid positive number: " +
+                    string)
+        return value
+
     return inner
