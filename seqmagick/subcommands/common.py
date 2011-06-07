@@ -28,17 +28,6 @@ def cut_range(string):
     return slice(start, stop)
 
 
-def sequence_file(sequence_file):
-    """
-    A custom argparse 'type' to make sure sequence files exist and the type is
-    supported.
-    """
-    if os.access(sequence_file, os.R_OK) and os.path.isfile(sequence_file):
-        return sequence_file
-    else:
-        raise argparse.ArgumentTypeError(sequence_file +
-                " not found or is not readable.")
-
 def typed_range(type_func, minimum, maximum):
     """
     Require variables to be of the specified type, between minimum and maximum
