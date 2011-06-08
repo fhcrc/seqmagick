@@ -11,10 +11,10 @@ class PositiveValueTestCase(unittest.TestCase):
                 common.positive_value(int), '-1')
 
     def test_positive(self):
-        self.assertEquals(1, common.positive_value(int)('1'))
+        self.assertEqual(1, common.positive_value(int)('1'))
 
     def test_zero(self):
-        self.assertEquals(0, common.positive_value(int)('0'))
+        self.assertEqual(0, common.positive_value(int)('0'))
 
 class CutRangeTestCase(unittest.TestCase):
     def test_negative(self):

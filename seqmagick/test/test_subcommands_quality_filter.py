@@ -16,32 +16,32 @@ class QualityFilterTestCase(unittest.TestCase):
         self.sequence.letter_annotations['phred_quality'] = [25, 25, 24, 25]
         instance = quality_filter.QualityScoreFilter()
         result = instance.filter_record(self.sequence)
-        self.assertEquals(None, result)
+        self.assertEqual(None, result)
 
     def test_nowindow_pass(self):
         self.sequence.letter_annotations['phred_quality'] = [25, 25, 25, 25]
         instance = quality_filter.QualityScoreFilter()
         result = instance.filter_record(self.sequence)
-        self.assertEquals(self.sequence, result)
+        self.assertEqual(self.sequence, result)
 
     def test_window_pass(self):
         self.sequence.letter_annotations['phred_quality'] = [25, 25, 25, 25]
         instance = quality_filter.QualityScoreFilter(window_size=2)
         result = instance.filter_record(self.sequence)
-        self.assertEquals(str(self.sequence), str(result))
+        self.assertEqual(str(self.sequence), str(result))
 
     def test_window_truncate_noseq(self):
         self.sequence.letter_annotations['phred_quality'] = [25, 24, 25, 25]
         instance = quality_filter.QualityScoreFilter(window_size=2)
         result = instance.filter_record(self.sequence)
-        self.assertEquals(0, len(result))
+        self.assertEqual(0, len(result))
 
     def test_window_truncate_mid(self):
         self.sequence.letter_annotations['phred_quality'] = [25, 25, 23, 25]
         instance = quality_filter.QualityScoreFilter(window_size=2)
         result = instance.filter_record(self.sequence)
-        self.assertEquals(2, len(result))
-        self.assertEquals('AC', str(result.seq))
+        self.assertEqual(2, len(result))
+        self.assertEqual('AC', str(result.seq))
 
 
 class AmbiguousBaseFilterTestCase(unittest.TestCase):
@@ -62,18 +62,18 @@ class AmbiguousBaseFilterTestCase(unittest.TestCase):
         """
         instance = quality_filter.AmbiguousBaseFilter('drop')
         actual = list(instance.filter_records(self.records))
-        self.assertEquals(1, len(actual))
-        self.assertEquals(1, instance.passed)
-        self.assertEquals(4, instance.failed)
-        self.assertEquals(self.records[0], actual[0])
+        self.assertEqual(1, len(actual))
+        self.assertEqual(1, instance.passed)
+        self.assertEqual(4, instance.failed)
+        self.assertEqual(self.records[0], actual[0])
 
     def test_truncate(self):
         instance = quality_filter.AmbiguousBaseFilter('truncate')
         actual = list(instance.filter_records(self.records))
-        self.assertEquals(5, len(actual))
-        self.assertEquals(0, instance.failed)
-        self.assertEquals(5, instance.passed)
-        self.assertEquals(['ACGT', '', '', 'ACGT', 'GG'],
+        self.assertEqual(5, len(actual))
+        self.assertEqual(0, instance.failed)
+        self.assertEqual(5, instance.passed)
+        self.assertEqual(['ACGT', '', '', 'ACGT', 'GG'],
                 [str(s.seq) for s in actual])
 
     def test_invalid_action(self):
