@@ -67,7 +67,7 @@ class TsvSeqInfoWriter(CsvSeqInfoWriter):
 class AlignedSeqInfoWriter(SeqInfoWriter):
     def __init__(self, sequence_files, output):
         super(AlignedSeqInfoWriter, self).__init__(sequence_files, output)
-        self.max_name_length = max(len(os.path.basename(f))
+        self.max_name_length = max(len(f)
                                    for f in self.sequence_files)
 
     def write_header(self, header):
