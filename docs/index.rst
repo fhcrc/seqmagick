@@ -246,6 +246,22 @@ By default, file format is inferred from extension::
 
 .. _`BioPython SeqIO wiki page`: http://www.biopython.org/wiki/SeqIO#File_Formats
 
+``extract-ids``
+---------------
+
+``seqmagick extract-ids`` is extremely simple - all the IDs from a sequence file
+are printed to stdout (by default) or the file of your choosing::
+
+    positional arguments:
+      sequence_file         Sequence file
+
+    optional arguments:
+      -h, --help            show this help message and exit
+      -o OUTPUT_FILE, --output-file OUTPUT_FILE
+                            Destination trimmed file
+      --source-format SOURCE_FORMAT
+
+
 ``info``
 --------
 
@@ -305,9 +321,6 @@ reverse primers. Usage is as follows::
                             trim
 
 
-.. _imagemagick: http://www.imagemagick.org/script/command-line-tools.php
-.. _`BioPython SeqIO wiki page`: http://www.biopython.org/wiki/SeqIO#File_Formats
-.. _`BioPython`: http://www.biopython.org/
 
 ``quality-filter``
 ------------------
@@ -345,6 +358,9 @@ extensions are:
 If an extension is not listed, you can either rename the file to a supported
 extension, or specify it manually via ``--input-format`` or ``--output-format``.
 
+.. _imagemagick: http://www.imagemagick.org/script/command-line-tools.php
+.. _`BioPython SeqIO wiki page`: http://www.biopython.org/wiki/SeqIO#File_Formats
+.. _`BioPython`: http://www.biopython.org/
 
 Indices and tables
 ==================
