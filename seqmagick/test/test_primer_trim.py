@@ -18,24 +18,24 @@ class PrimerAlignerTestCase(unittest.TestCase):
                 gap_open=-10.0)
 
     def test_max_score(self):
-        self.assertEquals(len(self.primer) * 5.0, self.instance.max_score)
+        self.assertEqual(len(self.primer) * 5.0, self.instance.max_score)
 
     def test_align_exact(self):
         sequence = ('ACTCTGTGTCACTTTAAACTGCATTTGAATGGAAGAGTAATAGTAGCAATAACGGCA'
                     'CTGATCAG')
         hamming_distance, start, end = self.instance.align(sequence)
-        self.assertEquals(0, hamming_distance)
-        self.assertEquals(16, start)
-        self.assertEquals(31, end)
+        self.assertEqual(0, hamming_distance)
+        self.assertEqual(16, start)
+        self.assertEqual(31, end)
 
     def test_align_gap(self):
         sequence = ('ACTCTGTGTCACTTTAAACTGCATTGAATGGAAGAGTAATAGTAGCAATAACGGCA'
                     'CTGATCAG')
         hamming_distance, start, end = self.instance.align(sequence)
         expected_distance = 1
-        self.assertEquals(expected_distance, hamming_distance)
-        self.assertEquals(16, start)
-        self.assertEquals(30, end)
+        self.assertEqual(expected_distance, hamming_distance)
+        self.assertEqual(16, start)
+        self.assertEqual(30, end)
 
 
 class HammingDistanceTestCase(unittest.TestCase):
@@ -47,25 +47,25 @@ class HammingDistanceTestCase(unittest.TestCase):
 
     def test_no_difference(self):
         s1 = s2 = 'test'
-        self.assertEquals(0, primer_trim.hamming_distance(s1, s2))
+        self.assertEqual(0, primer_trim.hamming_distance(s1, s2))
 
     def test_all_different(self):
         s1 = 'test'
         s2 = 'ACGT'
-        self.assertEquals(4, primer_trim.hamming_distance(s1, s2))
+        self.assertEqual(4, primer_trim.hamming_distance(s1, s2))
 
     def test_basic(self):
         s1 = 'ACGT'
         s2 = 'AGGT'
-        self.assertEquals(1, primer_trim.hamming_distance(s1, s2))
+        self.assertEqual(1, primer_trim.hamming_distance(s1, s2))
 
     def test_ambiguous(self):
         s1 = 'ACYT'
         s2 = 'ACCT'
-        self.assertEquals(0, primer_trim.hamming_distance(s1, s2,
+        self.assertEqual(0, primer_trim.hamming_distance(s1, s2,
             primer_trim._iupac_ambiguous_equal))
         s2 = 'ACTT'
-        self.assertEquals(0, primer_trim.hamming_distance(s1, s2,
+        self.assertEqual(0, primer_trim.hamming_distance(s1, s2,
             primer_trim._iupac_ambiguous_equal))
 
 def _alignment_record(sequence):
@@ -87,8 +87,8 @@ class LocatePrimersTestCase(unittest.TestCase):
         forward_idx, reverse_idx = primer_trim.locate_primers(self.sequences,
                 forward, reverse, False, 1)
 
-        self.assertEquals((7, 9), forward_idx)
-        self.assertEquals((15, 17), reverse_idx)
+        self.assertEqual((7, 9), forward_idx)
+        self.assertEqual((15, 17), reverse_idx)
 
     def test_no_forward(self):
         forward='GGGGGG'

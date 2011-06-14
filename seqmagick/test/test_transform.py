@@ -88,7 +88,7 @@ class SqueezeTestCase(unittest.TestCase):
 
     def test_gap_proportion(self):
         actual = transform.gap_proportion(self.sequences)
-        self.assertEquals([2./3, 0.0, 1.0, 0.0, 1./3, 1.0], actual)
+        self.assertEqual([2./3, 0.0, 1.0, 0.0, 1./3, 1.0], actual)
 
     def test_basic_squeeze(self):
         result = list(transform.squeeze(self.sequences, 1.0, self.sequences))
@@ -154,7 +154,7 @@ class HeadTestCase(unittest.TestCase):
 
     def test_zero(self):
         result = list(transform.head(self.sequences, 0))
-        self.assertEquals([], result)
+        self.assertEqual([], result)
 
     def test_more_seqs_than_available(self):
         """
@@ -162,7 +162,7 @@ class HeadTestCase(unittest.TestCase):
         them all
         """
         result = list(transform.head(self.sequences, 10000))
-        self.assertEquals(self.sequences, result)
+        self.assertEqual(self.sequences, result)
 
     def test_values(self):
         """
@@ -170,8 +170,8 @@ class HeadTestCase(unittest.TestCase):
         """
         for h in xrange(len(self.sequences) + 1):
             result = list(transform.head(self.sequences, h))
-            self.assertEquals(h, len(result))
-            self.assertEquals(self.sequences[:h], result)
+            self.assertEqual(h, len(result))
+            self.assertEqual(self.sequences[:h], result)
 
 
 
@@ -187,7 +187,7 @@ class IsolateRegionTestCase(unittest.TestCase):
         result = list(transform.isolate_region(self.sequences, 0,
             len(self.sequences[0])))
 
-        self.assertEquals(self.sequences, result)
+        self.assertEqual(self.sequences, result)
 
     def test_single_loc(self):
         start = 2
@@ -203,7 +203,7 @@ class IsolateRegionTestCase(unittest.TestCase):
 
         actual = list(transform.isolate_region(self.sequences, start, end))
         actual = [str(s.seq) for s in actual]
-        self.assertEquals(expected, actual)
+        self.assertEqual(expected, actual)
 
     def test_invalid(self):
         self.assertRaises(ValueError, transform.isolate_region(
@@ -221,15 +221,15 @@ class MinUngapLengthTestCase(unittest.TestCase):
 
     def test_none_pass(self):
         result = list(transform.min_ungap_length_discard(self.sequences, 8))
-        self.assertEquals([], result)
+        self.assertEqual([], result)
 
     def test_all_pass(self):
         result = list(transform.min_ungap_length_discard(self.sequences, 0))
-        self.assertEquals(self.sequences, result)
+        self.assertEqual(self.sequences, result)
 
     def test_partial(self):
         result = transform.min_ungap_length_discard(self.sequences, 4)
-        self.assertEquals([self.sequences[1], self.sequences[3]], list(result))
+        self.assertEqual([self.sequences[1], self.sequences[3]], list(result))
 
 class IncludeExcludeMixIn(object):
 
@@ -252,16 +252,16 @@ class IncludeFromFileTestCase(IncludeExcludeMixIn, unittest.TestCase):
     def test_filter(self):
         expected = [self.sequences[0], self.sequences[1], self.sequences[3]]
         actual = list(transform.include_from_file(self.sequences, self.handle))
-        self.assertEquals(3, len(actual))
-        self.assertEquals(expected, actual)
+        self.assertEqual(3, len(actual))
+        self.assertEqual(expected, actual)
 
 class ExcludeFromFileTestCase(IncludeExcludeMixIn, unittest.TestCase):
 
     def test_filter(self):
         expected = [self.sequences[2], self.sequences[4]]
         actual = list(transform.exclude_from_file(self.sequences, self.handle))
-        self.assertEquals(2, len(actual))
-        self.assertEquals(expected, actual)
+        self.assertEqual(2, len(actual))
+        self.assertEqual(expected, actual)
 
 class CutTestCase(unittest.TestCase):
 

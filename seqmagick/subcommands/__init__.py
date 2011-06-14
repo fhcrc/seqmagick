@@ -1,4 +1,5 @@
-commands = 'convert', 'info', 'mogrify', 'primer_trim', 'quality_filter'
+commands = 'convert', 'info', 'mogrify', 'primer_trim', 'quality_filter', \
+        'extract_ids'
 
 def itermodules(root=__name__):
     for command in commands:

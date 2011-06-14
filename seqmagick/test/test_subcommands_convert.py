@@ -34,7 +34,7 @@ class PopulateTransformsMixIn(object):
         except SystemExit:
             self.fail("Couldn't parse arguments")
         functions = [f.func for f in parsed_arguments.transforms]
-        self.assertEquals(self.functions, functions)
+        self.assertEqual(self.functions, functions)
 
 class OrderRespectedTestCase(PopulateTransformsMixIn, unittest.TestCase):
     """
@@ -124,5 +124,5 @@ class ArgumentTypeTestCase(PopulateTransformsMixIn, unittest.TestCase):
         except SystemExit:
             self.fail("Couldn't parse arguments")
         keywords = [f.keywords for f in parsed_arguments.transforms]
-        self.assertEquals([{'cut_slice': slice(0, 5)}], keywords)
+        self.assertEqual([{'cut_slice': slice(0, 5)}], keywords)
 
