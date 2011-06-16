@@ -181,18 +181,19 @@ def build_parser(parser):
     Add shared arguments to the convert or mogrify parser.
     """
     add_options(parser)
-    parser.add_argument('source_file', type=common.sequence_file,
-            help="Input sequence file")
-    parser.add_argument('dest_file', help="Output file")
+    parser.add_argument('source_file', type=argparse.FileType('r'),
+                        help="Input sequence file")
+    parser.add_argument('dest_file', type=argparse.FileType('w'),
+                        help="Output file")
 
     return parser
 
 def transform_file(source_file, destination_file, arguments):
     # Get just the file name, useful for naming the temporary file.
-    file_ext = os.path.splitext(source_file)[1]
+    file_ext = os.path.splitext(source_file.name)[1]
     source_file_type = (arguments.input_format or from_extension(file_ext))
 
-    output_ext = os.path.splitext(destination_file)[1]
+    output_ext = os.path.splitext(destination_file.name)[1]
     destination_file_type = (arguments.output_format or
             from_extension(output_ext))
 
@@ -251,8 +252,9 @@ def transform_file(source_file, destination_file, arguments):
         logging.info("Attempting to write fasta with %d line breaks.",
                 arguments.line_wrap)
 
-        with open(destination_file, "w") as handle:
-            writer = FastaIO.FastaWriter(handle, wrap=arguments.line_wrap)
+        with destination_file:
+            writer = FastaIO.FastaWriter(
+                destination_file, wrap=arguments.line_wrap)
             writer.write_file(records)
     else:
         # Mogrify requires writing all changes to a temporary file by default,
