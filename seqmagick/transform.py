@@ -523,7 +523,7 @@ def sort_length(source_file, source_file_type, direction=1):
     else:
         ids = [seq_id for (length, seq_id) in len_and_ids]
     del len_and_ids #free this memory
-    record_index = SeqIO.index(source_file, source_file_type)
+    record_index = SeqIO.index(source_file.name, source_file_type)
     records = (record_index[seq_id] for seq_id in ids)
 
     return records
@@ -545,7 +545,7 @@ def sort_name(source_file, source_file_type, direction=1):
 
     if direction == 0:
         ids = reversed(ids)
-    record_index = SeqIO.index(source_file, source_file_type)
+    record_index = SeqIO.index(source_file.name, source_file_type)
     records = (record_index[id] for id in ids)
 
     return records
