@@ -175,7 +175,9 @@ class AmbiguousBaseFilter(BaseFilter):
             assert False
 
 class MinLengthFilter(BaseFilter):
+    name = "Minimum Length Filter"
     def __init__(self, min_length):
+        super(MinLengthFilter, self).__init__()
         self.min_length = min_length
 
     def filter_record(self, record):

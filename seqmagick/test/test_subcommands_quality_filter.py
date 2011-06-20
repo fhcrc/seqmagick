@@ -79,3 +79,26 @@ class AmbiguousBaseFilterTestCase(unittest.TestCase):
     def test_invalid_action(self):
         self.assertRaises(ValueError, quality_filter.AmbiguousBaseFilter,
                 'other')
+
+
+class MinLengthFilterTestCase(unittest.TestCase):
+
+    def setUp(self):
+        self.sequences = [SeqRecord(Seq('ACGT')),
+                          SeqRecord(Seq('ACTTT')), ]
+
+    def test_none_pass(self):
+        instance = quality_filter.MinLengthFilter(6)
+        actual = list(instance.filter_records(self.sequences))
+        self.assertEqual([], actual)
+
+    def test_all_pass(self):
+        instance = quality_filter.MinLengthFilter(4)
+        actual = list(instance.filter_records(self.sequences))
+        self.assertEqual(self.sequences, actual)
+
+    def test_some_pass(self):
+        instance = quality_filter.MinLengthFilter(5)
+        actual = list(instance.filter_records(self.sequences))
+        self.assertEqual(self.sequences[1:], actual)
+
