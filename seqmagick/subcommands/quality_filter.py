@@ -26,6 +26,8 @@ def build_parser(parser):
     parser.add_argument('--min-mean-quality', metavar='QUALITY', type=float,
             default=25, help="""Minimum mean quality score for each read
             [default: %(default)s]""")
+    parser.add_argument('--min-length', metavar='LENGTH', type=int,
+            help="""Minimum length to keep sequence [default: %(default)s]""")
     parser.add_argument('--quality-window', type=int, metavar='WINDOW_SIZE',
             default=0, help="""Window size for truncating sequences.  When set
             to a non-zero value, sequences are truncated where the mean mean
@@ -172,6 +174,17 @@ class AmbiguousBaseFilter(BaseFilter):
         else:
             assert False
 
+class MinLengthFilter(BaseFilter):
+    def __init__(self, min_length):
+        self.min_length = min_length
+
+    def filter_record(self, record):
+        """
+        Filter record, dropping any that don't meet minimum lenght
+        """
+        if len(record) >= self.min_length:
+            return record
+
 def action(arguments):
     """
     Given parsed arguments, filter input files.
@@ -191,6 +204,10 @@ def action(arguments):
                         arguments.ambiguous_action)
                 filtered = ambiguous_filter.filter_records(filtered)
                 filters.append(ambiguous_filter)
+            if arguments.min_length:
+                min_length_filter = MinLengthFilter(arguments.min_length)
+                filtered = min_length_filter.filter_records(filtered)
+                filters.append(min_length_filter)
 
             with arguments.output_file:
                 SeqIO.write(filtered, arguments.output_file,

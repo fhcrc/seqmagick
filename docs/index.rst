@@ -337,15 +337,17 @@ writes the results to an output file::
     optional arguments:
       -h, --help            show this help message and exit
       --min-mean-quality QUALITY
-                            Minimum mean quality score for each read (default: 25)
+                            Minimum mean quality score for each read [default: 25]
+      --min-length LENGTH   Minimum length to keep sequence [default: None]
       --quality-window WINDOW_SIZE
                             Window size for truncating sequences. When set to a
                             non-zero value, sequences are truncated where the mean
                             mean quality within the window drops below --min-mean-
-                            quality. (default: 0)
+                            quality. [default: 0]
       --ambiguous-action {truncate,drop}
                             Action to take on ambiguous base in sequence (N's).
-                            Default: no action.
+                            [default: no action]
+
 
 Supported File Extensions
 =========================
