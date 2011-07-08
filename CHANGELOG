@@ -1,3 +1,6 @@
+0.3.0
+=====
+
 * Internal reorganization - transformations are converted to partial functions,
   then applied.
 * Argument order now affects order of tranformation application.
@@ -9,7 +12,9 @@
   --include-from-file --exclude-from-file
 * Removed seqmagick muscle
 * Added new subcommand `quality-filter`
-* Added new subcommand `extract ids`
+* Added new subcommand `extract ids` (closes GH-13)
+* Allow use of '-' to indicate stdin / stdout (closes GH-11)
+* Add mapping from .phyx to phylip-relaxed (targeted for BioPython 1.58)
 
 0.2.0
 =====
