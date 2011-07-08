@@ -1,3 +1,9 @@
+0.3.1
+=====
+
+* Fix bug in quality-filter MinLengthFilter
+* Case consistency in seqmagick
+
 0.3.0
 =====
 
