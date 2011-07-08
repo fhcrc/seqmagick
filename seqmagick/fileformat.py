@@ -42,7 +42,7 @@ def from_extension(extension):
     try:
         return EXTENSION_TO_TYPE[extension.lower()]
     except KeyError:
-        raise UnknownExtensionError("SeqMagick does not know how to handle " +
+        raise UnknownExtensionError("seqmagick does not know how to handle " +
                 "files with extensions like this: " + extension)
 
 

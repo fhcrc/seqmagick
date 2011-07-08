@@ -33,7 +33,7 @@ def parse_arguments(argv):
     """
     Extract command-line arguments for different actions.
     """
-    parser = argparse.ArgumentParser(description='SeqMagick - Manipulate ' + \
+    parser = argparse.ArgumentParser(description='seqmagick - Manipulate ' + \
        ' sequence files.', prog='seqmagick')
 
     parser.add_argument('-V', '--version', action='version',

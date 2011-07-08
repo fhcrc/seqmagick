@@ -371,7 +371,7 @@ extension, or specify it manually via ``--input-format`` or ``--output-format``.
 Acknowledgements
 ================
 
-SeqMagick is written and maintained by the `Matsen Group`_ at the Fred
+seqmagick is written and maintained by the `Matsen Group`_ at the Fred
 Hutchinson Cancer Research Center.  
 
 
