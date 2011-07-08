@@ -1,6 +1,6 @@
-========= ==============
+========= ======================================================================================================
 Extension Format        
-========= ==============
+========= ======================================================================================================
 .afa      fasta         
 .aln      clustal       
 .fa       fasta         
@@ -16,10 +16,9 @@ Extension Format
 .needle   emboss        
 .phy      phylip        
 .phylip   phylip        
-.phyx     phylip-relaxed
+.phyx     phylip-relaxed (**note:** requires building BioPython from the master branch until v1.58 is released)
 .qual     qual          
 .sff      sff           
 .sth      stockholm     
 .sto      stockholm     
-========= ==============
-
+========= ======================================================================================================

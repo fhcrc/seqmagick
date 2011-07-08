@@ -9,6 +9,14 @@
 .. .. toctree::
  ..:maxdepth: 2
 
+.. "Fork me on github"
+
+
+.. raw:: html
+
+    <a href="http://github.com/fhcrc/seqmagick"><img style="position: absolute; top: 0; left: 0; border: 0;" src="https://gs1.wac.edgecastcdn.net/80460E/assets/img/6429057dfef9e98189338d22e7f6646c6694f032/687474703a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f6c6566745f6f72616e67655f6666373630302e706e67" alt="Fork me on GitHub"></a>
+
+
 =========
 seqmagick
 =========
@@ -348,7 +356,6 @@ writes the results to an output file::
                             Action to take on ambiguous base in sequence (N's).
                             [default: no action]
 
-
 Supported File Extensions
 =========================
 
@@ -360,14 +367,21 @@ extensions are:
 If an extension is not listed, you can either rename the file to a supported
 extension, or specify it manually via ``--input-format`` or ``--output-format``.
 
+
+Acknowledgements
+================
+
+SeqMagick is written and maintained by the `Matsen Group`_ at the Fred
+Hutchinson Cancer Research Center.  
+
+
+Contributing
+============
+
+We welcome contributions! Simply fork the repository `on GitHub`_ and send a pull request.
+
+.. _`on GitHub`: http://github.com/fhcrc/seqmagick/
+.. _`Matsen Group`: http://matsen.fhcrc.org/
 .. _imagemagick: http://www.imagemagick.org/script/command-line-tools.php
 .. _`BioPython SeqIO wiki page`: http://www.biopython.org/wiki/SeqIO#File_Formats
 .. _`BioPython`: http://www.biopython.org/
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
-
