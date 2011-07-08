@@ -117,6 +117,19 @@ and remove any duplicates from an alignment in place::
 You can even define your own functions in python and use them via
 ``--apply-function``.
 
+.. note::
+  To maximize flexibility, most transformations passed as options to
+  ``mogrify`` and ``convert`` are processed *in order*, so::
+
+       seqmagick convert --min-length 50 --cut 1:5 a.fasta b.fasta
+
+  will work fine, but::
+
+       seqmagick convert --cut 1:5 --min-length 50 a.fasta b.fasta
+
+  will never return records, since the cutting transformation happens before
+  the minimum length predicate is applied.
+
 Command-line Arguments
 **********************
 
@@ -233,6 +246,22 @@ By default, file format is inferred from extension::
 
 .. _`BioPython SeqIO wiki page`: http://www.biopython.org/wiki/SeqIO#File_Formats
 
+``extract-ids``
+---------------
+
+``seqmagick extract-ids`` is extremely simple - all the IDs from a sequence file
+are printed to stdout (by default) or the file of your choosing::
+
+    positional arguments:
+      sequence_file         Sequence file
+
+    optional arguments:
+      -h, --help            show this help message and exit
+      -o OUTPUT_FILE, --output-file OUTPUT_FILE
+                            Destination trimmed file
+      --source-format SOURCE_FORMAT
+
+
 ``info``
 --------
 
@@ -292,9 +321,6 @@ reverse primers. Usage is as follows::
                             trim
 
 
-.. _imagemagick: http://www.imagemagick.org/script/command-line-tools.php
-.. _`BioPython SeqIO wiki page`: http://www.biopython.org/wiki/SeqIO#File_Formats
-.. _`BioPython`: http://www.biopython.org/
 
 ``quality-filter``
 ------------------
@@ -311,15 +337,17 @@ writes the results to an output file::
     optional arguments:
       -h, --help            show this help message and exit
       --min-mean-quality QUALITY
-                            Minimum mean quality score for each read (default: 25)
+                            Minimum mean quality score for each read [default: 25]
+      --min-length LENGTH   Minimum length to keep sequence [default: None]
       --quality-window WINDOW_SIZE
                             Window size for truncating sequences. When set to a
                             non-zero value, sequences are truncated where the mean
                             mean quality within the window drops below --min-mean-
-                            quality. (default: 0)
+                            quality. [default: 0]
       --ambiguous-action {truncate,drop}
                             Action to take on ambiguous base in sequence (N's).
-                            Default: no action.
+                            [default: no action]
+
 
 Supported File Extensions
 =========================
@@ -332,6 +360,9 @@ extensions are:
 If an extension is not listed, you can either rename the file to a supported
 extension, or specify it manually via ``--input-format`` or ``--output-format``.
 
+.. _imagemagick: http://www.imagemagick.org/script/command-line-tools.php
+.. _`BioPython SeqIO wiki page`: http://www.biopython.org/wiki/SeqIO#File_Formats
+.. _`BioPython`: http://www.biopython.org/
 
 Indices and tables
 ==================
