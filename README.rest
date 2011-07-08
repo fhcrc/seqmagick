@@ -13,7 +13,29 @@ there is one that takes arguments::
     seqmagick info *.{fasta,sto}       # describe all FASTA and Stockholm 
                                        # files in the current directory
 
-Want to learn more? Head to the `Documentation`_
+Features include:
+
+  * Modifying sequences: Remove gaps, reverse complement, reverse, change case,
+
+    - Remove gaps
+    - Reverse & Reverse Complement
+    - Trim to a range of residues
+    - Change case
+    - Sort by length or ID
+    - `more <http://fhcrc.github.com/seqmagick/#convert-and-mogrify>`_
+
+  * Displaying `information <http://fhcrc.github.com/seqmagick/#info>`_ about sequence files
+  * Subsetting sequence files by:
+
+    - Position
+    - ID
+    - Deduplication
+    - `more <http://fhcrc.github.com/seqmagick/#convert-and-mogrify>`_
+
+  * Filtering sequences by `quality score <http://fhcrc.github.com/seqmagick/#quality-filter>`_
+  * Trimming alignments to a `region of interest <http://fhcrc.github.com/seqmagick/#primer-trim>`_
+
+Want to learn more? Head to the `Documentation`_.
 
 ``seqmagick`` is free software under the GPL v3.
 
