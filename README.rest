@@ -24,7 +24,8 @@ Features include:
     - Sort by length or ID
     - `more <http://fhcrc.github.com/seqmagick/#convert-and-mogrify>`_
 
-  * Displaying `information <http://fhcrc.github.com/seqmagick/#info>`_ about sequence files
+  * Displaying `information <http://fhcrc.github.com/seqmagick/#info>`_ about
+    sequence files
   * Subsetting sequence files by:
 
     - Position
@@ -32,8 +33,11 @@ Features include:
     - Deduplication
     - `more <http://fhcrc.github.com/seqmagick/#convert-and-mogrify>`_
 
-  * Filtering sequences by `quality score <http://fhcrc.github.com/seqmagick/#quality-filter>`_
-  * Trimming alignments to a `region of interest <http://fhcrc.github.com/seqmagick/#primer-trim>`_
+  * Filtering sequences by `quality score
+    <http://fhcrc.github.com/seqmagick/#quality-filter>`_
+  * Trimming alignments to a `region of interest
+    <http://fhcrc.github.com/seqmagick/#primer-trim>`_ defined by the
+    forward and reverse primers
 
 Want to learn more? Head to the `Documentation`_.
 
