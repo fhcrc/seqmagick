@@ -10,34 +10,34 @@ there is one that takes arguments::
 
     seqmagick convert a.fasta b.phy    # convert from fasta to phylip
     seqmagick mogrify --ungap a.fasta  # remove all gaps from a.fasta, in place
-    seqmagick info *.{fasta,sto}       # describe all FASTA and Stockholm 
+    seqmagick info *.{fasta,sto}       # describe all FASTA and Stockholm
                                        # files in the current directory
 
 Features include:
 
-  * Modifying sequences: Remove gaps, reverse complement, reverse, change case,
+* Modifying sequences: Remove gaps, reverse complement, reverse, change case,
 
-    - Remove gaps
-    - Reverse & Reverse Complement
-    - Trim to a range of residues
-    - Change case
-    - Sort by length or ID
-    - `more <http://fhcrc.github.com/seqmagick/#convert-and-mogrify>`_
+  - Remove gaps
+  - Reverse & Reverse Complement
+  - Trim to a range of residues
+  - Change case
+  - Sort by length or ID
+  - `more <http://fhcrc.github.com/seqmagick/#convert-and-mogrify>`_
 
-  * Displaying `information <http://fhcrc.github.com/seqmagick/#info>`_ about
-    sequence files
-  * Subsetting sequence files by:
+* Displaying `information <http://fhcrc.github.com/seqmagick/#info>`_ about
+  sequence files
+* Subsetting sequence files by:
 
-    - Position
-    - ID
-    - Deduplication
-    - `more <http://fhcrc.github.com/seqmagick/#convert-and-mogrify>`_
+  - Position
+  - ID
+  - Deduplication
+  - `more <http://fhcrc.github.com/seqmagick/#convert-and-mogrify>`_
 
-  * Filtering sequences by `quality score
-    <http://fhcrc.github.com/seqmagick/#quality-filter>`_
-  * Trimming alignments to a `region of interest
-    <http://fhcrc.github.com/seqmagick/#primer-trim>`_ defined by the
-    forward and reverse primers
+* Filtering sequences by `quality score
+  <http://fhcrc.github.com/seqmagick/#quality-filter>`_
+* Trimming alignments to a `region of interest
+  <http://fhcrc.github.com/seqmagick/#primer-trim>`_ defined by the
+  forward and reverse primers
 
 Want to learn more? Head to the `Documentation`_.
 
