@@ -18,7 +18,7 @@ Features include:
 * Modifying sequences: Remove gaps, reverse complement, reverse, change case,
 
   - Remove gaps
-  - Reverse & Reverse Complement
+  - Reverse & reverse complement
   - Trim to a range of residues
   - Change case
   - Sort by length or ID
