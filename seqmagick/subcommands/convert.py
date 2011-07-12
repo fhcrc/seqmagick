@@ -243,7 +243,7 @@ def transform_file(source_file, destination_file, arguments):
     if arguments.squeeze:
         logging.info("Performing squeeze")
         records = transform.squeeze(records, arguments.squeeze,
-                                    SeqIO.parse(source_file, source_file_type))
+                SeqIO.parse(source_file.name, source_file_type))
 
     # Only the fasta format is supported, as SeqIO.write does not have a 'wrap'
     # parameter.

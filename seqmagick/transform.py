@@ -377,8 +377,8 @@ def squeeze(records, gap_threshold, sequence_iterator):
     positions.
     """
     logging.info('Applying squeeze: '
-                 'removing any gaps that are present '
-                 'in the same position across all sequences in an alignment.')
+                 'removing any gaps that are present in at least %f proportion '
+                 'of sequences', gap_threshold)
 
     gap_proportions = gap_proportion(sequence_iterator)
     keep_columns = [g < gap_threshold for g in gap_proportions]
