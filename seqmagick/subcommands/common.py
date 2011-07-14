@@ -93,8 +93,6 @@ def partial_append_action(fn, argument_keys=None):
             # Generate keyword arguments for the input function
             kwargs = dict(zip(argument_keys, values))
             f = functools.partial(fn, **kwargs)
-            functools.update_wrapper(f, fn)
-            f.func_name = 'wrapped_' + fn.func_name
             items.append(f)
             setattr(namespace, self.dest, items)
 
