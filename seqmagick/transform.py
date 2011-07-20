@@ -9,6 +9,7 @@ import string
 
 from Bio import SeqIO
 from Bio.Alphabet import generic_dna, generic_rna
+from Bio.Data import CodonTable
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 from Bio.SeqUtils.CheckSum import seguid
@@ -435,6 +436,25 @@ def transcribe(records, transcribe):
             dna = rna.back_transcribe()
             yield SeqRecord(dna, id=name, description=description)
 
+# Translate-related functions
+class CodonWarningDict(collections.defaultdict):
+    """
+    Translation table for codons tht prints a warning when an unknown
+    codon is requested, then returns the value passed as missing_char
+    """
+
+    def __init__(self, missing_char='X'):
+        super(CodonWarningDict, self).__init__(lambda: missing_char)
+
+
+    def __missing__(self, key):
+        if '-' in key:
+            if not key in self:
+                logging.warn("Unknown Codon: %s", key)
+            return super(CodonWarningDict, self).__missing__(key)
+        else:
+            raise KeyError(key)
+
 
 def translate(records, translate):
     """
@@ -447,22 +467,28 @@ def translate(records, translate):
         rna2protein
         rna2proteinstop
     """
-    logging.info('Applying _translation generator: '
+    logging.info('Applying translation generator: '
                  'operation to perform is ' + translate + '.')
+
+    to_stop = translate.endswith('stop')
+
+    source_type = translate[:3]
+    alphabet = {'dna': generic_dna, 'rna': generic_rna}[source_type]
+
+    # Get a translation table
+    table = {'dna': CodonTable.standard_dna_table,
+             'rna': CodonTable.standard_rna_table}[source_type]
+
+    # Handle ambiguities by replacing ambiguous codons with 'X'
+    forward = CodonWarningDict()
+    forward.update(table.forward_table)
+    table.forward_table = forward
+
     for record in records:
         sequence = str(record.seq)
-        description = record.description
-        name = record.id
-        if translate in ('dna2protein', 'dna2proteinstop'):
-            to_stop = translate == 'dna2proteinstop'
-            dna = Seq(sequence, generic_dna)
-            protein = dna.translate(to_stop=to_stop)
-            yield SeqRecord(protein, id=name, description=description)
-        elif translate in ('rna2protein', 'rna2proteinstop'):
-            to_stop = translate == 'rna2proteinstop'
-            rna = Seq(sequence, generic_rna)
-            protein = rna.translate(to_stop=to_stop)
-            yield SeqRecord(protein, id=name, description=description)
+        seq = Seq(sequence, alphabet)
+        protein = seq.translate(table, to_stop=to_stop)
+        yield SeqRecord(protein, id=record.id, description=record.description)
 
 
 def max_length_discard(records, max_length):
