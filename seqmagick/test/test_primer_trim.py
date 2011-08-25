@@ -1,7 +1,6 @@
 """
 Tests for primer trim
 """
-import argparse
 import unittest
 
 from Bio import Alphabet
@@ -36,7 +35,6 @@ class PrimerAlignerTestCase(unittest.TestCase):
         self.assertEqual(expected_distance, hamming_distance)
         self.assertEqual(16, start)
         self.assertEqual(30, end)
-
 
 class HammingDistanceTestCase(unittest.TestCase):
 

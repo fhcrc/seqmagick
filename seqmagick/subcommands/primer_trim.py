@@ -10,8 +10,8 @@ from Bio import Alphabet, SeqIO, pairwise2
 from Bio.Alphabet import IUPAC
 from Bio.Seq import Seq
 
-import common
 from seqmagick import transform, fileformat
+from seqmagick.subcommands import common
 
 
 def build_parser(parser):
@@ -208,31 +208,37 @@ def locate_primers(sequences, forward_primer, reverse_primer,
     forward_aligner = PrimerAligner(forward_primer)
     reverse_aligner = PrimerAligner(reverse_primer)
 
-    for sequence in sequences:
+    for i, sequence in enumerate(sequences):
         if seq_length is None:
             seq_length = len(sequence)
         elif len(sequence) != seq_length:
-            raise ValueError(("Unexpected sequence length: {0}. "
-                    "Is this an alignment?").format(len(sequence)))
+            raise ValueError(("Sequence Length Heterogeneity: {0} != {1}. "
+                    "Is this an alignment?").format(len(sequence), seq_length))
         index_map = ungap_index_map(sequence.seq)
         if forward_loc is None:
             ham_dist, start, end = \
                     forward_aligner.align(sequence.seq.ungap())
             if ham_dist <= max_hamming_distance:
                 forward_loc = index_map[start], index_map[end]
-                logging.info("Forward: indexes %d to %d", *forward_loc)
+                logging.info("Forward in sequence %d: indexes %d to %d", i + 1,
+                             *forward_loc)
         if reverse_loc is None:
             ham_dist, start, end = \
                     reverse_aligner.align(sequence.seq.ungap())
             if ham_dist <= max_hamming_distance:
                 reverse_loc = index_map[start], index_map[end]
-                logging.info("Reverse: indexes %d to %d", *reverse_loc)
+                logging.info("Reverse in sequence %d: indexes %d to %d", i + 1,
+                             *reverse_loc)
         if forward_loc and reverse_loc:
             # Both found
             # Check order
             if forward_loc[0] > reverse_loc[0]:
                 raise PrimerOrderError(forward_loc[0], reverse_loc[0])
             return forward_loc, reverse_loc
+        else:
+            logging.debug("Sequence %d: %d/2 primers found",
+                    i + 1, sum(j is not None
+                               for j in (forward_loc, reverse_loc)))
 
     # Did not find either the forward or reverse primer:
     if not forward_loc:
