@@ -14,6 +14,9 @@ def build_parser(parser):
     parser.add_argument('-o', '--output-file', help="Destination trimmed file",
             type=argparse.FileType('w'), default=sys.stdout)
     parser.add_argument('--source-format', default=None)
+    parser.add_argument('-d', '--include-description', action='store_true',
+            default=False, help="""Include the sequence description in output
+            [default: %(default)s]""")
 
 def action(arguments):
     # Determine file format for input and output
@@ -21,8 +24,12 @@ def action(arguments):
             fileformat.from_filename(arguments.sequence_file.name))
 
     with arguments.sequence_file:
-        ids = (sequence.id for sequence in SeqIO.parse(arguments.sequence_file,
-                                                       source_format))
+        sequences = SeqIO.parse(arguments.sequence_file, source_format)
+        if arguments.include_description:
+            ids = ("{0} {1}".format(s.id, s.description if s.description != s.id else '')
+                   for s in sequences)
+        else:
+            ids = (sequence.id for sequence in sequences)
         with arguments.output_file:
             for i in ids:
                 print >> arguments.output_file, i

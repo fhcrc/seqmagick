@@ -268,6 +268,8 @@ are printed to stdout (by default) or the file of your choosing::
       -o OUTPUT_FILE, --output-file OUTPUT_FILE
                             Destination trimmed file
       --source-format SOURCE_FORMAT
+      -d, --include-description
+                            Include the sequence description in output [default: False]
 
 
 ``info``
