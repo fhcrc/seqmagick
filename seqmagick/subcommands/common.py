@@ -4,8 +4,7 @@ Common functions for subcommands
 import argparse
 import copy
 import functools
-import os
-import os.path
+import signal
 
 def cut_range(string):
     """
@@ -112,3 +111,13 @@ def positive_value(target_type):
         return value
 
     return inner
+
+
+def exit_on_sigpipe(status=None):
+    """
+    Set program to exit on SIGPIPE
+    """
+    def exit(signal, frame):
+        raise SystemExit(status)
+
+    signal.signal(signal.SIGPIPE, exit)

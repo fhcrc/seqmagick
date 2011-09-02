@@ -12,6 +12,7 @@ from Bio import SeqIO
 
 from seqmagick import fileformat
 
+from . import common
 
 def build_parser(parser):
     parser.add_argument('source_files', metavar='sequence_files', nargs='+')
@@ -140,6 +141,9 @@ def action(arguments):
     different output formats including tab (tab-delimited), csv and align
     (aligned as if part of a borderless table).
     """
+    # Ignore SIGPIPE, for head support
+    common.exit_on_sigpipe()
+
     handle = arguments.destination_file
     output_format = arguments.output_format
     if not output_format:
