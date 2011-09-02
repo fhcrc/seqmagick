@@ -8,6 +8,8 @@ from Bio import SeqIO
 
 from seqmagick import fileformat
 
+from . import common
+
 def build_parser(parser):
     parser.add_argument('sequence_file', help="Sequence file",
             type=argparse.FileType('r'))
@@ -19,6 +21,8 @@ def build_parser(parser):
             [default: %(default)s]""")
 
 def action(arguments):
+    common.exit_on_sigpipe()
+
     # Determine file format for input and output
     source_format = (arguments.source_format or
             fileformat.from_filename(arguments.sequence_file.name))

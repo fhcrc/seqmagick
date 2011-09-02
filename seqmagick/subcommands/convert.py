@@ -10,8 +10,7 @@ from Bio.SeqIO import FastaIO
 from seqmagick import transform
 from seqmagick.fileformat import from_extension
 
-import common
-
+from . import common
 
 def add_options(parser):
     """
