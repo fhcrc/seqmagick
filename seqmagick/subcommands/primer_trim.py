@@ -11,8 +11,8 @@ from Bio.Alphabet import IUPAC
 from Bio.Seq import Seq
 
 from seqmagick import transform, fileformat
-from seqmagick.subcommands import common
 
+from . import common
 
 def build_parser(parser):
     parser.add_argument('source_file', help="Source alignment file",

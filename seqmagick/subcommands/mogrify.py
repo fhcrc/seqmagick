@@ -2,13 +2,13 @@
 Modify sequence file(s) in place.
 """
 
-from seqmagick.subcommands import convert
 import argparse
 import logging
 import os.path
 import shutil
 import tempfile
 
+from . import convert
 
 def build_parser(parser):
     """
@@ -37,4 +37,3 @@ def action(arguments):
             convert.transform_file(input_file, tf, arguments)
         # Overwrite the original file
         shutil.move(tf.name, input_file.name)
-
