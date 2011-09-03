@@ -285,3 +285,56 @@ class CutTestCase(unittest.TestCase):
         actual = list(transform.cut_sequences(self.sequences, slice(0, 2)))
         self.assertEqual(['AA', 'BB', 'DD', 'EE'], [str(s.seq) for s in
             actual])
+
+class CodonWarningDictTestCase(unittest.TestCase):
+
+    def warn(self, *args, **kwargs):
+        self.warnings.append((args, kwargs))
+
+    def setUp(self):
+        self.warnings = []
+        self.warning_dict = transform.CodonWarningDict()
+        self.warning_dict['UUU'] = "F"
+        self.old_warn = transform.logging.warn
+        transform.logging.warn = self.warn
+
+    def tearDown(self):
+        transform.logging.warn = self.old_warn
+
+    def test_nowarn(self):
+        actual = self.warning_dict['UUU']
+        self.assertEqual('F', actual)
+        self.assertEqual([], self.warnings)
+
+    def test_warn(self):
+        codon = 'UU-'
+        actual = self.warning_dict[codon]
+        self.assertEqual('X', actual)
+        self.assertEqual([(("Unknown Codon: %s", codon), {})], self.warnings)
+
+class TranslateTestCase(unittest.TestCase):
+
+    def test_dna_protein_nogap(self):
+        sequences = [seqrecord('A', 'TTTTTATAA')]
+        expected = ['FL*']
+        actual = transform.translate(sequences, 'dna2protein')
+        self.assertEqual(expected, [str(i.seq) for i in actual])
+
+    def test_dna_protein_nogap_stop(self):
+        sequences = [seqrecord('A', 'TTTTTATAA')]
+        expected = ['FL']
+        actual = transform.translate(sequences, 'dna2proteinstop')
+        self.assertEqual(expected, [str(i.seq) for i in actual])
+
+    def test_dna_protein_gap(self):
+        sequences = [seqrecord('A', 'TTTTT-TAA')]
+        expected = ['FX*']
+        actual = transform.translate(sequences, 'dna2protein')
+        self.assertEqual(expected, [str(i.seq) for i in actual])
+
+    def test_dna_protein_gap_stop(self):
+        sequences = [seqrecord('A', '---TTATAA')]
+        expected = ['XL']
+        actual = transform.translate(sequences, 'dna2proteinstop')
+        self.assertEqual(expected, [str(i.seq) for i in actual])
+
