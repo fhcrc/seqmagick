@@ -3,7 +3,6 @@ Tests for seqmagick.transform
 """
 
 from cStringIO import StringIO
-import logging
 import unittest
 
 from Bio import Alphabet
@@ -11,8 +10,6 @@ from Bio.SeqRecord import SeqRecord
 from Bio.Seq import Seq
 
 from seqmagick import transform
-
-logging.basicConfig(level=logging.FATAL)
 
 def _alignment_record(sequence):
     return SeqRecord(Seq(sequence,
@@ -289,6 +286,7 @@ class CutTestCase(unittest.TestCase):
         self.assertEqual(['AA', 'BB', 'DD', 'EE'], [str(s.seq) for s in
             actual])
 
+<<<<<<< HEAD
 class CodonWarningDictTestCase(unittest.TestCase):
 
     def warn(self, *args, **kwargs):
@@ -341,6 +339,7 @@ class TranslateTestCase(unittest.TestCase):
         actual = transform.translate(sequences, 'dna2proteinstop')
         self.assertEqual(expected, [str(i.seq) for i in actual])
 
+=======
 class UngapSequencesTestCase(unittest.TestCase):
 
     def test_dot_gap(self):
@@ -358,3 +357,4 @@ class UngapSequencesTestCase(unittest.TestCase):
 
         ungapped = list(transform.ungap_sequences(sequences))
         self.assertEqual(["AAA", "AG", "A"], [str(s.seq) for s in ungapped])
+>>>>>>> Allow '-' or '.' as gaps

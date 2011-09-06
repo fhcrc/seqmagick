@@ -14,6 +14,8 @@ from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 from Bio.SeqUtils.CheckSum import seguid
 
+# Characters to be treated as gaps
+GAP_CHARS = "-."
 
 def dashes_cleanup(records):
     """
@@ -224,16 +226,20 @@ def reverse_complement_sequences(records):
         yield rev_record
 
 
-def ungap_sequences(records):
+def ungap_sequences(records, gap_chars=GAP_CHARS):
     """
     Remove gaps from sequences, given an alignment.
     """
     logging.info('Applying _ungap_sequences generator: '
                  'removing gaps from the alignment.')
     for record in records:
-        yield SeqRecord(record.seq.ungap("-"), id=record.id,
-                        description=record.description)
+        yield ungap_all(record, gap_chars)
 
+def ungap_all(record, gap_chars=GAP_CHARS):
+    for c in gap_chars:
+        record = SeqRecord(record.seq.ungap(c), id=record.id,
+                description=record.description)
+    return record
 
 def name_append_suffix(records, suffix):
     """
@@ -526,7 +532,7 @@ def min_ungap_length_discard(records, min_length):
     Discard any records that are shorter than min_length after removing gaps.
     """
     for record in records:
-        if len(record.seq.ungap('-')) >= min_length:
+        if len(ungap_all(record)) >= min_length:
             yield record
 
 
