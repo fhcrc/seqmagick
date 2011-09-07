@@ -9,6 +9,14 @@
 .. .. toctree::
  ..:maxdepth: 2
 
+.. "Fork me on github"
+
+
+.. raw:: html
+
+    <a href="http://github.com/fhcrc/seqmagick"><img style="position: absolute; top: 0; left: 0; border: 0;" src="_static/fork.png" alt="Fork me on GitHub"></a>
+
+
 =========
 seqmagick
 =========
@@ -246,6 +254,24 @@ By default, file format is inferred from extension::
 
 .. _`BioPython SeqIO wiki page`: http://www.biopython.org/wiki/SeqIO#File_Formats
 
+``extract-ids``
+---------------
+
+``seqmagick extract-ids`` is extremely simple - all the IDs from a sequence file
+are printed to stdout (by default) or the file of your choosing::
+
+    positional arguments:
+      sequence_file         Sequence file
+
+    optional arguments:
+      -h, --help            show this help message and exit
+      -o OUTPUT_FILE, --output-file OUTPUT_FILE
+                            Destination trimmed file
+      --source-format SOURCE_FORMAT
+      -d, --include-description
+                            Include the sequence description in output [default: False]
+
+
 ``info``
 --------
 
@@ -305,9 +331,6 @@ reverse primers. Usage is as follows::
                             trim
 
 
-.. _imagemagick: http://www.imagemagick.org/script/command-line-tools.php
-.. _`BioPython SeqIO wiki page`: http://www.biopython.org/wiki/SeqIO#File_Formats
-.. _`BioPython`: http://www.biopython.org/
 
 ``quality-filter``
 ------------------
@@ -324,15 +347,16 @@ writes the results to an output file::
     optional arguments:
       -h, --help            show this help message and exit
       --min-mean-quality QUALITY
-                            Minimum mean quality score for each read (default: 25)
+                            Minimum mean quality score for each read [default: 25]
+      --min-length LENGTH   Minimum length to keep sequence [default: None]
       --quality-window WINDOW_SIZE
                             Window size for truncating sequences. When set to a
                             non-zero value, sequences are truncated where the mean
                             mean quality within the window drops below --min-mean-
-                            quality. (default: 0)
+                            quality. [default: 0]
       --ambiguous-action {truncate,drop}
                             Action to take on ambiguous base in sequence (N's).
-                            Default: no action.
+                            [default: no action]
 
 Supported File Extensions
 =========================
@@ -346,10 +370,20 @@ If an extension is not listed, you can either rename the file to a supported
 extension, or specify it manually via ``--input-format`` or ``--output-format``.
 
 
-Indices and tables
-==================
+Acknowledgements
+================
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+seqmagick is written and maintained by the `Matsen Group`_ at the Fred
+Hutchinson Cancer Research Center.  
 
+
+Contributing
+============
+
+We welcome contributions! Simply fork the repository `on GitHub`_ and send a pull request.
+
+.. _`on GitHub`: http://github.com/fhcrc/seqmagick/
+.. _`Matsen Group`: http://matsen.fhcrc.org/
+.. _imagemagick: http://www.imagemagick.org/script/command-line-tools.php
+.. _`BioPython SeqIO wiki page`: http://www.biopython.org/wiki/SeqIO#File_Formats
+.. _`BioPython`: http://www.biopython.org/

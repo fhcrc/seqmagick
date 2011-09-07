@@ -7,13 +7,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>seqmagick &mdash; seqmagick v0.2.0 documentation</title>
+    <title>seqmagick &mdash; seqmagick v0.3.1 documentation</title>
     <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.2.0',
+        VERSION:     '0.3.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -22,7 +22,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="seqmagick v0.2.0 documentation" href="#" /> 
+    <link rel="top" title="seqmagick v0.3.1 documentation" href="#" /> 
   </head>
   <body>
     <div class="related">
@@ -31,7 +31,7 @@
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
-        <li><a href="#">seqmagick v0.2.0 documentation</a> &raquo;</li> 
+        <li><a href="#">seqmagick v0.3.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
       <div class="sphinxsidebar">
@@ -62,6 +62,7 @@
 </li>
 </ul>
 </li>
+<li><a class="reference internal" href="#extract-ids"><tt class="docutils literal"><span class="pre">extract-ids</span></tt></a></li>
 <li><a class="reference internal" href="#info"><tt class="docutils literal"><span class="pre">info</span></tt></a><ul>
 <li><a class="reference internal" href="#example">Example</a></li>
 </ul>
@@ -71,7 +72,8 @@
 </ul>
 </li>
 <li><a class="reference internal" href="#supported-file-extensions">Supported File Extensions</a></li>
-<li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
+<li><a class="reference internal" href="#acknowledgements">Acknowledgements</a></li>
+<li><a class="reference internal" href="#contributing">Contributing</a></li>
 </ul>
 </li>
 </ul>
@@ -102,7 +104,7 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="seqmagick">
+  <a href="http://github.com/fhcrc/seqmagick"><img style="position: absolute; top: 0; left: 0; border: 0;" src="_static/fork.png" alt="Fork me on GitHub"></a><div class="section" id="seqmagick">
 <h1><a class="toc-backref" href="#id3">seqmagick</a><a class="headerlink" href="#seqmagick" title="Permalink to this headline">¶</a></h1>
 <div class="contents new topic" id="contents">
 <p class="topic-title first">Contents</p>
@@ -117,16 +119,18 @@
 <li><a class="reference internal" href="#command-line-arguments" id="id10">Command-line Arguments</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#info" id="id11"><tt class="docutils literal"><span class="pre">info</span></tt></a><ul>
-<li><a class="reference internal" href="#example" id="id12">Example</a></li>
+<li><a class="reference internal" href="#extract-ids" id="id11"><tt class="docutils literal"><span class="pre">extract-ids</span></tt></a></li>
+<li><a class="reference internal" href="#info" id="id12"><tt class="docutils literal"><span class="pre">info</span></tt></a><ul>
+<li><a class="reference internal" href="#example" id="id13">Example</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#primer-trim" id="id13"><tt class="docutils literal"><span class="pre">primer-trim</span></tt></a></li>
-<li><a class="reference internal" href="#quality-filter" id="id14"><tt class="docutils literal"><span class="pre">quality-filter</span></tt></a></li>
+<li><a class="reference internal" href="#primer-trim" id="id14"><tt class="docutils literal"><span class="pre">primer-trim</span></tt></a></li>
+<li><a class="reference internal" href="#quality-filter" id="id15"><tt class="docutils literal"><span class="pre">quality-filter</span></tt></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#supported-file-extensions" id="id15">Supported File Extensions</a></li>
-<li><a class="reference internal" href="#indices-and-tables" id="id16">Indices and tables</a></li>
+<li><a class="reference internal" href="#supported-file-extensions" id="id16">Supported File Extensions</a></li>
+<li><a class="reference internal" href="#acknowledgements" id="id17">Acknowledgements</a></li>
+<li><a class="reference internal" href="#contributing" id="id18">Contributing</a></li>
 </ul>
 </li>
 </ul>
@@ -330,11 +334,27 @@ the minimum length predicate is applied.</p>
 </div>
 </div>
 </div>
+<div class="section" id="extract-ids">
+<h3><a class="toc-backref" href="#id11"><tt class="docutils literal"><span class="pre">extract-ids</span></tt></a><a class="headerlink" href="#extract-ids" title="Permalink to this headline">¶</a></h3>
+<p><tt class="docutils literal"><span class="pre">seqmagick</span> <span class="pre">extract-ids</span></tt> is extremely simple - all the IDs from a sequence file
+are printed to stdout (by default) or the file of your choosing:</p>
+<div class="highlight-python"><pre>positional arguments:
+  sequence_file         Sequence file
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -o OUTPUT_FILE, --output-file OUTPUT_FILE
+                        Destination trimmed file
+  --source-format SOURCE_FORMAT
+  -d, --include-description
+                        Include the sequence description in output [default: False]</pre>
+</div>
+</div>
 <div class="section" id="info">
-<h3><a class="toc-backref" href="#id11"><tt class="docutils literal"><span class="pre">info</span></tt></a><a class="headerlink" href="#info" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id12"><tt class="docutils literal"><span class="pre">info</span></tt></a><a class="headerlink" href="#info" title="Permalink to this headline">¶</a></h3>
 <p><tt class="docutils literal"><span class="pre">seqmagick</span> <span class="pre">info</span></tt> describes one or more sequence files</p>
 <div class="section" id="example">
-<h4><a class="toc-backref" href="#id12">Example</a><a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h4>
+<h4><a class="toc-backref" href="#id13">Example</a><a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h4>
 <div class="highlight-python"><pre>seqmagick info examples/*.fasta
 
 name                      alignment  min_len  max_len  avg_len  num_seqs
@@ -349,7 +369,7 @@ examples/wrapped.fasta    FALSE      120      237      178.50   2</pre>
 </div>
 </div>
 <div class="section" id="primer-trim">
-<h3><a class="toc-backref" href="#id13"><tt class="docutils literal"><span class="pre">primer-trim</span></tt></a><a class="headerlink" href="#primer-trim" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id14"><tt class="docutils literal"><span class="pre">primer-trim</span></tt></a><a class="headerlink" href="#primer-trim" title="Permalink to this headline">¶</a></h3>
 <p><tt class="docutils literal"><span class="pre">primer-trim</span></tt> trims an alignment to a region defined by a set of forward and
 reverse primers. Usage is as follows:</p>
 <div class="highlight-python"><pre>positional arguments:
@@ -385,7 +405,7 @@ optional arguments:
 </div>
 </div>
 <div class="section" id="quality-filter">
-<h3><a class="toc-backref" href="#id14"><tt class="docutils literal"><span class="pre">quality-filter</span></tt></a><a class="headerlink" href="#quality-filter" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id15"><tt class="docutils literal"><span class="pre">quality-filter</span></tt></a><a class="headerlink" href="#quality-filter" title="Permalink to this headline">¶</a></h3>
 <p><tt class="docutils literal"><span class="pre">quality-filter</span></tt> truncates and removes sequences that don&#8217;t match a set of
 quality criteria.  The subcommand takes a FASTA and quality score file, and
 writes the results to an output file:</p>
@@ -397,26 +417,27 @@ writes the results to an output file:</p>
 optional arguments:
   -h, --help            show this help message and exit
   --min-mean-quality QUALITY
-                        Minimum mean quality score for each read (default: 25)
+                        Minimum mean quality score for each read [default: 25]
+  --min-length LENGTH   Minimum length to keep sequence [default: None]
   --quality-window WINDOW_SIZE
                         Window size for truncating sequences. When set to a
                         non-zero value, sequences are truncated where the mean
                         mean quality within the window drops below --min-mean-
-                        quality. (default: 0)
+                        quality. [default: 0]
   --ambiguous-action {truncate,drop}
                         Action to take on ambiguous base in sequence (N's).
-                        Default: no action.</pre>
+                        [default: no action]</pre>
 </div>
 </div>
 </div>
 <div class="section" id="supported-file-extensions">
-<h2><a class="toc-backref" href="#id15">Supported File Extensions</a><a class="headerlink" href="#supported-file-extensions" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id16">Supported File Extensions</a><a class="headerlink" href="#supported-file-extensions" title="Permalink to this headline">¶</a></h2>
 <p>By default, <tt class="docutils literal"><span class="pre">seqmagick</span></tt> infers the file type from extension. Currently mapped
 extensions are:</p>
 <table border="1" class="docutils">
 <colgroup>
-<col width="50%" />
-<col width="50%" />
+<col width="8%" />
+<col width="92%" />
 </colgroup>
 <thead valign="bottom">
 <tr><th class="head">Extension</th>
@@ -434,6 +455,9 @@ extensions are:</p>
 <td>fasta</td>
 </tr>
 <tr><td>.faa</td>
+<td>fasta</td>
+</tr>
+<tr><td>.fas</td>
 <td>fasta</td>
 </tr>
 <tr><td>.fasta</td>
@@ -466,6 +490,9 @@ extensions are:</p>
 <tr><td>.phylip</td>
 <td>phylip</td>
 </tr>
+<tr><td>.phyx</td>
+<td>phylip-relaxed (<strong>note:</strong> requires building BioPython from the master branch until v1.58 is released)</td>
+</tr>
 <tr><td>.qual</td>
 <td>qual</td>
 </tr>
@@ -483,13 +510,14 @@ extensions are:</p>
 <p>If an extension is not listed, you can either rename the file to a supported
 extension, or specify it manually via <tt class="docutils literal"><span class="pre">--input-format</span></tt> or <tt class="docutils literal"><span class="pre">--output-format</span></tt>.</p>
 </div>
-<div class="section" id="indices-and-tables">
-<h2><a class="toc-backref" href="#id16">Indices and tables</a><a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h2>
-<ul class="simple">
-<li><a class="reference internal" href="genindex.html"><em>Index</em></a></li>
-<li><a class="reference internal" href="py-modindex.html"><em>Module Index</em></a></li>
-<li><a class="reference internal" href="search.html"><em>Search Page</em></a></li>
-</ul>
+<div class="section" id="acknowledgements">
+<h2><a class="toc-backref" href="#id17">Acknowledgements</a><a class="headerlink" href="#acknowledgements" title="Permalink to this headline">¶</a></h2>
+<p>seqmagick is written and maintained by the <a class="reference external" href="http://matsen.fhcrc.org/">Matsen Group</a> at the Fred
+Hutchinson Cancer Research Center.</p>
+</div>
+<div class="section" id="contributing">
+<h2><a class="toc-backref" href="#id18">Contributing</a><a class="headerlink" href="#contributing" title="Permalink to this headline">¶</a></h2>
+<p>We welcome contributions! Simply fork the repository <a class="reference external" href="http://github.com/fhcrc/seqmagick/">on GitHub</a> and send a pull request.</p>
 </div>
 </div>
 
@@ -505,7 +533,7 @@ extension, or specify it manually via <tt class="docutils literal"><span class="
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              >index</a></li>
-        <li><a href="#">seqmagick v0.2.0 documentation</a> &raquo;</li> 
+        <li><a href="#">seqmagick v0.3.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
