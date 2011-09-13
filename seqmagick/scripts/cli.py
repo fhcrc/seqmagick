@@ -8,7 +8,7 @@ from seqmagick import __version__ as version
 from seqmagick import subcommands
 
 
-def main(argv):
+def main(argv=sys.argv[1:]):
     action, arguments = parse_arguments(argv)
 
     loglevel = {
