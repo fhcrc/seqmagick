@@ -3,12 +3,32 @@ Modify sequence file(s) in place.
 """
 
 import argparse
+import contextlib
 import logging
+import os
 import os.path
 import shutil
 import tempfile
 
 from . import convert
+
+@contextlib.contextmanager
+def atomic_write(path):
+    """
+    Open a file for atomic writing.
+
+    Generates a temp file, renames to dest
+    """
+    base_dir = os.path.dirname(path)
+    tf = tempfile.NamedTemporaryFile(dir=base_dir, delete=False)
+    try:
+        with tf:
+            yield tf
+        # Move
+        os.rename(tf.name, path)
+    except:
+        os.remove(tf.name)
+        raise
 
 def build_parser(parser):
     """
