@@ -3,10 +3,11 @@ Tests for seqmagick.transform
 """
 
 from cStringIO import StringIO
+import functools
 import logging
 import unittest
 
-from Bio import Alphabet
+from Bio import Alphabet, SeqIO
 from Bio.SeqRecord import SeqRecord
 from Bio.Seq import Seq
 
@@ -358,3 +359,41 @@ class UngapSequencesTestCase(unittest.TestCase):
 
         ungapped = list(transform.ungap_sequences(sequences))
         self.assertEqual(["AAA", "AG", "A"], [str(s.seq) for s in ungapped])
+
+class IdModifyMixin(object):
+    """
+    Mixin to ease testing name prefix and suffix
+    """
+
+    def setUp(self):
+        self.input_fp = StringIO(self.initial_fasta)
+        self.output_fp = StringIO()
+
+    def test_modify(self):
+        records = SeqIO.parse(self.input_fp, 'fasta')
+        records = self.__class__.modify_fn(records)
+        SeqIO.write(records, self.output_fp, 'fasta')
+        self.assertEqual(self.target_fasta, self.output_fp.getvalue().strip())
+
+class NamePrefixTestCase(IdModifyMixin, unittest.TestCase):
+    initial_fasta = """>seq1
+ACGT
+>gi|260674|gb|S52561.1| {long terminal repeat} [human immunodeficiency virus type]
+ACGT"""
+    target_fasta = """>pre.seq1
+ACGT
+>pre.gi|260674|gb|S52561.1| {long terminal repeat} [human immunodeficiency virus type]
+ACGT"""
+    modify_fn = functools.partial(transform.name_insert_prefix, prefix="pre.")
+
+class NameSuffixTestCase(IdModifyMixin, unittest.TestCase):
+    initial_fasta = """>seq1
+ACGT
+>gi|260674|gb|S52561.1| {long terminal repeat} [human immunodeficiency virus type]
+ACGT"""
+    target_fasta = """>seq1.post
+ACGT
+>gi|260674|gb|S52561.1|.post {long terminal repeat} [human immunodeficiency virus type]
+ACGT"""
+    modify_fn = functools.partial(transform.name_append_suffix, suffix=".post")
+
