@@ -3,32 +3,10 @@ Modify sequence file(s) in place.
 """
 
 import argparse
-import contextlib
 import logging
-import os
 import os.path
-import shutil
-import tempfile
 
-from . import convert
-
-@contextlib.contextmanager
-def atomic_write(path):
-    """
-    Open a file for atomic writing.
-
-    Generates a temp file, renames to dest
-    """
-    base_dir = os.path.dirname(path)
-    tf = tempfile.NamedTemporaryFile(dir=base_dir, delete=False)
-    try:
-        with tf:
-            yield tf
-        # Move
-        os.rename(tf.name, path)
-    except:
-        os.remove(tf.name)
-        raise
+from . import convert, common
 
 def build_parser(parser):
     """
@@ -50,10 +28,7 @@ def action(arguments):
     """
     for input_file in arguments.input_files:
         logging.info(input_file)
-        bn = os.path.basename(input_file.name)
         # Generate a temporary file
-        with tempfile.NamedTemporaryFile(prefix='smagick', suffix=bn,
-                delete=False) as tf:
+        suffix = '.' + os.path.splitext(input_file.name)[1]
+        with common.atomic_write(input_file.name, suffix=suffix) as tf:
             convert.transform_file(input_file, tf, arguments)
-        # Overwrite the original file
-        shutil.move(tf.name, input_file.name)

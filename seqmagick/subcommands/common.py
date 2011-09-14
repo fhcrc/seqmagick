@@ -2,9 +2,34 @@
 Common functions for subcommands
 """
 import argparse
+import contextlib
 import copy
 import functools
+import os
+import os.path
 import signal
+import tempfile
+
+@contextlib.contextmanager
+def atomic_write(path, **kwargs):
+    """
+    Open a file for atomic writing.
+
+    Generates a temp file, renames to dest.
+
+    Additional arguments are passed to tempfile.NamedTemporaryFile
+    """
+    base_dir = os.path.dirname(path)
+    tf = tempfile.NamedTemporaryFile(dir=base_dir, delete=False,
+                                     **kwargs)
+    try:
+        with tf:
+            yield tf
+        # Move
+        os.rename(tf.name, path)
+    except:
+        os.remove(tf.name)
+        raise
 
 def cut_range(string):
     """
