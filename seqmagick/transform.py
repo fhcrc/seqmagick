@@ -241,6 +241,20 @@ def ungap_all(record, gap_chars=GAP_CHARS):
                 description=record.description)
     return record
 
+
+def _update_id(record, new_id):
+    """
+    Update a record id to new_id, also modifying the ID in record.description
+    """
+    old_id = record.id
+    record.id = new_id
+
+    # At least for FASTA, record ID starts the description
+    record.description = re.sub('^' + re.escape(old_id), new_id,
+            record.description)
+    return record
+
+
 def name_append_suffix(records, suffix):
     """
     Given a set of sequences, append a suffix for each sequence's name.
@@ -249,8 +263,9 @@ def name_append_suffix(records, suffix):
                  'Appending suffix ' + suffix + ' to all '
                  'sequence IDs.')
     for record in records:
-        yield SeqRecord(record.seq, id=record.id+suffix,
-                        description=record.description)
+        new_id = record.id + suffix
+        _update_id(record, new_id)
+        yield record
 
 
 def name_insert_prefix(records, prefix):
@@ -261,8 +276,9 @@ def name_insert_prefix(records, prefix):
                  'Inserting prefix ' + prefix + ' for all '
                  'sequence IDs.')
     for record in records:
-        yield SeqRecord(record.seq, id=prefix+record.id,
-                        description=record.description)
+        new_id = prefix + record.id
+        _update_id(record, new_id)
+        yield record
 
 
 
