@@ -30,8 +30,7 @@ def action(arguments):
     with arguments.sequence_file:
         sequences = SeqIO.parse(arguments.sequence_file, source_format)
         if arguments.include_description:
-            ids = ("{0} {1}".format(s.id, s.description if s.description != s.id else '')
-                   for s in sequences)
+            ids = (sequence.description for sequence in sequences)
         else:
             ids = (sequence.id for sequence in sequences)
         with arguments.output_file:
