@@ -1,4 +1,10 @@
 * Fix bug in --squeeze
+* More informative messages in `seqmagick primer-trim`
+* Exiting without error on SIGPIPE in extract-ids, info (GH-17)
+* Ambiguities are translated as 'X' in --translate (GH-16)
+* Allowing '.' or '-' as gap character (GH-18)
+* --name-prefix and --name-suffix no longer create a mangled description (GH-19)
+* Cleanup, additional tests
 
 0.3.1
 =====
