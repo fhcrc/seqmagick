@@ -1,3 +1,4 @@
+import os
 import os.path
 import shlex
 import shutil
@@ -22,21 +23,24 @@ class CommandLineTestMixIn(object):
         with open(self.input_path) as fp:
             shutil.copyfileobj(fp, self.input_file)
         self.input_file.flush()
-        self.output_file = tempfile.NamedTemporaryFile(suffix=self.out_suffix)
+        with tempfile.NamedTemporaryFile(suffix=self.out_suffix) as tf:
+            self.output_file = tf.name
 
     def test_run(self):
         command = self.command.format(input=self.input_file.name,
-                output=self.output_file.name)
+                output=self.output_file)
         cli.main(shlex.split(command))
 
-        actual = self.output_file.read()
+        with open(self.output_file) as fp:
+            actual = fp.read()
         with open(self.expected_path) as fp:
             expected = fp.read()
         self.assertEqual(expected, actual)
 
     def tearDown(self):
         self.input_file.close()
-        self.output_file.close()
+        if os.path.isfile(self.output_file):
+            os.remove(self.output_file)
 
 class TestBasicConvert(CommandLineTestMixIn, unittest.TestCase):
     in_suffix = '.fasta'
