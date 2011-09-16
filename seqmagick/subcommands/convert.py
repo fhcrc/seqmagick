@@ -182,8 +182,7 @@ def build_parser(parser):
     add_options(parser)
     parser.add_argument('source_file', type=argparse.FileType('r'),
                         help="Input sequence file")
-    parser.add_argument('dest_file', type=argparse.FileType('w'),
-                        help="Output file")
+    parser.add_argument('dest_file', help="Output file")
 
     return parser
 
@@ -227,6 +226,7 @@ def transform_file(source_file, destination_file, arguments):
         records = transform.deduplicate_sequences(
             records, arguments.deduplicate_sequences)
 
+    # Apply all the partial functions
     if arguments.apply_function:
         for apply_function in arguments.apply_function:
             records = apply_function(records)
@@ -297,4 +297,6 @@ def module_function(string):
 
 
 def action(arguments):
-    transform_file(arguments.source_file, arguments.dest_file, arguments)
+    with arguments.source_file as src, \
+            common.atomic_write(arguments.dest_file) as dest:
+        transform_file(src, dest, arguments)

@@ -5,10 +5,8 @@ Modify sequence file(s) in place.
 import argparse
 import logging
 import os.path
-import shutil
-import tempfile
 
-from . import convert
+from . import convert, common
 
 def build_parser(parser):
     """
@@ -30,10 +28,6 @@ def action(arguments):
     """
     for input_file in arguments.input_files:
         logging.info(input_file)
-        bn = os.path.basename(input_file.name)
         # Generate a temporary file
-        with tempfile.NamedTemporaryFile(prefix='smagick', suffix=bn,
-                delete=False) as tf:
+        with common.atomic_write(input_file.name) as tf:
             convert.transform_file(input_file, tf, arguments)
-        # Overwrite the original file
-        shutil.move(tf.name, input_file.name)
