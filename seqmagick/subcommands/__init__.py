@@ -1,5 +1,5 @@
 commands = 'convert', 'info', 'mogrify', 'primer_trim', 'quality_filter', \
-        'extract_ids'
+        'extract_ids', 'revtrans_align'
 
 def itermodules(root=__name__):
     for command in commands:
