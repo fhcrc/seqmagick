@@ -143,6 +143,7 @@ def action(arguments):
     """
     # Ignore SIGPIPE, for head support
     common.exit_on_sigpipe()
+    common.exit_on_sigint()
 
     handle = arguments.destination_file
     output_format = arguments.output_format

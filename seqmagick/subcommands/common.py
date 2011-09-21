@@ -8,6 +8,7 @@ import functools
 import os
 import os.path
 import signal
+import sys
 import tempfile
 
 @contextlib.contextmanager
@@ -138,12 +139,21 @@ def positive_value(target_type):
 
     return inner
 
+def _exit_on_signal(sig, status=None, message=None):
+    def exit(sig, frame):
+        if message:
+            print >> sys.stderr, message
+        raise SystemExit(status)
+    signal.signal(sig, exit)
+
+def exit_on_sigint(status=1, message="Canceled."):
+    """
+    Set program to exit on SIGINT, with provided status and message.
+    """
+    _exit_on_signal(signal.SIGINT, status, message)
 
 def exit_on_sigpipe(status=None):
     """
     Set program to exit on SIGPIPE
     """
-    def exit(signal, frame):
-        raise SystemExit(status)
-
-    signal.signal(signal.SIGPIPE, exit)
+    _exit_on_signal(signal.SIGPIPE, status)
