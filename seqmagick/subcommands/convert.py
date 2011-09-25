@@ -191,7 +191,8 @@ def transform_file(source_file, destination_file, arguments):
     file_ext = os.path.splitext(source_file.name)[1]
     source_file_type = (arguments.input_format or from_extension(file_ext))
 
-    output_ext = os.path.splitext(destination_file.name)[1]
+    output_ext = os.path.splitext(getattr(destination_file, 'name', ''))[1]
+
     destination_file_type = (arguments.output_format or
             from_extension(output_ext))
 

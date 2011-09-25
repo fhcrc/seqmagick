@@ -1,7 +1,9 @@
+from cStringIO import StringIO
 import os
 import os.path
 import shlex
 import shutil
+import sys
 import unittest
 import tempfile
 
@@ -55,3 +57,21 @@ class TestConvertUngapCut(CommandLineTestMixIn, unittest.TestCase):
     input_path = p('input2.fasta')
     expected_path = p('output2_ungap_cut.fasta')
     command = 'convert --ungap --cut 1:3 {input} {output}'
+
+class TestConvertToStdOut(unittest.TestCase):
+
+    def setUp(self):
+        self.out = StringIO()
+        self.actual_stdout = sys.stdout
+        sys.stdout = self.out
+
+    def tearDown(self):
+        sys.stdout = self.actual_stdout
+
+    def test_convert(self):
+        in_path = p('input2.fasta')
+        cli.main(['convert', in_path, '-', '--output-format', 'fasta'])
+        actual = self.out.getvalue()
+        with open(in_path) as fp:
+            expected = fp.read()
+        self.assertEqual(expected, actual)
