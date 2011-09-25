@@ -20,18 +20,22 @@ def atomic_write(path, **kwargs):
 
     Additional arguments are passed to tempfile.NamedTemporaryFile
     """
-    base_dir = os.path.dirname(path)
-    kwargs['suffix'] = '.' + os.path.splitext(path)[1]
-    tf = tempfile.NamedTemporaryFile(dir=base_dir, delete=False,
-                                     **kwargs)
-    try:
-        with tf:
-            yield tf
-        # Move
-        os.rename(tf.name, path)
-    except:
-        os.remove(tf.name)
-        raise
+    # Handle stdout:
+    if path == '-':
+        yield sys.stdout
+    else:
+        base_dir = os.path.dirname(path)
+        kwargs['suffix'] = '.' + os.path.splitext(path)[1]
+        tf = tempfile.NamedTemporaryFile(dir=base_dir, delete=False,
+                                         **kwargs)
+        try:
+            with tf:
+                yield tf
+            # Move
+            os.rename(tf.name, path)
+        except:
+            os.remove(tf.name)
+            raise
 
 def cut_range(string):
     """
