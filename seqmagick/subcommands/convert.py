@@ -44,7 +44,8 @@ def add_options(parser):
             separated. Includes last item. Start or end can be left unspecified
             to indicate start/end of sequence.""")
     seq_mods.add_argument('--relative-to', dest='cut_relative', metavar='ID',
-            help="""Apply --cut relative to the indexes of ID.""")
+            help="""Apply --cut relative to the indexes of non-gap residues in
+            sequence identified by ID""")
     seq_mods.add_argument('--dash-gap',
             action=partial_action(transform.dashes_cleanup), dest='transforms',
         help='Change . and : into - for all sequences')

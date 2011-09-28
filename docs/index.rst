@@ -164,8 +164,10 @@ Sequence Modification
                             /path/to/file.py:function_name. Function should accept
                             an iterable of Bio.SeqRecord objects, and yield
                             SeqRecords. Specify more than one to chain.
-      --cut start:end       1-indexed start and end positions for cutting
-                            sequences, : separated. Includes last item.
+      --cut start:end[,start2:end2]
+                            1-indexed start and end positions for cutting sequences, : separated. Includes last item. Start or end can be left unspecified
+                            to indicate start/end of sequence.
+      --relative-to ID      Apply --cut relative to the indexes of non-gap residues in sequence identified by ID
       --dash-gap            Change . and : into - for all sequences
       --lower               Translate the sequences to lower case
       --reverse             Reverse the order of sites in sequences
