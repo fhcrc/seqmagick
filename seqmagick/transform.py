@@ -175,6 +175,7 @@ def cut_sequences(records, cut_slice):
     for record in records:
         yield record[cut_slice]
 
+
 def multi_cut_sequences(records, slices):
     # If only a single slice is specified, use cut_sequences,
     # since this preserves per-letter annotations
@@ -188,6 +189,51 @@ def multi_cut_sequences(records, slices):
             # SeqRecords support addition as concatenation
             yield reduce(lambda x, y: x + y, pieces)
 
+def cut_sequences_relative(records, slices, record_id):
+    """
+    Cuts records to slices, indexed by non-gap positions in record_id
+    """
+    with _record_buffer(records) as r:
+        try:
+            record = next(i for i in r() if i.id == record_id)
+        except StopIteration:
+            raise ValueError("Record with id {0} not found.".format(record_id))
+
+        # Generate a map from indexes in the specified sequence to those in the
+        # alignment
+        n = itertools.count().next
+        ungap_map = dict((n(), i) for i, base in enumerate(str(record.seq))
+                         if base not in GAP_CHARS)
+
+        def update_slice(s):
+            """
+            Maps a slice relative to ungapped record_id to a slice valid for the
+            whole alignment.
+            """
+            start, end = s.start, s.stop
+            if start is not None:
+                try:
+                    start = ungap_map[start]
+                except KeyError:
+                    raise KeyError("""No index {0} in {1}.""".format(
+                        start, record_id))
+            if end is not None:
+                # We need the base in the slice identified by end, not the base
+                # at end, otherwise insertions between end-1 and end will be
+                # included.
+                try:
+                    end = ungap_map[end - 1] + 1
+                except KeyError:
+                    logging.warn("""No index %d in %s. Keeping columns to end
+                        of alignment.""", end, record_id)
+                    end = None
+
+            return slice(start, end)
+
+        new_slices = [update_slice(s) for s in slices]
+
+        for record in multi_cut_sequences(r(), new_slices):
+            yield record
 
 def lower_sequences(records):
     """
@@ -449,30 +495,6 @@ def squeeze(records, gap_threshold=1.0):
             squeezed = itertools.compress(sequence, keep_columns)
             yield SeqRecord(Seq(''.join(squeezed)), id=record.id,
                             description=record.description)
-
-def squeeze_to_record(records, record_id):
-    """
-    Remove columns in an alignment which are gaps in the record identified by
-    record_id
-    """
-    with _record_buffer(records) as r:
-        try:
-            record = next(i for i in r() if i.id == record_id)
-        except StopIteration:
-            raise ValueError("Record with id {0} not found.".format(record_id))
-
-        # Identify which columns should be kept
-        keep_columns = [i not in GAP_CHARS for i in str(record.seq)]
-        for record in r():
-            sequence = str(record.seq)
-            if not len(record) == len(keep_columns):
-                raise ValueError(("Record {0} length does not match expected "
-                    "length {1}. Is this an alignment?").format(
-                        record.id, len(keep_columns)))
-            squeezed = itertools.compress(sequence, keep_columns)
-            yield SeqRecord(Seq(''.join(squeezed)), id=record.id,
-                            description=record.description)
-
 
 def strip_range(records):
     """

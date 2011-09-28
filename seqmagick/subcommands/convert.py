@@ -236,9 +236,10 @@ def transform_file(source_file, destination_file, arguments):
                 raise argparse.ArgumentError(
                         "--relative-to specified without --cut")
             i = arguments.transforms.index(f)
+            arguments.transforms.pop(i)
             arguments.transforms.insert(i,
-                    functools.partial(transform.squeeze_to_record,
-                        record_id=arguments.cut_relative))
+                    functools.partial(transform.cut_sequences_relative,
+                        record_id=arguments.cut_relative, **f.keywords))
 
         for function in arguments.transforms:
             records = function(records)
