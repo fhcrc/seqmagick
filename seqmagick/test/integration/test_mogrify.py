@@ -41,4 +41,4 @@ class CommandLineTestMixIn(object):
         os.remove(self.input_file)
 
 class TestMogrifyUngapCut(CommandLineTestMixIn, test_convert.TestConvertUngapCut):
-    command = 'mogrify --ungap --cut 1:3 {input}'
+    command = 'mogrify --ungap --cut 1:3 --tail 2 {input}'

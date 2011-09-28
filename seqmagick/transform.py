@@ -394,21 +394,16 @@ def head(records, head):
     return itertools.islice(records, head)
 
 
-def tail(records, tail, record_count):
+def tail(records, tail):
     """
     Limit results to the bottom N records.
     """
-    logging.info('Applying _tail generator: '
-                 'limiting results to bottom ' + str(tail) + ' records.')
-    position = 0
-    start = record_count - tail
-    for record in records:
-        if position < start:
-            position += 1
-            continue
-        else:
+    with _record_buffer(records) as r:
+        record_count = sum(1 for record in r())
+        start_index = record_count - tail
+        rec_iter = r()
+        for record in itertools.islice(rec_iter, start_index, None):
             yield record
-
 
 # Squeeze-related
 def gap_proportion(sequences, gap_chars='-'):

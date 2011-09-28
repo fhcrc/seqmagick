@@ -143,7 +143,8 @@ def add_options(parser):
             action=partial_action(transform.seq_exclude, 'filter_regex'),
             dest='transforms', help="""Filter the sequences by regular
             expression in sequence""")
-    seq_select.add_argument('--tail', metavar='N', dest='tail', type=int,
+    seq_select.add_argument('--tail', metavar='N', dest='transforms', type=int,
+            action=partial_action(transform.tail, 'tail'),
         help='Trim down to bottom N sequences')
 
     id_mods = parser.add_argument_group("Sequence ID Modification")
@@ -231,14 +232,6 @@ def transform_file(source_file, destination_file, arguments):
     if arguments.apply_function:
         for apply_function in arguments.apply_function:
             records = apply_function(records)
-
-
-    if arguments.tail:
-        # To know where to begin including records for tail, we need to count
-        # the total number of records, which requires going through the entire
-        # file and additional time.
-        record_count = sum(1 for record in SeqIO.parse(source_file, source_file_type))
-        records = transform.tail(records, arguments.tail, record_count)
 
     # Only the fasta format is supported, as SeqIO.write does not have a 'wrap'
     # parameter.

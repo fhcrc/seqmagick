@@ -56,7 +56,7 @@ class TestConvertUngapCut(CommandLineTestMixIn, unittest.TestCase):
     out_suffix = '.fasta'
     input_path = p('input2.fasta')
     expected_path = p('output2_ungap_cut.fasta')
-    command = 'convert --ungap --cut 1:3 {input} {output}'
+    command = 'convert --ungap --cut 1:3 --tail 2 {input} {output}'
 
 class TestConvertToStdOut(unittest.TestCase):
 

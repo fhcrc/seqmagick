@@ -173,9 +173,28 @@ class HeadTestCase(unittest.TestCase):
             self.assertEqual(h, len(result))
             self.assertEqual(self.sequences[:h], result)
 
+class TailTestCase(unittest.TestCase):
+    def setUp(self):
+        self.records = [
+            seqrecord('sequence_1', 'AC-G--'),
+            seqrecord('sequence_2', '-C-GT-'),
+            seqrecord('sequence_3', '-T-AG-'),
+        ]
 
+    def _do_test(self, size):
+        actual = list(transform.tail(self.records, size))
+        expected = self.records[-size:]
+        self.assertEqual([e.id for e in expected], [a.id for a in actual])
+        self.assertEqual([str(e.seq) for e in expected], [str(a.seq) for a in actual])
 
+    def test_tail_1(self):
+        self._do_test(1)
 
+    def test_tail_2(self):
+        self._do_test(2)
+
+    def test_tail_3(self):
+        self._do_test(3)
 
 class IsolateRegionTestCase(unittest.TestCase):
 
