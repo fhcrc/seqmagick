@@ -70,6 +70,24 @@ class CutRangeTestCase(unittest.TestCase):
         self.assertEqual(4, actual.start)
         self.assertEqual(10, actual.stop)
 
+    def test_no_start(self):
+        actual = common.cut_range(':10')
+        self.assertEqual(None, actual.start)
+        self.assertEqual(10, actual.stop)
+
+    def test_no_end(self):
+        actual = common.cut_range('5:')
+        self.assertEqual(4, actual.start)
+
+class SequenceSlicesTestCase(unittest.TestCase):
+    def test_single(self):
+        actual = common.sequence_slices(':10')
+        self.assertEqual([slice(None, 10)], actual)
+
+    def test_multiple(self):
+        actual = common.sequence_slices('1:10,3:20')
+        self.assertEqual([slice(0, 10), slice(2, 20)], actual)
+
 class AtomicWriteTestCase(unittest.TestCase):
 
     initial_content = "Initial Content"

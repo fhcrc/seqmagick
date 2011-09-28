@@ -37,21 +37,33 @@ def atomic_write(path, **kwargs):
             os.remove(tf.name)
             raise
 
+def sequence_slices(string):
+    """
+    Parses a list of slices from a string of format:
+
+    start1:end1[,start2:end2[,start2:end3]] etc
+    """
+    slices = string.split(',')
+    return [cut_range(i) for i in slices]
+
 def cut_range(string):
     """
     A custom argparse 'type' to deal with sequences ranges such as 5:500.
 
-    Returns a 0-based slice corresponding to the selection defined by the
+    Returns a 0-based slice corresponding to the selection defined by the slice
     """
     value_range = string.split(':')
     if len(value_range) != 2:
         msg = "{0} is not a valid, 1-indexed range.".format(string)
         raise argparse.ArgumentTypeError(msg)
 
-    start, stop = tuple(map(int, value_range))
+    start, stop = tuple(int(i) if i else None for i in value_range)
     # Convert from 1-indexed to 0-indexed
-    start -= 1
-    if start < 0 or stop < start:
+    if start is not None:
+        start -= 1
+
+    if ((start or 0) < 0
+            or (stop if stop is not None else sys.maxint) < (start or 0)):
         msg = "{0} is not a valid, 1-indexed range.".format(string)
         raise argparse.ArgumentTypeError(msg)
 
