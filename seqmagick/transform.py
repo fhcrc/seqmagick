@@ -2,10 +2,13 @@
 Functions to transform / filter sequences
 """
 import collections
+import contextlib
+import cPickle as pickle
 import itertools
 import logging
 import re
 import string
+import tempfile
 
 from Bio import SeqIO
 from Bio.Alphabet import generic_dna, generic_rna
@@ -16,6 +19,34 @@ from Bio.SeqUtils.CheckSum import seguid
 
 # Characters to be treated as gaps
 GAP_CHARS = "-."
+
+# Size of temporary file buffer: default to 20MB
+DEFAULT_BUFFER_SIZE = 20971520 # 20*2**20
+
+@contextlib.contextmanager
+def _record_buffer(records, buffer_size=DEFAULT_BUFFER_SIZE):
+    """
+    Buffer for transform functions which require multiple passes through data.
+
+    Value returned by context manager is a function which returns an iterator
+    through records.
+    """
+    with tempfile.SpooledTemporaryFile(buffer_size, mode='wb+') as tf:
+        pickler = pickle.Pickler(tf)
+        for record in records:
+            pickler.dump(record)
+
+        def record_iter():
+            tf.seek(0)
+            unpickler = pickle.Unpickler(tf)
+            while True:
+                try:
+                    yield unpickler.load()
+                except EOFError:
+                    break
+
+        yield record_iter
+
 
 def dashes_cleanup(records):
     """

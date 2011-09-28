@@ -403,3 +403,31 @@ class MultiCutTestCase(unittest.TestCase):
         actual = list(transform.multi_cut_sequences(self.inputs,
             [slice(None, 2), slice(8, None)]))
         self.assertEqual(['ACAGA'], [str(s.seq) for s in actual])
+
+class RecordBufferTestCase(unittest.TestCase):
+    def setUp(self):
+        self.sequences = [SeqRecord(Seq("AAA"), id="s1"),
+                SeqRecord(Seq("A-G"), id="s2"),
+                SeqRecord(Seq("-A-"), id="s3"),]
+        self.seq_iter = iter(self.sequences)
+
+    def _compare(self, records):
+        self.assertTrue(len(self.sequences), len(records))
+
+        for e, a in zip(self.sequences, records):
+            self.assertEqual(e.id, a.id)
+            self.assertEqual(e.description, a.description)
+            self.assertEqual(str(e.seq), str(a.seq))
+
+    def test_single_pass(self):
+        with transform._record_buffer(self.seq_iter) as iter_f:
+            records = list(iter_f())
+            self._compare(records)
+
+    def test_multi_pass(self):
+        with transform._record_buffer(self.seq_iter) as iter_f:
+            records = list(iter_f())
+            self._compare(records)
+
+            records = list(iter_f())
+            self._compare(records)
