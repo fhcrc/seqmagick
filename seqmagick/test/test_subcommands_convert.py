@@ -43,7 +43,7 @@ class OrderRespectedTestCase(PopulateTransformsMixIn, unittest.TestCase):
     arguments = ['--upper', '--translate', 'dna2protein', '--lower',
             '--squeeze']
     functions = [transform.upper_sequences, transform.translate,
-            transform.lower_sequences]
+            transform.lower_sequences, transform.squeeze]
 
 class SequenceModTransformsTestCase(PopulateTransformsMixIn, unittest.TestCase):
     arguments = ['--dash-gap',

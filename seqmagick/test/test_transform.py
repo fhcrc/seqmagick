@@ -92,7 +92,7 @@ class SqueezeTestCase(unittest.TestCase):
         self.assertEqual([2./3, 0.0, 1.0, 0.0, 1./3, 1.0], actual)
 
     def test_basic_squeeze(self):
-        result = list(transform.squeeze(self.sequences, 1.0, self.sequences))
+        result = list(transform.squeeze(self.sequences, 1.0))
 
         self.assertEqual([4, 4, 4], [len(i) for i in result])
         self.assertEqual([i.id for i in self.sequences], [i.id for i in result])
@@ -109,7 +109,7 @@ class SqueezeTestCase(unittest.TestCase):
         """
         Threshold of 0.001 - nothing should be squeezed.
         """
-        result = list(transform.squeeze(self.sequences, 1.01, self.sequences))
+        result = list(transform.squeeze(self.sequences, 1.01))
         self.assertEqual([str(i.seq) for i in self.sequences],
                 [str(i.seq) for i in result])
 

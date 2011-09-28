@@ -54,13 +54,13 @@ def add_options(parser):
     seq_mods.add_argument('--reverse-complement', dest='transforms',
             action=partial_action(transform.reverse_complement_sequences),
             help='Convert sequences into reverse complements')
-    seq_mods.add_argument('--squeeze', action='store_const', dest='squeeze',
-            default=None,
-            const=1.0, help='''Remove any gaps that are present in the same
+    seq_mods.add_argument('--squeeze', action=partial_action(transform.squeeze),
+            dest='transforms',
+            help='''Remove any gaps that are present in the same
             position across all sequences in an alignment (equivalent to
             --squeeze-threshold=1.0)''')
-    seq_mods.add_argument('--squeeze-threshold', dest='squeeze',
-            action="store",
+    seq_mods.add_argument('--squeeze-threshold', dest='transforms',
+            action=partial_action(transform.squeeze, 'gap_threshold'),
             type=common.typed_range(float, 0.0, 1.0),
             metavar='PROP', help="""Trim columns from an alignment which
             have gaps in least the specified proportion of sequences.""")
@@ -217,8 +217,6 @@ def transform_file(source_file, destination_file, arguments):
     # Apply generator functions to iterator.#
     #########################################
 
-    logging.info('Setting up transform functions for file: %s', source_file)
-
     # Apply all the transform functions in transforms
     if arguments.transforms:
         for function in arguments.transforms:
@@ -241,11 +239,6 @@ def transform_file(source_file, destination_file, arguments):
         # file and additional time.
         record_count = sum(1 for record in SeqIO.parse(source_file, source_file_type))
         records = transform.tail(records, arguments.tail, record_count)
-
-    if arguments.squeeze:
-        logging.info("Performing squeeze")
-        records = transform.squeeze(records, arguments.squeeze,
-                SeqIO.parse(source_file.name, source_file_type))
 
     # Only the fasta format is supported, as SeqIO.write does not have a 'wrap'
     # parameter.

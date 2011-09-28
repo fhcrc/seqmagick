@@ -437,25 +437,23 @@ def gap_proportion(sequences, gap_chars='-'):
     return gap_props
 
 
-def squeeze(records, gap_threshold, sequence_iterator):
+def squeeze(records, gap_threshold=1.0):
     """
     Remove any gaps that are present in the same position across all sequences
     in an alignment.  Takes a second sequence iterator for determining gap
     positions.
     """
-    logging.info('Applying squeeze: '
-                 'removing any gaps that are present in at least %f proportion '
-                 'of sequences', gap_threshold)
+    with _record_buffer(records) as r:
+        gap_proportions = gap_proportion(r())
 
-    gap_proportions = gap_proportion(sequence_iterator)
-    keep_columns = [g < gap_threshold for g in gap_proportions]
+        keep_columns = [g < gap_threshold for g in gap_proportions]
 
-    for record in records:
-        sequence = str(record.seq)
-        # Trim
-        squeezed = itertools.compress(sequence, keep_columns)
-        yield SeqRecord(Seq(''.join(squeezed)), id=record.id,
-                        description=record.description)
+        for record in r():
+            sequence = str(record.seq)
+            # Trim
+            squeezed = itertools.compress(sequence, keep_columns)
+            yield SeqRecord(Seq(''.join(squeezed)), id=record.id,
+                            description=record.description)
 
 
 def strip_range(records):
