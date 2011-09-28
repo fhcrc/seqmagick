@@ -35,11 +35,13 @@ def add_options(parser):
             an iterable of Bio.SeqRecord objects, and yield SeqRecords.
             Specify more than one to chain.""",
             default=[], action='append')
-    seq_mods.add_argument('--cut', dest='transforms', metavar="start:end",
-            type=common.cut_range,
-            action=partial_action(transform.cut_sequences, 'cut_slice'),
+    seq_mods.add_argument('--cut', dest='transforms',
+            metavar="start:end[,start2:end2]",
+            type=common.sequence_slices,
+            action=partial_action(transform.multi_cut_sequences, 'slices'),
             help="""1-indexed start and end positions for cutting sequences, :
-            separated. Includes last item.""")
+            separated. Includes last item. Start or end can be left unspecified
+            to indicate start/end of sequence.""")
     seq_mods.add_argument('--dash-gap',
             action=partial_action(transform.dashes_cleanup), dest='transforms',
         help='Change . and : into - for all sequences')

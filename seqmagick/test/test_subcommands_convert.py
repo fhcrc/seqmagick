@@ -115,7 +115,7 @@ class IdModificationTransformsTestCase(PopulateTransformsMixIn, unittest.TestCas
 
 class ArgumentTypeTestCase(PopulateTransformsMixIn, unittest.TestCase):
     arguments = ['--cut', '1:5']
-    functions = [transform.cut_sequences]
+    functions = [transform.multi_cut_sequences]
     def test_argument_type(self):
         arguments = [self.infile, self.outfile]
         arguments.extend(self.arguments)
@@ -124,5 +124,5 @@ class ArgumentTypeTestCase(PopulateTransformsMixIn, unittest.TestCase):
         except SystemExit:
             self.fail("Couldn't parse arguments")
         keywords = [f.keywords for f in parsed_arguments.transforms]
-        self.assertEqual([{'cut_slice': slice(0, 5)}], keywords)
+        self.assertEqual([{'slices': [slice(0, 5)]}], keywords)
 
