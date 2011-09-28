@@ -75,3 +75,15 @@ class TestConvertToStdOut(unittest.TestCase):
         with open(in_path) as fp:
             expected = fp.read()
         self.assertEqual(expected, actual)
+
+class TestCutRelative(CommandLineTestMixIn, unittest.TestCase):
+    in_suffix = '.fasta'
+    out_suffix = '.fasta'
+    input_path = p('input3.fasta')
+    expected_path = p('output3.fasta')
+    command = 'convert --cut 2:3 --relative-to HXB2 {input} {output}'
+
+    def test_unknown_seq(self):
+        args = ['convert', '--cut', '2:3', '--relative-to', 'OTHER',
+                self.input_path, '-', '--output-format', 'fasta']
+        self.assertRaises(ValueError, cli.main, args)

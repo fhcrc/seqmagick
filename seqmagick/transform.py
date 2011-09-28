@@ -450,6 +450,29 @@ def squeeze(records, gap_threshold=1.0):
             yield SeqRecord(Seq(''.join(squeezed)), id=record.id,
                             description=record.description)
 
+def squeeze_to_record(records, record_id):
+    """
+    Remove columns in an alignment which are gaps in the record identified by
+    record_id
+    """
+    with _record_buffer(records) as r:
+        try:
+            record = next(i for i in r() if i.id == record_id)
+        except StopIteration:
+            raise ValueError("Record with id {0} not found.".format(record_id))
+
+        # Identify which columns should be kept
+        keep_columns = [i not in GAP_CHARS for i in str(record.seq)]
+        for record in r():
+            sequence = str(record.seq)
+            if not len(record) == len(keep_columns):
+                raise ValueError(("Record {0} length does not match expected "
+                    "length {1}. Is this an alignment?").format(
+                        record.id, len(keep_columns)))
+            squeezed = itertools.compress(sequence, keep_columns)
+            yield SeqRecord(Seq(''.join(squeezed)), id=record.id,
+                            description=record.description)
+
 
 def strip_range(records):
     """

@@ -2,6 +2,7 @@
 Convert between sequence formats
 """
 import argparse
+import functools
 import logging
 import os.path
 
@@ -42,6 +43,8 @@ def add_options(parser):
             help="""1-indexed start and end positions for cutting sequences, :
             separated. Includes last item. Start or end can be left unspecified
             to indicate start/end of sequence.""")
+    seq_mods.add_argument('--relative-to', dest='cut_relative', metavar='ID',
+            help="""Apply --cut relative to the indexes of ID.""")
     seq_mods.add_argument('--dash-gap',
             action=partial_action(transform.dashes_cleanup), dest='transforms',
         help='Change . and : into - for all sequences')
@@ -220,6 +223,22 @@ def transform_file(source_file, destination_file, arguments):
 
     # Apply all the transform functions in transforms
     if arguments.transforms:
+
+        # Special case handling for --cut and --relative-to
+        if arguments.cut_relative:
+            # Add a function to trim any columns which are gaps in the sequence
+            # ID
+            try:
+                f = next(f for f in arguments.transforms
+                         if f.func == transform.multi_cut_sequences)
+            except StopIteration:
+                raise argparse.ArgumentError(
+                        "--relative-to specified without --cut")
+            i = arguments.transforms.index(f)
+            arguments.transforms.insert(i,
+                    functools.partial(transform.squeeze_to_record,
+                        record_id=arguments.cut_relative))
+
         for function in arguments.transforms:
             records = function(records)
 
