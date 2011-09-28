@@ -144,6 +144,18 @@ def cut_sequences(records, cut_slice):
     for record in records:
         yield record[cut_slice]
 
+def multi_cut_sequences(records, slices):
+    # If only a single slice is specified, use cut_sequences,
+    # since this preserves per-letter annotations
+    if len(slices) == 1:
+        for sequence in cut_sequences(records, slices[0]):
+            yield sequence
+    else:
+        # For multiple slices, concatenate the slice results
+        for record in records:
+            pieces = (record[s] for s in slices)
+            yield reduce(lambda x, y: x+y, pieces)
+
 
 def lower_sequences(records):
     """
