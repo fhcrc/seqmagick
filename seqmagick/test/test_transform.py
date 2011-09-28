@@ -19,12 +19,11 @@ def _alignment_record(sequence):
     return SeqRecord(Seq(sequence,
         alphabet=Alphabet.Gapped(Alphabet.generic_dna)))
 
-def seqrecord(sequence_id, sequence_text, alphabet=None):
+def seqrecord(sequence_id, sequence_text, alphabet=Alphabet.generic_dna):
     """
     Quick shortcut to make a SeqRecord
     """
     return SeqRecord(Seq(sequence_text, alphabet), id=sequence_id)
-
 
 class PatternReplaceTestCase(unittest.TestCase):
 
@@ -76,8 +75,6 @@ class PatternReplaceTestCase(unittest.TestCase):
         expected = self.create_sequences()
         expected[1].id = 'test_DONE-repl_2'
         self.assertEqual(self.sequences, result)
-
-
 
 class SqueezeTestCase(unittest.TestCase):
 
@@ -145,7 +142,6 @@ class SeqPatternTestCase(unittest.TestCase):
             expected = [i for i in self.sequences if i not in expected_include]
             result = list(transform.seq_exclude(self.sequences, regex))
             self.assertEqual(expected, result)
-
 
 class HeadTestCase(unittest.TestCase):
     """
@@ -360,6 +356,7 @@ class UngapSequencesTestCase(unittest.TestCase):
         ungapped = list(transform.ungap_sequences(sequences))
         self.assertEqual(["AAA", "AG", "A"], [str(s.seq) for s in ungapped])
 
+# Name Modification functions
 class IdModifyMixin(object):
     """
     Mixin to ease testing name prefix and suffix
@@ -397,3 +394,12 @@ ACGT
 ACGT"""
     modify_fn = functools.partial(transform.name_append_suffix, suffix=".post")
 
+
+class MultiCutTestCase(unittest.TestCase):
+    def setUp(self):
+        self.inputs = [seqrecord("Sequence 1", "ACGT--TCAGA")]
+
+    def test_multicut(self):
+        actual = list(transform.multi_cut_sequences(self.inputs,
+            [slice(None, 2), slice(8, None)]))
+        self.assertEqual(['ACAGA'], [str(s.seq) for s in actual])

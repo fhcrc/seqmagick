@@ -154,7 +154,8 @@ def multi_cut_sequences(records, slices):
         # For multiple slices, concatenate the slice results
         for record in records:
             pieces = (record[s] for s in slices)
-            yield reduce(lambda x, y: x+y, pieces)
+            # SeqRecords support addition as concatenation
+            yield reduce(lambda x, y: x + y, pieces)
 
 
 def lower_sequences(records):
