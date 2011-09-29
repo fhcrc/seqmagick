@@ -249,12 +249,14 @@ the minimum length predicate is applied.</p>
                       an iterable of Bio.SeqRecord objects, and yield
                       SeqRecords. Specify more than one to chain.
 --cut start:end[,start2:end2]
-                      1-indexed start and end positions for cutting
-                      sequences, : separated. Includes last item. Start or
-                      end can be left unspecified to indicate start/end of
-                      sequence.
---relative-to ID      Apply --cut relative to the indexes of ID.
+                      1-indexed start and end positions for cutting sequences, : separated. Includes last item. Start or end can be left unspecified
+                      to indicate start/end of sequence.
+--relative-to ID      Apply --cut relative to the indexes of non-gap residues in sequence identified by ID
 --dash-gap            Change . and : into - for all sequences
+--mask start:end[,start2:end2...]
+                  Replace residues in 1-indexed slice with gap-
+                  characters. If --relative-to is also specified,
+                  coordinates are relative to the sequence ID provided.
 --lower               Translate the sequences to lower case
 --reverse             Reverse the order of sites in sequences
 --reverse-complement  Convert sequences into reverse complements
