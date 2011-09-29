@@ -169,6 +169,10 @@ Sequence Modification
                             to indicate start/end of sequence.
       --relative-to ID      Apply --cut relative to the indexes of non-gap residues in sequence identified by ID
       --dash-gap            Change . and : into - for all sequences
+      --mask start:end[,start2:end2...]
+                        Replace residues in 1-indexed slice with gap-
+                        characters. If --relative-to is also specified,
+                        coordinates are relative to the sequence ID provided.
       --lower               Translate the sequences to lower case
       --reverse             Reverse the order of sites in sequences
       --reverse-complement  Convert sequences into reverse complements

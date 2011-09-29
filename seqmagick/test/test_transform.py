@@ -291,19 +291,22 @@ class CutTestCase(unittest.TestCase):
                 SeqRecord(Seq("EEE"), id="test sequence"), ]
 
     def test_no_sequences(self):
-        actual = list(transform.cut_sequences(self.sequences, slice(0, 0)))
+        actual = list(transform._cut_sequences(self.sequences, slice(0, 0)))
         for sequence in actual:
             self.assertEqual(0, len(sequence))
 
     def test_full_sequence(self):
-        actual = list(transform.cut_sequences(self.sequences, slice(0, 3)))
+        actual = list(transform._cut_sequences(self.sequences, slice(0, 3)))
         self.assertEqual(['AAA', 'BBB', 'DDD', 'EEE'], [str(s.seq) for s in
             actual])
 
     def test_cut_sequences(self):
-        actual = list(transform.cut_sequences(self.sequences, slice(0, 2)))
+        actual = list(transform._cut_sequences(self.sequences, slice(0, 2)))
         self.assertEqual(['AA', 'BB', 'DD', 'EE'], [str(s.seq) for s in
             actual])
+
+
+
 
 class CodonWarningDictTestCase(unittest.TestCase):
 
@@ -422,6 +425,29 @@ class MultiCutTestCase(unittest.TestCase):
         actual = list(transform.multi_cut_sequences(self.inputs,
             [slice(None, 2), slice(8, None)]))
         self.assertEqual(['ACAGA'], [str(s.seq) for s in actual])
+
+class MultiMaskSequences(unittest.TestCase):
+
+    def setUp(self):
+        self.sequences = [SeqRecord(Seq("AAA"), id="sequenceid1"),
+                SeqRecord(Seq("BBB"), id="sequenceid2"),
+                SeqRecord(Seq("DDDD"), id="sequence id 4"),
+                SeqRecord(Seq("EEE"), id="test sequence"), ]
+
+    def test_mask_whole(self):
+        masks = [slice(0, 200)]
+        actual = list(transform.multi_mask_sequences(self.sequences, masks))
+        self.assertEqual(len(self.sequences), len(actual))
+        for e, a in zip(self.sequences, actual):
+            self.assertEqual(e.id, a.id)
+            self.assertEqual('-'*len(e), str(a.seq))
+
+    def test_mask(self):
+        masks = [slice(1, 2)]
+        actual = list(transform.multi_mask_sequences(self.sequences, masks))
+        self.assertEqual(len(self.sequences), len(actual))
+        self.assertEqual(['A-A', 'B-B', 'D-DD', 'E-E'],
+                [str(a.seq) for a in actual])
 
 class RecordBufferTestCase(unittest.TestCase):
     def setUp(self):

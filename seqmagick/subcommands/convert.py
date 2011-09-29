@@ -52,6 +52,12 @@ def add_options(parser):
     seq_mods.add_argument('--lower',
             action=partial_action(transform.lower_sequences),
             dest='transforms', help='Translate the sequences to lower case')
+    seq_mods.add_argument('--mask', metavar="start1:end1[,start2:end2]",
+            action=partial_action(transform.multi_mask_sequences, 'slices'),
+            type=common.sequence_slices, dest='transforms', help="""Replace
+            residues in 1-indexed slice with gap-characters. If --relative-to
+            is also specified, coordinates are relative to the sequence ID
+            provided.""")
     seq_mods.add_argument('--reverse',
             action=partial_action(transform.reverse_sequences),
             dest='transforms', help='Reverse the order of sites in sequences')
@@ -227,19 +233,22 @@ def transform_file(source_file, destination_file, arguments):
 
         # Special case handling for --cut and --relative-to
         if arguments.cut_relative:
-            # Add a function to trim any columns which are gaps in the sequence
-            # ID
-            try:
-                f = next(f for f in arguments.transforms
-                         if f.func == transform.multi_cut_sequences)
-            except StopIteration:
-                raise argparse.ArgumentError(
-                        "--relative-to specified without --cut")
-            i = arguments.transforms.index(f)
-            arguments.transforms.pop(i)
-            arguments.transforms.insert(i,
-                    functools.partial(transform.cut_sequences_relative,
-                        record_id=arguments.cut_relative, **f.keywords))
+            for o, n in ((transform.multi_cut_sequences,
+                          transform.cut_sequences_relative),
+                         (transform.multi_mask_sequences,
+                          transform.mask_sequences_relative)):
+                # Add a function to trim any columns which are gaps in the
+                # sequence ID
+                try:
+                    f = next(f for f in arguments.transforms
+                             if f.func == o)
+                except StopIteration:
+                    continue
+                i = arguments.transforms.index(f)
+                arguments.transforms.pop(i)
+                arguments.transforms.insert(i,
+                        functools.partial(n,
+                            record_id=arguments.cut_relative, **f.keywords))
 
         for function in arguments.transforms:
             records = function(records)

@@ -168,7 +168,7 @@ def isolate_region(sequences, start, end, gap_char='-'):
         yield sequence
 
 
-def cut_sequences(records, cut_slice):
+def _cut_sequences(records, cut_slice):
     """
     Cut sequences given a slice.
     """
@@ -177,10 +177,10 @@ def cut_sequences(records, cut_slice):
 
 
 def multi_cut_sequences(records, slices):
-    # If only a single slice is specified, use cut_sequences,
+    # If only a single slice is specified, use _cut_sequences,
     # since this preserves per-letter annotations
     if len(slices) == 1:
-        for sequence in cut_sequences(records, slices[0]):
+        for sequence in _cut_sequences(records, slices[0]):
             yield sequence
     else:
         # For multiple slices, concatenate the slice results
@@ -188,6 +188,39 @@ def multi_cut_sequences(records, slices):
             pieces = (record[s] for s in slices)
             # SeqRecords support addition as concatenation
             yield reduce(lambda x, y: x + y, pieces)
+
+def _update_slices(record, slices):
+    n = itertools.count().next
+    # Generate a map from indexes in the specified sequence to those in the
+    # alignment
+    ungap_map = dict((n(), i) for i, base in enumerate(str(record.seq))
+                     if base not in GAP_CHARS)
+    def update_slice(s):
+        """
+        Maps a slice relative to ungapped record_id to a slice valid for the
+        whole alignment.
+        """
+        start, end = s.start, s.stop
+        if start is not None:
+            try:
+                start = ungap_map[start]
+            except KeyError:
+                raise KeyError("""No index {0} in {1}.""".format(
+                    start, record.id))
+        if end is not None:
+            # We need the base in the slice identified by end, not the base
+            # at end, otherwise insertions between end-1 and end will be
+            # included.
+            try:
+                end = ungap_map[end - 1] + 1
+            except KeyError:
+                logging.warn("""No index %d in %s. Keeping columns to end
+                    of alignment.""", end, record.id)
+                end = None
+
+        return slice(start, end)
+
+    return [update_slice(s) for s in slices]
 
 def cut_sequences_relative(records, slices, record_id):
     """
@@ -199,41 +232,34 @@ def cut_sequences_relative(records, slices, record_id):
         except StopIteration:
             raise ValueError("Record with id {0} not found.".format(record_id))
 
-        # Generate a map from indexes in the specified sequence to those in the
-        # alignment
-        n = itertools.count().next
-        ungap_map = dict((n(), i) for i, base in enumerate(str(record.seq))
-                         if base not in GAP_CHARS)
-
-        def update_slice(s):
-            """
-            Maps a slice relative to ungapped record_id to a slice valid for the
-            whole alignment.
-            """
-            start, end = s.start, s.stop
-            if start is not None:
-                try:
-                    start = ungap_map[start]
-                except KeyError:
-                    raise KeyError("""No index {0} in {1}.""".format(
-                        start, record_id))
-            if end is not None:
-                # We need the base in the slice identified by end, not the base
-                # at end, otherwise insertions between end-1 and end will be
-                # included.
-                try:
-                    end = ungap_map[end - 1] + 1
-                except KeyError:
-                    logging.warn("""No index %d in %s. Keeping columns to end
-                        of alignment.""", end, record_id)
-                    end = None
-
-            return slice(start, end)
-
-        new_slices = [update_slice(s) for s in slices]
-
+        new_slices = _update_slices(record, slices)
         for record in multi_cut_sequences(r(), new_slices):
             yield record
+
+def multi_mask_sequences(records, slices):
+    """
+    Replace characters sliced by slices with gap characters.
+    """
+    for record in records:
+        record_indices = range(len(record))
+        keep_indices = reduce(lambda i, s: i - frozenset(record_indices[s]),
+                              slices, frozenset(record_indices))
+        seq = ''.join(b if i in keep_indices else '-'
+                      for i, b in enumerate(str(record.seq)))
+        record.seq = Seq(seq)
+        yield record
+
+def mask_sequences_relative(records, slices, record_id):
+    with _record_buffer(records) as r:
+        try:
+            record = next(i for i in r() if i.id == record_id)
+        except StopIteration:
+            raise ValueError("Record with id {0} not found.".format(record_id))
+
+        new_slices = _update_slices(record, slices)
+        for record in multi_mask_sequences(r(), new_slices):
+            yield record
+
 
 def lower_sequences(records):
     """
