@@ -5,7 +5,6 @@ Info action
 import argparse
 import collections
 import csv
-import os.path
 import sys
 
 from Bio import SeqIO
@@ -16,24 +15,27 @@ from . import common
 
 def build_parser(parser):
     parser.add_argument('source_files', metavar='sequence_files', nargs='+')
+    parser.add_argument('--input-format', help="""Input format. Overrides
+            extension for all input files""")
     parser.add_argument('--out-file', dest='destination_file',
             type=argparse.FileType('w'), default=sys.stdout,
             metavar='destination_file',
             help='Output destination. Default: STDOUT')
     parser.add_argument('--format', dest='output_format',
-        choices=('tab', 'csv', 'align'), help='''Specify output format as
+        choices=('tab', 'csv', 'align'), help="""Specify output format as
         tab-delimited, CSV or aligned in a borderless table.  Default is
         tab-delimited if the output is directed to a file, aligned if output to
-        the console.''')
+        the console.""")
 
 class SeqInfoWriter(object):
     """
     Base writer for sequence files
     """
 
-    def __init__(self, sequence_files, output):
+    def __init__(self, sequence_files, output, input_format=None):
         self.sequence_files = sequence_files
         self.output = output
+        self.input_format = input_format
 
     def write_row(self, row):
         raise NotImplementedError("Override in subclass")
@@ -45,14 +47,17 @@ class SeqInfoWriter(object):
         header = ('name', 'alignment', 'min_len', 'max_len', 'avg_len',
                   'num_seqs')
         self.write_header(header)
-        for source_file in self.sequence_files:
-            row = summarize_sequence_file(source_file)
+        rows = (summarize_sequence_file(source_file, self.input_format)
+                for source_file in self.sequence_files)
+
+        for row in rows:
             self.write_row(row)
 
 class CsvSeqInfoWriter(SeqInfoWriter):
     delimiter = ','
-    def __init__(self, sequence_files, output):
-        super(CsvSeqInfoWriter, self).__init__(sequence_files, output)
+    def __init__(self, sequence_files, output, input_format=None):
+        super(CsvSeqInfoWriter, self).__init__(sequence_files, output,
+                input_format)
         self.writer = csv.writer(self.output, delimiter=self.delimiter,
                 lineterminator='\n')
 
@@ -66,10 +71,10 @@ class TsvSeqInfoWriter(CsvSeqInfoWriter):
     delimiter = '\t'
 
 class AlignedSeqInfoWriter(SeqInfoWriter):
-    def __init__(self, sequence_files, output):
-        super(AlignedSeqInfoWriter, self).__init__(sequence_files, output)
-        self.max_name_length = max(len(f)
-                                   for f in self.sequence_files)
+    def __init__(self, sequence_files, output, input_format=None):
+        super(AlignedSeqInfoWriter, self).__init__(sequence_files, output,
+                input_format)
+        self.max_name_length = max(len(f) for f in self.sequence_files)
 
     def write_header(self, header):
         fmt = ('{0:' + str(self.max_name_length + 1) + 's}{1:10s}'
@@ -90,7 +95,7 @@ _HEADERS = ('name', 'alignment', 'min_len', 'max_len', 'avg_len',
 _SeqFileInfo = collections.namedtuple('SeqFileInfo', _HEADERS)
 
 
-def summarize_sequence_file(source_file):
+def summarize_sequence_file(source_file, file_type=None):
     """
     Summarizes a sequence file, returning a tuple containing the name,
     whether the file is an alignment, minimum sequence length, maximum
@@ -101,8 +106,8 @@ def summarize_sequence_file(source_file):
     min_length = sys.maxint
     max_length = 0
     sequence_count = 0
-    file_type = fileformat.from_extension(
-            os.path.splitext(source_file)[1])
+    if not file_type:
+        file_type = fileformat.from_filename(source_file)
 
     # Get an iterator and analyze the data.
     for record in SeqIO.parse(source_file, file_type):
@@ -155,5 +160,6 @@ def action(arguments):
 
     writer_cls = _WRITERS[output_format]
     with handle:
-        writer = writer_cls(arguments.source_files, handle)
+        writer = writer_cls(arguments.source_files, handle,
+                arguments.input_format)
         writer.write()
