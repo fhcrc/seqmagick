@@ -356,7 +356,7 @@ class TranslateTestCase(unittest.TestCase):
 
     def test_dna_protein_gap_stop(self):
         sequences = [seqrecord('A', '---TTATAA')]
-        expected = ['XL']
+        expected = ['-L']
         actual = transform.translate(sequences, 'dna2proteinstop')
         self.assertEqual(expected, [str(i.seq) for i in actual])
 
