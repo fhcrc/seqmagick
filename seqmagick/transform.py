@@ -578,7 +578,10 @@ class CodonWarningDict(collections.defaultdict):
 
 
     def __missing__(self, key):
-        if '-' in key:
+        # All-gap codons can translate to a single protein gap
+        if key == '---':
+            return '-'
+        elif '-' in key:
             if not key in self:
                 logging.warn("Unknown Codon: %s", key)
             return super(CodonWarningDict, self).__missing__(key)
