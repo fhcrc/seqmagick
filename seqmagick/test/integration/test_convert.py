@@ -51,6 +51,12 @@ class TestBasicConvert(CommandLineTestMixIn, unittest.TestCase):
     expected_path = p('output2.phy')
     command = 'convert {input} {output}'
 
+class TestConvertToNexus(CommandLineTestMixIn, unittest.TestCase):
+    in_suffix = '.fasta'
+    input_path = p('input2.fasta')
+    expected_path = p('output2.nex')
+    command = 'convert {input} {output} --output-format nexus --alphabet dna-ambiguous'
+
 class TestConvertUngapCut(CommandLineTestMixIn, unittest.TestCase):
     in_suffix = '.fasta'
     out_suffix = '.fasta'
