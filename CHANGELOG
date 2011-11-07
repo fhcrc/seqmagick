@@ -1,5 +1,6 @@
 * Fix bug in --squeeze
 * More informative messages in `seqmagick primer-trim`
+* Added `--alphabet` flag to allow writing NEXUS (GH-23)
 * Exiting without error on SIGPIPE in extract-ids, info (GH-17)
 * Ambiguities are translated as 'X' in --translate (GH-16)
 * Allowing '.' or '-' as gap character (GH-18)

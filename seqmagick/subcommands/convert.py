@@ -6,12 +6,21 @@ import functools
 import logging
 import os.path
 
-from Bio import SeqIO
+from Bio import Alphabet, SeqIO
+from Bio.Alphabet import IUPAC
 from Bio.SeqIO import FastaIO
 from seqmagick import transform
 from seqmagick.fileformat import from_extension
 
 from . import common
+
+ALPHABETS = {
+        'dna': Alphabet.generic_dna,
+        'dna-ambiguous': IUPAC.ambiguous_dna,
+        'protein': Alphabet.generic_protein,
+        'rna': Alphabet.generic_rna,
+        'rna-ambiguous': IUPAC.ambiguous_rna,
+}
 
 def add_options(parser):
     """
@@ -185,6 +194,9 @@ def add_options(parser):
     format_group.add_argument('--output-format', metavar='Format',
             help="Output file format (default: determine from extension)")
 
+    parser.add_argument('--alphabet', choices=ALPHABETS,
+            help="""Input alphabet. Required for writing NEXUS.""")
+
     return parser
 
 
@@ -221,7 +233,8 @@ def transform_file(source_file, destination_file, arguments):
                 direction=directions[direction])
     else:
         # Unsorted iterator.
-        records = SeqIO.parse(source_file, source_file_type)
+        records = SeqIO.parse(source_file, source_file_type,
+                alphabet=ALPHABETS.get(arguments.alphabet))
 
 
     #########################################
