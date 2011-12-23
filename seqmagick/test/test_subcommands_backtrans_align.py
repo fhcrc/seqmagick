@@ -4,33 +4,33 @@ from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 from Bio.Data import CodonTable
 
-from seqmagick.subcommands import revtrans_align
+from seqmagick.subcommands import backtrans_align
 
 class BatchTestCase(unittest.TestCase):
     def test_no_input(self):
         i = []
-        b = revtrans_align.batch(i, 1)
+        b = backtrans_align.batch(i, 1)
         self.assertRaises(StopIteration, next, b)
 
     def test_singletons(self):
         i = range(3)
-        b = revtrans_align.batch(i, 1)
+        b = backtrans_align.batch(i, 1)
         self.assertEquals([[0], [1], [2]], list(b))
 
     def test_doubles(self):
         i = range(6)
-        b = revtrans_align.batch(i, 2)
+        b = backtrans_align.batch(i, 2)
         self.assertEquals([[0, 1], [2, 3], [4, 5]], list(b))
 
     def test_partial(self):
         i = range(5)
-        b = revtrans_align.batch(i, 2)
+        b = backtrans_align.batch(i, 2)
         self.assertEquals([[0, 1], [2, 3], [4]], list(b))
 
 
 class AlignmentMapperTestCase(unittest.TestCase):
     def setUp(self):
-        self.instance = revtrans_align.AlignmentMapper(CodonTable.unambiguous_dna_by_name['Standard'])
+        self.instance = backtrans_align.AlignmentMapper(CodonTable.unambiguous_dna_by_name['Standard'])
 
     def test_validate_valid(self):
         nucl = 'TTTAAG'
