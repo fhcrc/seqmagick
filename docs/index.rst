@@ -258,7 +258,31 @@ By default, file format is inferred from extension::
                             Output file format (default: determine from extension)
 
 
-.. _`BioPython SeqIO wiki page`: http://www.biopython.org/wiki/SeqIO#File_Formats
+
+``backtrans-align``
+-------------------
+
+Given a protein alignment and unaligned nucleotides, align the nucleotides
+using the protein alignment.  Protein and nucleotide sequence files must
+contain the same number of sequences, in the same order, with the same IDs.
+
+::
+
+    usage: seqmagick backtrans-align [-h] [-o destination_file]
+                                    [-t {standard-ambiguous,vertebrate-mito,standard}]
+                                    protein_align nucl_align
+
+    positional arguments:
+      protein_align         Protein Alignment
+      nucl_align            FASTA Alignment
+
+    optional arguments:
+      -h, --help            show this help message and exit
+      -o destination_file, --out-file destination_file
+                            Output destination. Default: STDOUT
+      -t {standard-ambiguous,vertebrate-mito,standard}, --translation-table {standard-ambiguous,vertebrate-mito,standard}
+                            Translation table to use. [Default: standard]
+
 
 ``extract-ids``
 ---------------
@@ -336,8 +360,6 @@ reverse primers. Usage is as follows::
                             outside the primer-defined area to gaps). default:
                             trim
 
-
-
 ``quality-filter``
 ------------------
 
@@ -380,7 +402,7 @@ Acknowledgements
 ================
 
 seqmagick is written and maintained by the `Matsen Group`_ at the Fred
-Hutchinson Cancer Research Center.  
+Hutchinson Cancer Research Center.
 
 
 Contributing

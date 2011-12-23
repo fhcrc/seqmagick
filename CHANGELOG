@@ -6,6 +6,8 @@
 * Allowing '.' or '-' as gap character (GH-18)
 * --name-prefix and --name-suffix no longer create a mangled description (GH-19)
 * Files owned by another user can be mogrified, as long as they are group writeable (GH-14)
+* Add `backtrans-align` subcommand, which maps unaligned nucleotides onto a
+  protein alignment (GH-20)
 * Cleanup, additional tests
 
 0.3.1
