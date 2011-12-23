@@ -56,7 +56,8 @@ def parse_arguments(argv):
     # Add actions
     actions = {}
     for name, mod in subcommands.itermodules():
-        subparser = subparsers.add_parser(name, help=mod.__doc__)
+        subparser = subparsers.add_parser(name, help=mod.__doc__,
+                description=mod.__doc__)
         mod.build_parser(subparser)
         actions[name] = mod.action
 
