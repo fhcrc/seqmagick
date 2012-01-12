@@ -39,11 +39,12 @@ def add_options(parser):
 
     seq_mods = parser.add_argument_group("Sequence Modificaton")
     seq_mods.add_argument('--apply-function', type=module_function,
-            metavar='/path/to/module.py:function_name',
+            metavar='/path/to/module.py:function_name[:parameter]',
             help="""Specify a custom function to apply to the input sequences,
             specified as /path/to/file.py:function_name. Function should accept
-            an iterable of Bio.SeqRecord objects, and yield SeqRecords.
-            Specify more than one to chain.""",
+            an iterable of Bio.SeqRecord objects, and yield SeqRecords. If the
+            parameter is specified, it will be passed as a string as the second
+            argument to the function. Specify more than one to chain.""",
             default=[], action='append')
     seq_mods.add_argument('--cut', dest='transforms',
             metavar="start:end[,start2:end2]",
@@ -303,12 +304,13 @@ def module_function(string):
     """
     Load a function from a python module using a file name, function name
     specification of format:
-        /path/to/x.py:function_name
+        /path/to/x.py:function_name[:parameter]
     """
-    parts = string.split(':')
-    if len(parts) != 2:
-        raise ValueError("Illegal specification. Should be module:function")
-    module_path, function_name = parts
+    parts = string.split(':', 2)
+    if len(parts) < 2:
+        raise ValueError(
+            "Illegal specification. Should be module:function[:parameter]")
+    module_path, function_name = parts[:2]
 
     # Import the module
     module_vars = {}
@@ -320,10 +322,9 @@ def module_function(string):
         raise argparse.ArgumentTypeError("{0} has no attribute '{1}'".format(
             module_path, function_name))
 
-    # Must be callable
-    if not callable(function):
-        raise argparse.ArgumentTypeError("{0} is not callable.".format(
-            function_name))
+    if len(parts) == 3:
+        old_function = function
+        function = lambda r: old_function(r, parts[2])
 
     return function
 
