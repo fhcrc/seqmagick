@@ -352,11 +352,9 @@ def ungap_sequences(records, gap_chars=GAP_CHARS):
         yield ungap_all(record, gap_chars)
 
 def ungap_all(record, gap_chars=GAP_CHARS):
-    for c in gap_chars:
-        record = SeqRecord(record.seq.ungap(c), id=record.id,
-                description=record.description)
+    record = SeqRecord(Seq(str(record.seq).translate(None, gap_chars)),
+            id=record.id, description=record.description)
     return record
-
 
 def _update_id(record, new_id):
     """
