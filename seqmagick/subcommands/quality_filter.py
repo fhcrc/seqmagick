@@ -17,10 +17,12 @@ def build_parser(parser):
     """
     Generate a subparser
     """
-    parser.add_argument('input_fasta', type=argparse.FileType('r'),
-            help='Input fasta file')
-    parser.add_argument('input_qual', type=argparse.FileType('r'),
-            help='The quality scores associated with fasta_file')
+    parser.add_argument('input_fastq', type=argparse.FileType('r'),
+            help="""Input fastq file. A fasta-format file may also be provided
+            if --input-qual is also specified.""")
+    parser.add_argument('--input-qual', type=argparse.FileType('r'),
+            help="""The quality scores associated with the input file. Only
+            used if input file is fasta.""")
     parser.add_argument('output_file', type=argparse.FileType('w'),
             help="""Output file. Format determined from extension.""")
     parser.add_argument('--min-mean-quality', metavar='QUALITY', type=float,
@@ -196,24 +198,26 @@ def action(arguments):
 
     output_type = fileformat.from_filename(arguments.output_file.name)
     filters = [qfilter]
-    with arguments.input_fasta:
-        with arguments.input_qual:
-            sequences = QualityIO.PairedFastaQualIterator(
-                    arguments.input_fasta, arguments.input_qual)
-            filtered = qfilter.filter_records(sequences)
-            if arguments.ambiguous_action:
-                ambiguous_filter = AmbiguousBaseFilter(
-                        arguments.ambiguous_action)
-                filtered = ambiguous_filter.filter_records(filtered)
-                filters.append(ambiguous_filter)
-            if arguments.min_length:
-                min_length_filter = MinLengthFilter(arguments.min_length)
-                filtered = min_length_filter.filter_records(filtered)
-                filters.append(min_length_filter)
+    with arguments.input_fastq as fp:
+        if arguments.input_qual:
+            sequences = QualityIO.PairedFastaQualIterator(fp,
+                    arguments.input_qual)
+        else:
+            sequences = SeqIO.parse(fp, 'fastq')
+        filtered = qfilter.filter_records(sequences)
+        if arguments.ambiguous_action:
+            ambiguous_filter = AmbiguousBaseFilter(
+                    arguments.ambiguous_action)
+            filtered = ambiguous_filter.filter_records(filtered)
+            filters.append(ambiguous_filter)
+        if arguments.min_length:
+            min_length_filter = MinLengthFilter(arguments.min_length)
+            filtered = min_length_filter.filter_records(filtered)
+            filters.append(min_length_filter)
 
-            with arguments.output_file:
-                SeqIO.write(filtered, arguments.output_file,
-                        output_type)
+        with arguments.output_file:
+            SeqIO.write(filtered, arguments.output_file,
+                    output_type)
 
     rpt_rows = [(f.name, f.passed_unchanged, f.passed_changed, f.failed,
         f.total_filtered, f.proportion_passed) for f in filters]
