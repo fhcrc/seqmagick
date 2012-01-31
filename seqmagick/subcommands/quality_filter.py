@@ -39,6 +39,9 @@ def build_parser(parser):
     parser.add_argument('--ambiguous-action', choices=('truncate', 'drop'),
             help="""Action to take on ambiguous base in sequence (N's).
             [default: no action]""")
+    parser.add_argument('--max-ambiguous', default=None, help="""Maximum number
+            of ambiguous bases in a sequence. Sequences exceeding this count
+            will be removed.""", type=int)
 
 
 def mean(sequence):
@@ -103,6 +106,8 @@ class BaseFilter(object):
 
     @property
     def proportion_passed(self):
+        if not self.total_filtered:
+            return 0
         return float(self.passed) / self.total_filtered
 
 
@@ -176,6 +181,22 @@ class AmbiguousBaseFilter(BaseFilter):
         else:
             assert False
 
+class MaxAmbiguousFilter(BaseFilter):
+    name = "Maximum Ambiguous Bases Filter"
+
+    def __init__(self, max_ambiguous):
+        super(MaxAmbiguousFilter, self).__init__()
+        assert max_ambiguous is not None
+        self.max_ambiguous = max_ambiguous
+
+    def filter_record(self, record):
+        n_count = record.seq.upper().count('N')
+        if n_count > self.max_ambiguous:
+            return None
+        else:
+            assert n_count <= self.max_ambiguous
+            return record
+
 class MinLengthFilter(BaseFilter):
     name = "Minimum Length Filter"
     def __init__(self, min_length):
@@ -184,7 +205,7 @@ class MinLengthFilter(BaseFilter):
 
     def filter_record(self, record):
         """
-        Filter record, dropping any that don't meet minimum lenght
+        Filter record, dropping any that don't meet minimum lenghth
         """
         if len(record) >= self.min_length:
             return record
@@ -205,6 +226,10 @@ def action(arguments):
         else:
             sequences = SeqIO.parse(fp, 'fastq')
         filtered = qfilter.filter_records(sequences)
+        if arguments.max_ambiguous is not None:
+            max_ambig_filter = MaxAmbiguousFilter(arguments.max_ambiguous)
+            filtered = max_ambig_filter.filter_records(filtered)
+            filters.append(max_ambig_filter)
         if arguments.ambiguous_action:
             ambiguous_filter = AmbiguousBaseFilter(
                     arguments.ambiguous_action)
