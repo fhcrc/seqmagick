@@ -129,3 +129,23 @@ class MinLengthFilterTestCase(unittest.TestCase):
         actual = list(instance.filter_records(self.sequences))
         self.assertEqual(self.sequences[1:], actual)
 
+class MaxLengthFilterTestCase(unittest.TestCase):
+    def setUp(self):
+        self.sequences = [SeqRecord(Seq('ACGT')),
+                          SeqRecord(Seq('ACTTT')), ]
+
+    def test_none_truncated(self):
+        instance = quality_filter.MaxLengthFilter(6)
+        actual = list(instance.filter_records(self.sequences))
+        self.assertEqual(self.sequences, actual)
+
+    def test_some_truncated(self):
+        instance = quality_filter.MaxLengthFilter(4)
+        actual = list(instance.filter_records(self.sequences))
+        self.assertEqual(['ACGT', 'ACTT'], [str(s.seq) for s in actual])
+
+    def test_all_truncated(self):
+        instance = quality_filter.MaxLengthFilter(3)
+        actual = list(instance.filter_records(self.sequences))
+        self.assertEqual(['ACG', 'ACT'], [str(s.seq) for s in actual])
+        self.assertEqual([i.id for i in self.sequences], [i.id for i in actual])

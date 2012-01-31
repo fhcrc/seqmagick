@@ -30,6 +30,9 @@ def build_parser(parser):
             [default: %(default)s]""")
     parser.add_argument('--min-length', metavar='LENGTH', type=int,
             help="""Minimum length to keep sequence [default: %(default)s]""")
+    parser.add_argument('--max-length', metavar='LENGTH', type=int,
+            help="""Maximum length to keep before truncating [default:
+            %(default)s]. This operation occurs before --max-ambiguous""")
     parser.add_argument('--quality-window', type=int, metavar='WINDOW_SIZE',
             default=0, help="""Window size for truncating sequences.  When set
             to a non-zero value, sequences are truncated where the mean mean
@@ -210,6 +213,24 @@ class MinLengthFilter(BaseFilter):
         if len(record) >= self.min_length:
             return record
 
+class MaxLengthFilter(BaseFilter):
+    """
+    Truncate long sequences
+    """
+    name = "Maximum Length Filter"
+    def __init__(self, max_length):
+        super(MaxLengthFilter, self).__init__()
+        self.max_length = max_length
+
+    def filter_record(self, record):
+        """
+        Filter record, truncating any over some maximum length
+        """
+        if len(record) >= self.max_length:
+            return record[:self.max_length]
+        else:
+            return record
+
 def action(arguments):
     """
     Given parsed arguments, filter input files.
@@ -226,6 +247,14 @@ def action(arguments):
         else:
             sequences = SeqIO.parse(fp, 'fastq')
         filtered = qfilter.filter_records(sequences)
+        if arguments.max_length:
+            max_length_filter = MaxLengthFilter(arguments.max_length)
+            filtered = max_length_filter.filter_records(filtered)
+            filters.append(max_length_filter)
+        if arguments.min_length:
+            min_length_filter = MinLengthFilter(arguments.min_length)
+            filtered = min_length_filter.filter_records(filtered)
+            filters.append(min_length_filter)
         if arguments.max_ambiguous is not None:
             max_ambig_filter = MaxAmbiguousFilter(arguments.max_ambiguous)
             filtered = max_ambig_filter.filter_records(filtered)
@@ -235,10 +264,6 @@ def action(arguments):
                     arguments.ambiguous_action)
             filtered = ambiguous_filter.filter_records(filtered)
             filters.append(ambiguous_filter)
-        if arguments.min_length:
-            min_length_filter = MinLengthFilter(arguments.min_length)
-            filtered = min_length_filter.filter_records(filtered)
-            filters.append(min_length_filter)
 
         with arguments.output_file:
             SeqIO.write(filtered, arguments.output_file,
