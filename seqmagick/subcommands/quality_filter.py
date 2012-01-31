@@ -17,10 +17,12 @@ def build_parser(parser):
     """
     Generate a subparser
     """
-    parser.add_argument('input_fasta', type=argparse.FileType('r'),
-            help='Input fasta file')
-    parser.add_argument('input_qual', type=argparse.FileType('r'),
-            help='The quality scores associated with fasta_file')
+    parser.add_argument('input_fastq', type=argparse.FileType('r'),
+            help="""Input fastq file. A fasta-format file may also be provided
+            if --input-qual is also specified.""")
+    parser.add_argument('--input-qual', type=argparse.FileType('r'),
+            help="""The quality scores associated with the input file. Only
+            used if input file is fasta.""")
     parser.add_argument('output_file', type=argparse.FileType('w'),
             help="""Output file. Format determined from extension.""")
     parser.add_argument('--min-mean-quality', metavar='QUALITY', type=float,
@@ -28,6 +30,9 @@ def build_parser(parser):
             [default: %(default)s]""")
     parser.add_argument('--min-length', metavar='LENGTH', type=int,
             help="""Minimum length to keep sequence [default: %(default)s]""")
+    parser.add_argument('--max-length', metavar='LENGTH', type=int,
+            help="""Maximum length to keep before truncating [default:
+            %(default)s]. This operation occurs before --max-ambiguous""")
     parser.add_argument('--quality-window', type=int, metavar='WINDOW_SIZE',
             default=0, help="""Window size for truncating sequences.  When set
             to a non-zero value, sequences are truncated where the mean mean
@@ -37,6 +42,9 @@ def build_parser(parser):
     parser.add_argument('--ambiguous-action', choices=('truncate', 'drop'),
             help="""Action to take on ambiguous base in sequence (N's).
             [default: no action]""")
+    parser.add_argument('--max-ambiguous', default=None, help="""Maximum number
+            of ambiguous bases in a sequence. Sequences exceeding this count
+            will be removed.""", type=int)
 
 
 def mean(sequence):
@@ -101,6 +109,8 @@ class BaseFilter(object):
 
     @property
     def proportion_passed(self):
+        if not self.total_filtered:
+            return 0
         return float(self.passed) / self.total_filtered
 
 
@@ -174,6 +184,22 @@ class AmbiguousBaseFilter(BaseFilter):
         else:
             assert False
 
+class MaxAmbiguousFilter(BaseFilter):
+    name = "Maximum Ambiguous Bases Filter"
+
+    def __init__(self, max_ambiguous):
+        super(MaxAmbiguousFilter, self).__init__()
+        assert max_ambiguous is not None
+        self.max_ambiguous = max_ambiguous
+
+    def filter_record(self, record):
+        n_count = record.seq.upper().count('N')
+        if n_count > self.max_ambiguous:
+            return None
+        else:
+            assert n_count <= self.max_ambiguous
+            return record
+
 class MinLengthFilter(BaseFilter):
     name = "Minimum Length Filter"
     def __init__(self, min_length):
@@ -182,9 +208,27 @@ class MinLengthFilter(BaseFilter):
 
     def filter_record(self, record):
         """
-        Filter record, dropping any that don't meet minimum lenght
+        Filter record, dropping any that don't meet minimum lenghth
         """
         if len(record) >= self.min_length:
+            return record
+
+class MaxLengthFilter(BaseFilter):
+    """
+    Truncate long sequences
+    """
+    name = "Maximum Length Filter"
+    def __init__(self, max_length):
+        super(MaxLengthFilter, self).__init__()
+        self.max_length = max_length
+
+    def filter_record(self, record):
+        """
+        Filter record, truncating any over some maximum length
+        """
+        if len(record) >= self.max_length:
+            return record[:self.max_length]
+        else:
             return record
 
 def action(arguments):
@@ -196,24 +240,34 @@ def action(arguments):
 
     output_type = fileformat.from_filename(arguments.output_file.name)
     filters = [qfilter]
-    with arguments.input_fasta:
-        with arguments.input_qual:
-            sequences = QualityIO.PairedFastaQualIterator(
-                    arguments.input_fasta, arguments.input_qual)
-            filtered = qfilter.filter_records(sequences)
-            if arguments.ambiguous_action:
-                ambiguous_filter = AmbiguousBaseFilter(
-                        arguments.ambiguous_action)
-                filtered = ambiguous_filter.filter_records(filtered)
-                filters.append(ambiguous_filter)
-            if arguments.min_length:
-                min_length_filter = MinLengthFilter(arguments.min_length)
-                filtered = min_length_filter.filter_records(filtered)
-                filters.append(min_length_filter)
+    with arguments.input_fastq as fp:
+        if arguments.input_qual:
+            sequences = QualityIO.PairedFastaQualIterator(fp,
+                    arguments.input_qual)
+        else:
+            sequences = SeqIO.parse(fp, 'fastq')
+        filtered = qfilter.filter_records(sequences)
+        if arguments.max_length:
+            max_length_filter = MaxLengthFilter(arguments.max_length)
+            filtered = max_length_filter.filter_records(filtered)
+            filters.append(max_length_filter)
+        if arguments.min_length:
+            min_length_filter = MinLengthFilter(arguments.min_length)
+            filtered = min_length_filter.filter_records(filtered)
+            filters.append(min_length_filter)
+        if arguments.max_ambiguous is not None:
+            max_ambig_filter = MaxAmbiguousFilter(arguments.max_ambiguous)
+            filtered = max_ambig_filter.filter_records(filtered)
+            filters.append(max_ambig_filter)
+        if arguments.ambiguous_action:
+            ambiguous_filter = AmbiguousBaseFilter(
+                    arguments.ambiguous_action)
+            filtered = ambiguous_filter.filter_records(filtered)
+            filters.append(ambiguous_filter)
 
-            with arguments.output_file:
-                SeqIO.write(filtered, arguments.output_file,
-                        output_type)
+        with arguments.output_file:
+            SeqIO.write(filtered, arguments.output_file,
+                    output_type)
 
     rpt_rows = [(f.name, f.passed_unchanged, f.passed_changed, f.failed,
         f.total_filtered, f.proportion_passed) for f in filters]

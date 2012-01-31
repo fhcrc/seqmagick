@@ -80,6 +80,33 @@ class AmbiguousBaseFilterTestCase(unittest.TestCase):
         self.assertRaises(ValueError, quality_filter.AmbiguousBaseFilter,
                 'other')
 
+class MaxAmbiguousFilterTestCase(unittest.TestCase):
+    """
+    """
+    def setUp(self):
+        self.records = [SeqRecord(Seq('ACGT')),
+                SeqRecord(Seq('NNNN')),
+                SeqRecord(Seq('NACT')),
+                SeqRecord(Seq('ACNTN')),
+                SeqRecord(Seq('GGNTTNACT')),
+                ]
+
+    def test_none(self):
+        instance = quality_filter.MaxAmbiguousFilter(0)
+        filtered = list(instance.filter_records(self.records))
+        self.assertEqual(len(filtered), 1)
+        self.assertEqual(str(self.records[0].seq), str(filtered[0].seq))
+
+    def test_10(self):
+        instance = quality_filter.MaxAmbiguousFilter(10)
+        filtered = list(instance.filter_records(self.records))
+        self.assertEqual(filtered, self.records)
+
+    def test_1(self):
+        instance = quality_filter.MaxAmbiguousFilter(1)
+        filtered = list(instance.filter_records(self.records))
+        self.assertEqual([self.records[i] for i in (0, 2)], filtered)
+
 
 class MinLengthFilterTestCase(unittest.TestCase):
 
@@ -102,3 +129,23 @@ class MinLengthFilterTestCase(unittest.TestCase):
         actual = list(instance.filter_records(self.sequences))
         self.assertEqual(self.sequences[1:], actual)
 
+class MaxLengthFilterTestCase(unittest.TestCase):
+    def setUp(self):
+        self.sequences = [SeqRecord(Seq('ACGT')),
+                          SeqRecord(Seq('ACTTT')), ]
+
+    def test_none_truncated(self):
+        instance = quality_filter.MaxLengthFilter(6)
+        actual = list(instance.filter_records(self.sequences))
+        self.assertEqual(self.sequences, actual)
+
+    def test_some_truncated(self):
+        instance = quality_filter.MaxLengthFilter(4)
+        actual = list(instance.filter_records(self.sequences))
+        self.assertEqual(['ACGT', 'ACTT'], [str(s.seq) for s in actual])
+
+    def test_all_truncated(self):
+        instance = quality_filter.MaxLengthFilter(3)
+        actual = list(instance.filter_records(self.sequences))
+        self.assertEqual(['ACG', 'ACT'], [str(s.seq) for s in actual])
+        self.assertEqual([i.id for i in self.sequences], [i.id for i in actual])
