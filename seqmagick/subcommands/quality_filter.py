@@ -12,6 +12,10 @@ from Bio import SeqIO
 from Bio.SeqIO import QualityIO
 
 from seqmagick import fileformat
+from .common import typed_range
+
+# Default minimummean quality score
+DEFAULT_MEAN_SCORE = 25.0
 
 def build_parser(parser):
     """
@@ -26,14 +30,22 @@ def build_parser(parser):
     parser.add_argument('output_file', type=argparse.FileType('w'),
             help="""Output file. Format determined from extension.""")
     parser.add_argument('--min-mean-quality', metavar='QUALITY', type=float,
-            default=25, help="""Minimum mean quality score for each read
-            [default: %(default)s]""")
+            default=DEFAULT_MEAN_SCORE, help="""Minimum mean quality score for
+            each read [default: %(default)s]""")
     parser.add_argument('--min-length', metavar='LENGTH', type=int,
             help="""Minimum length to keep sequence [default: %(default)s]""")
-    parser.add_argument('--max-length', metavar='LENGTH', type=int,
+
+    window_group = parser.add_argument_group('Quality window options')
+    window_group.add_argument('--max-length', metavar='LENGTH', type=int,
             help="""Maximum length to keep before truncating [default:
             %(default)s]. This operation occurs before --max-ambiguous""")
-    parser.add_argument('--quality-window', type=int, metavar='WINDOW_SIZE',
+    window_group.add_argument('--quality-window-mean-qual', type=float,
+            help="""Minimum quality score within the window defined by
+            --quality-window. [default: same as --min-mean-quality]""")
+    window_group.add_argument('--quality-window-prop', help="""Proportion of
+            reads within quality window to that must pass filter. Floats are [default:
+            %(default).1f]""", default=1.0, type=typed_range(float, 0.0, 1.0))
+    window_group.add_argument('--quality-window', type=int, metavar='WINDOW_SIZE',
             default=0, help="""Window size for truncating sequences.  When set
             to a non-zero value, sequences are truncated where the mean mean
             quality within the window drops below --min-mean-quality.
@@ -119,12 +131,10 @@ class QualityScoreFilter(BaseFilter):
     Quality score filter
     """
 
-    name = 'Quality Score Filter'
-
-    def __init__(self, min_mean_score=25.0, window_size=0):
+    def __init__(self, min_mean_score=DEFAULT_MEAN_SCORE):
         super(QualityScoreFilter, self).__init__()
         self.min_mean_score = min_mean_score
-        self.window_size = window_size
+        self.name = "Quality Score Filter [min_mean: {0}]".format(min_mean_score)
 
     def filter_record(self, record):
         """
@@ -134,8 +144,31 @@ class QualityScoreFilter(BaseFilter):
         """
         quality_scores = record.letter_annotations['phred_quality']
 
-        # Simple case - no window size or window covers whole sequence
-        if self.window_size == 0 or len(record) <= self.window_size:
+        mean_score = mean(quality_scores)
+        return record if mean_score >= self.min_mean_score else None
+
+class WindowQualityScoreFilter(BaseFilter):
+    """
+    Filter records, truncating records where the mean score drops below a
+    certain value.
+    """
+    def __init__(self, window_size, min_mean_score=DEFAULT_MEAN_SCORE):
+        super(WindowQualityScoreFilter, self).__init__()
+        self.min_mean_score = min_mean_score
+        assert window_size and window_size > 0
+        self.window_size = window_size
+        self.name = "Windowed Quality Score Filter [min_mean-quality: {0}; window_size: {1}]".format(min_mean_score, window_size)
+
+    def filter_record(self, record):
+        """
+        Filter a single record
+
+        Returns None if the record failed.
+        """
+        quality_scores = record.letter_annotations['phred_quality']
+
+        # Simple case - window covers whole sequence
+        if len(record) <= self.window_size:
             mean_score = mean(quality_scores)
             return record if mean_score >= self.min_mean_score else None
 
@@ -153,7 +186,6 @@ class QualityScoreFilter(BaseFilter):
 
         return record[:clip_right]
 
-
 class AmbiguousBaseFilter(BaseFilter):
     """
     Filter records, taking some action if 'N' is encountered in the sequence.
@@ -169,6 +201,7 @@ class AmbiguousBaseFilter(BaseFilter):
         if action not in ('truncate', 'drop'):
             raise ValueError("Unknown action: {0}".format(action))
         self.action = action
+        self.name = AmbiguousBaseFilter.name + " [{0}]".format(action)
 
     def filter_record(self, record):
         """
@@ -201,14 +234,18 @@ class MaxAmbiguousFilter(BaseFilter):
             return record
 
 class MinLengthFilter(BaseFilter):
-    name = "Minimum Length Filter"
+    """
+    Remove records which don't meet minimum length
+    """
     def __init__(self, min_length):
         super(MinLengthFilter, self).__init__()
+        assert min_length > 0
         self.min_length = min_length
+        self.name = "Minimum Length Filter [{0}]".format(min_length)
 
     def filter_record(self, record):
         """
-        Filter record, dropping any that don't meet minimum lenghth
+        Filter record, dropping any that don't meet minimum length
         """
         if len(record) >= self.min_length:
             return record
@@ -235,8 +272,12 @@ def action(arguments):
     """
     Given parsed arguments, filter input files.
     """
-    qfilter = QualityScoreFilter(arguments.min_mean_quality,
-            arguments.quality_window)
+    if arguments.quality_window_mean_qual and not arguments.quality_window:
+        raise ValueError("--quality-window-mean-qual specified without "
+                "--quality-window")
+
+    # Always filter with a quality score
+    qfilter = QualityScoreFilter(arguments.min_mean_quality)
 
     output_type = fileformat.from_filename(arguments.output_file.name)
     filters = [qfilter]
@@ -264,6 +305,12 @@ def action(arguments):
                     arguments.ambiguous_action)
             filtered = ambiguous_filter.filter_records(filtered)
             filters.append(ambiguous_filter)
+        if arguments.quality_window:
+            min_qual = arguments.quality_window_mean_qual or \
+                    arguments.min_mean_quality
+            window_filter = WindowQualityScoreFilter(arguments.quality_window,
+                    min_qual)
+            filters.insert(0, window_filter)
 
         with arguments.output_file:
             SeqIO.write(filtered, arguments.output_file,

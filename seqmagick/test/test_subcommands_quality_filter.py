@@ -5,11 +5,10 @@ from Bio.SeqRecord import SeqRecord
 
 from seqmagick.subcommands import quality_filter
 
-
 class QualityFilterTestCase(unittest.TestCase):
 
     def setUp(self):
-        self.instance = quality_filter.QualityScoreFilter()
+        self.instance = quality_filter.QualityScoreFilter(25.0)
         self.sequence = SeqRecord(Seq('ACGT'))
 
     def test_nowindow_fail(self):
@@ -24,25 +23,27 @@ class QualityFilterTestCase(unittest.TestCase):
         result = instance.filter_record(self.sequence)
         self.assertEqual(self.sequence, result)
 
+class WindowQualityFilterTestCase(unittest.TestCase):
+
+    def setUp(self):
+        self.instance = quality_filter.WindowQualityScoreFilter(2, 25)
+        self.sequence = SeqRecord(Seq('ACGT'))
+
     def test_window_pass(self):
         self.sequence.letter_annotations['phred_quality'] = [25, 25, 25, 25]
-        instance = quality_filter.QualityScoreFilter(window_size=2)
-        result = instance.filter_record(self.sequence)
+        result = self.instance.filter_record(self.sequence)
         self.assertEqual(str(self.sequence), str(result))
 
     def test_window_truncate_noseq(self):
         self.sequence.letter_annotations['phred_quality'] = [25, 24, 25, 25]
-        instance = quality_filter.QualityScoreFilter(window_size=2)
-        result = instance.filter_record(self.sequence)
+        result = self.instance.filter_record(self.sequence)
         self.assertEqual(0, len(result))
 
     def test_window_truncate_mid(self):
         self.sequence.letter_annotations['phred_quality'] = [25, 25, 23, 25]
-        instance = quality_filter.QualityScoreFilter(window_size=2)
-        result = instance.filter_record(self.sequence)
+        result = self.instance.filter_record(self.sequence)
         self.assertEqual(2, len(result))
         self.assertEqual('AC', str(result.seq))
-
 
 class AmbiguousBaseFilterTestCase(unittest.TestCase):
     """
