@@ -35,6 +35,10 @@ def build_parser(parser):
     parser.add_argument('--min-length', metavar='LENGTH', type=int,
             help="""Minimum length to keep sequence [default: %(default)s]""")
 
+    parser.add_argument('--report-out', type=argparse.FileType('w'),
+            default=sys.stdout, help="""Path to write report [default:
+            stdout]""")
+
     window_group = parser.add_argument_group('Quality window options')
     window_group.add_argument('--max-length', metavar='LENGTH', type=int,
             help="""Maximum length to keep before truncating [default:
@@ -316,11 +320,12 @@ def action(arguments):
             SeqIO.write(filtered, arguments.output_file,
                     output_type)
 
-    rpt_rows = [(f.name, f.passed_unchanged, f.passed_changed, f.failed,
-        f.total_filtered, f.proportion_passed) for f in filters]
+    rpt_rows = ((f.name, f.passed_unchanged, f.passed_changed, f.failed,
+        f.total_filtered, f.proportion_passed) for f in filters)
 
     # Write report
-    writer = csv.writer(sys.stdout, lineterminator='\n', delimiter='\t')
-    writer.writerow(('filter', 'passed_unchanged', 'passed_changed', 'failed',
-        'total_processed', 'proportion_passed'))
-    writer.writerows(rpt_rows)
+    with arguments.report_out as fp:
+        writer = csv.writer(fp, lineterminator='\n', delimiter='\t')
+        writer.writerow(('filter', 'passed_unchanged', 'passed_changed', 'failed',
+            'total_processed', 'proportion_passed'))
+        writer.writerows(rpt_rows)
