@@ -7,6 +7,8 @@ import collections
 import csv
 import itertools
 import sys
+from Queue import Queue, Empty
+import threading
 
 from Bio import SeqIO
 from Bio.SeqIO import QualityIO
@@ -38,6 +40,8 @@ def build_parser(parser):
     parser.add_argument('--report-out', type=argparse.FileType('w'),
             default=sys.stdout, help="""Path to write report [default:
             stdout]""")
+    parser.add_argument('--failure-out', type=argparse.FileType('w'),
+            help="""Path to write failure report [default: None]""")
 
     window_group = parser.add_argument_group('Quality window options')
     window_group.add_argument('--max-length', metavar='LENGTH', type=int,
@@ -85,6 +89,30 @@ def moving_average(iterable, n):
         d.append(elem)
         yield s / float(n)
 
+class FailureReportWriter(threading.Thread):
+    """
+    Writes a log of sequences that failed filtering, and the filter that
+    removed them.
+    """
+    def __init__(self, queue, fp):
+        super(FailureReportWriter, self).__init__()
+        self.queue = queue
+        self.writer = csv.DictWriter(fp, ('failed_sequence', 'reason'),
+                delimiter='\t', lineterminator='\n')
+        self.writer.writeheader()
+
+    def run(self):
+        while True:
+            try:
+                record = self.queue.get(timeout=1)
+            except Empty:
+                continue
+
+            if record is None:
+                self.queue.task_done()
+                return
+            self.writer.writerow(record)
+            self.queue.task_done()
 
 class BaseFilter(object):
     """
@@ -101,7 +129,7 @@ class BaseFilter(object):
     def filter_record(self, record):
         raise NotImplementedError("Override in subclass")
 
-    def filter_records(self, records):
+    def filter_records(self, records, failure_queue=None):
         """
         Apply the filter to records
         """
@@ -116,6 +144,9 @@ class BaseFilter(object):
                 yield filtered
             else:
                 self.failed += 1
+                if failure_queue:
+                    failure_queue.put({'failed_sequence': record.id,
+                                       'reason': self.name})
 
     @property
     def passed(self):
@@ -288,34 +319,38 @@ def action(arguments):
         raise ValueError("--quality-window-mean-qual specified without "
                 "--quality-window")
 
+    queue = None
+    if arguments.failure_out:
+        queue = Queue()
+        t = FailureReportWriter(queue, arguments.failure_out)
+        t.setDaemon(True)
+        t.start()
+
     # Always filter with a quality score
     qfilter = QualityScoreFilter(arguments.min_mean_quality)
+    filters = [qfilter]
 
     output_type = fileformat.from_filename(arguments.output_file.name)
-    filters = [qfilter]
     with arguments.input_fastq as fp:
         if arguments.input_qual:
             sequences = QualityIO.PairedFastaQualIterator(fp,
                     arguments.input_qual)
         else:
             sequences = SeqIO.parse(fp, 'fastq')
-        filtered = qfilter.filter_records(sequences)
+
+        # Add filters
         if arguments.max_length:
             max_length_filter = MaxLengthFilter(arguments.max_length)
-            filtered = max_length_filter.filter_records(filtered)
             filters.append(max_length_filter)
         if arguments.min_length:
             min_length_filter = MinLengthFilter(arguments.min_length)
-            filtered = min_length_filter.filter_records(filtered)
             filters.append(min_length_filter)
         if arguments.max_ambiguous is not None:
             max_ambig_filter = MaxAmbiguousFilter(arguments.max_ambiguous)
-            filtered = max_ambig_filter.filter_records(filtered)
             filters.append(max_ambig_filter)
         if arguments.ambiguous_action:
             ambiguous_filter = AmbiguousBaseFilter(
                     arguments.ambiguous_action)
-            filtered = ambiguous_filter.filter_records(filtered)
             filters.append(ambiguous_filter)
         if arguments.quality_window:
             min_qual = arguments.quality_window_mean_qual or \
@@ -324,9 +359,11 @@ def action(arguments):
                     min_qual)
             filters.insert(0, window_filter)
 
+        for f in filters:
+            sequences = f.filter_records(sequences, queue)
+
         with arguments.output_file:
-            SeqIO.write(filtered, arguments.output_file,
-                    output_type)
+            SeqIO.write(sequences, arguments.output_file, output_type)
 
     rpt_rows = (f.report_dict() for f in filters)
 
@@ -335,5 +372,7 @@ def action(arguments):
         writer = csv.DictWriter(fp, BaseFilter.report_fields,
                 lineterminator='\n', delimiter='\t')
         writer.writeheader()
-        writer = csv.writer(fp, lineterminator='\n', delimiter='\t')
         writer.writerows(rpt_rows)
+
+    if queue:
+        queue.join()
