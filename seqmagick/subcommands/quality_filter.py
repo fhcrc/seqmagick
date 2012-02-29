@@ -90,6 +90,8 @@ class BaseFilter(object):
     """
     Base class for filters
     """
+    report_fields = ['name', 'passed_unchanged', 'passed_changed', 'failed',
+            'total_filtered', 'proportion_passed']
 
     def __init__(self):
         self.passed_unchanged = 0
@@ -129,10 +131,14 @@ class BaseFilter(object):
             return 0
         return float(self.passed) / self.total_filtered
 
+    def report_dict(self):
+        return dict((f, getattr(self, f)) for f in self.report_fields)
+
 
 class QualityScoreFilter(BaseFilter):
     """
-    Quality score filter
+    Quality score filter - requires that the average base quality over the
+    length of the read is greater than some threshold.
     """
 
     def __init__(self, min_mean_score=DEFAULT_MEAN_SCORE):
@@ -153,7 +159,7 @@ class QualityScoreFilter(BaseFilter):
 
 class WindowQualityScoreFilter(BaseFilter):
     """
-    Filter records, truncating records where the mean score drops below a
+    Filter records, truncating records when the mean score drops below a
     certain value.
     """
     def __init__(self, window_size, min_mean_score=DEFAULT_MEAN_SCORE):
@@ -197,7 +203,6 @@ class AmbiguousBaseFilter(BaseFilter):
     action  - either 'truncate' (drop N and any sequence following) or 'drop'
               (remove sequences with 'N's)
     """
-
     name = 'Ambiguous Base Filter'
 
     def __init__(self, action):
@@ -222,6 +227,9 @@ class AmbiguousBaseFilter(BaseFilter):
             assert False
 
 class MaxAmbiguousFilter(BaseFilter):
+    """
+    Filters records exceeding some minimum number of ambiguous bases
+    """
     name = "Maximum Ambiguous Bases Filter"
 
     def __init__(self, max_ambiguous):
@@ -320,12 +328,12 @@ def action(arguments):
             SeqIO.write(filtered, arguments.output_file,
                     output_type)
 
-    rpt_rows = ((f.name, f.passed_unchanged, f.passed_changed, f.failed,
-        f.total_filtered, f.proportion_passed) for f in filters)
+    rpt_rows = (f.report_dict() for f in filters)
 
     # Write report
     with arguments.report_out as fp:
+        writer = csv.DictWriter(fp, BaseFilter.report_fields,
+                lineterminator='\n', delimiter='\t')
+        writer.writeheader()
         writer = csv.writer(fp, lineterminator='\n', delimiter='\t')
-        writer.writerow(('filter', 'passed_unchanged', 'passed_changed', 'failed',
-            'total_processed', 'proportion_passed'))
         writer.writerows(rpt_rows)
