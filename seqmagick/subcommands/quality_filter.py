@@ -373,8 +373,6 @@ class PrimerBarcodeFilter(BaseFilter):
                                                     _ambiguous_pattern(primer)),
                                   re.IGNORECASE)
 
-        print self.pattern.pattern
-
     def _report_match(self, record, sample):
         if not self.writer:
             return
