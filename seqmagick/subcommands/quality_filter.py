@@ -6,6 +6,7 @@ import argparse
 import collections
 import csv
 import itertools
+import re
 import sys
 from Queue import Queue, Empty
 import threading
@@ -18,6 +19,29 @@ from .common import typed_range
 
 # Default minimummean quality score
 DEFAULT_MEAN_SCORE = 25.0
+
+# Tools for working with ambiguous bases
+# Map from Ambiguous Base to regex
+_AMBIGUOUS_MAP = {
+       'R': '[GA]',
+       'Y': '[TC]',
+       'K': '[GT]',
+       'M': '[AC]',
+       'S': '[GC]',
+       'W': '[AT]',
+       'B': '[GTC]',
+       'D': '[GAT]',
+       'H': '[ACT]',
+       'V': '[GCA]',
+       'N': '[AGCT]',
+}
+
+def _ambiguous_pattern(sequence_str):
+    """
+    Convert an IUPAC ambiguous string to a regular expression pattern string
+    """
+    return ''.join(_AMBIGUOUS_MAP.get(c, c) for c in sequence_str)
+
 
 def build_parser(parser):
     """
@@ -65,6 +89,14 @@ def build_parser(parser):
     parser.add_argument('--max-ambiguous', default=None, help="""Maximum number
             of ambiguous bases in a sequence. Sequences exceeding this count
             will be removed.""", type=int)
+
+    barcode_group = parser.add_argument_group('Barcode/Primer')
+    barcode_group.add_argument('--primer', help="""IUPAC ambiguous primer to
+            require""")
+    barcode_group.add_argument('--barcode-file', help="""Headerless CSV file
+            containing sample_id,barcode rows""", type=argparse.FileType('r'))
+    barcode_group.add_argument('--map-out', help="""Path to write
+            sequence_id,sample_id pairs""", type=argparse.FileType('w'))
 
 
 def mean(sequence):
@@ -175,7 +207,7 @@ class QualityScoreFilter(BaseFilter):
     def __init__(self, min_mean_score=DEFAULT_MEAN_SCORE):
         super(QualityScoreFilter, self).__init__()
         self.min_mean_score = min_mean_score
-        self.name = "Quality Score Filter [min_mean: {0}]".format(min_mean_score)
+        self.name = "Quality Score [min_mean: {0}]".format(min_mean_score)
 
     def filter_record(self, record):
         """
@@ -198,7 +230,9 @@ class WindowQualityScoreFilter(BaseFilter):
         self.min_mean_score = min_mean_score
         assert window_size and window_size > 0
         self.window_size = window_size
-        self.name = "Windowed Quality Score Filter [min_mean-quality: {0}; window_size: {1}]".format(min_mean_score, window_size)
+        self.name = ("Windowed Quality Score " +
+                     "[min_mean-quality: {0}; window_size: {1}]").format(
+                             min_mean_score, window_size)
 
     def filter_record(self, record):
         """
@@ -234,7 +268,7 @@ class AmbiguousBaseFilter(BaseFilter):
     action  - either 'truncate' (drop N and any sequence following) or 'drop'
               (remove sequences with 'N's)
     """
-    name = 'Ambiguous Base Filter'
+    name = 'Ambiguous Base'
 
     def __init__(self, action):
         super(AmbiguousBaseFilter, self).__init__()
@@ -261,12 +295,13 @@ class MaxAmbiguousFilter(BaseFilter):
     """
     Filters records exceeding some minimum number of ambiguous bases
     """
-    name = "Maximum Ambiguous Bases Filter"
+    name = "Maximum Ambiguous Bases"
 
     def __init__(self, max_ambiguous):
         super(MaxAmbiguousFilter, self).__init__()
         assert max_ambiguous is not None
         self.max_ambiguous = max_ambiguous
+        self.name = self.name + '[{0}]'.format(max_ambiguous)
 
     def filter_record(self, record):
         n_count = record.seq.upper().count('N')
@@ -284,7 +319,7 @@ class MinLengthFilter(BaseFilter):
         super(MinLengthFilter, self).__init__()
         assert min_length > 0
         self.min_length = min_length
-        self.name = "Minimum Length Filter [{0}]".format(min_length)
+        self.name = "Minimum Length [{0}]".format(min_length)
 
     def filter_record(self, record):
         """
@@ -297,10 +332,11 @@ class MaxLengthFilter(BaseFilter):
     """
     Truncate long sequences
     """
-    name = "Maximum Length Filter"
+    name = "Maximum Length"
     def __init__(self, max_length):
         super(MaxLengthFilter, self).__init__()
         self.max_length = max_length
+        self.name = self.name + " [{0}]".format(max_length)
 
     def filter_record(self, record):
         """
@@ -310,6 +346,55 @@ class MaxLengthFilter(BaseFilter):
             return record[:self.max_length]
         else:
             return record
+
+class PrimerBarcodeFilter(BaseFilter):
+    """
+    Filter that checks that the sequence starts with a known barcode/primer
+    combination.
+
+    Sequences that pass the filter have the barcode and primer removed.
+
+    If an output_file is provided, (sequence_id, sample_id) tuples are written
+    to it.
+    """
+    name = "Primer/Barcode"
+
+    def __init__(self, primer, barcodes, output_file=None, trim=True):
+        super(PrimerBarcodeFilter, self).__init__()
+        self.primer = primer
+        self.barcodes = barcodes
+        self.trim = True
+        if output_file:
+            self.writer = csv.writer(output_file, lineterminator='\n')
+        else:
+            self.writer = None
+
+        self.pattern = re.compile('^({0}){1}'.format('|'.join(barcodes),
+                                                    _ambiguous_pattern(primer)),
+                                  re.IGNORECASE)
+
+        print self.pattern.pattern
+
+    def _report_match(self, record, sample):
+        if not self.writer:
+            return
+        self.writer.writerow((record.id, sample))
+
+    def filter_record(self, record):
+        m = self.pattern.match(str(record.seq))
+        if m:
+            self._report_match(record, self.barcodes[m.group(1)])
+            if self.trim:
+                record = record[m.end():]
+            return record
+
+def parse_barcode_file(fp):
+    reader = csv.reader(fp)
+    barcodes = {i[1]: i[0] for i in reader}
+    lengths = map(len, barcodes)
+    if not max(lengths) == min(lengths):
+        raise ValueError("Varying lengths in barcode file!")
+    return barcodes
 
 def action(arguments):
     """
@@ -358,6 +443,12 @@ def action(arguments):
             window_filter = WindowQualityScoreFilter(arguments.quality_window,
                     min_qual)
             filters.insert(0, window_filter)
+
+        if arguments.barcode_file:
+            with arguments.barcode_file:
+                barcodes = parse_barcode_file(arguments.barcode_file)
+            f = PrimerBarcodeFilter(arguments.primer or '', barcodes, arguments.map_out)
+            filters.append(f)
 
         for f in filters:
             sequences = f.filter_records(sequences, queue)

@@ -1,3 +1,4 @@
+from cStringIO import StringIO
 import unittest
 
 from Bio.Seq import Seq
@@ -150,3 +151,27 @@ class MaxLengthFilterTestCase(unittest.TestCase):
         actual = list(instance.filter_records(self.sequences))
         self.assertEqual(['ACG', 'ACT'], [str(s.seq) for s in actual])
         self.assertEqual([i.id for i in self.sequences], [i.id for i in actual])
+
+class PrimerBarcodeFilterTestCase(unittest.TestCase):
+    def setUp(self):
+        self.sequences = [SeqRecord(Seq('ACCGTTACGAT'), 'seq1'),
+                          SeqRecord(Seq('ACTGTTACGCT'), 'seq2'),
+                          SeqRecord(Seq('AACTGTTA'), 'seq3'), # Homopolymer in bc
+                          SeqRecord(Seq('ACCGTA'), 'seq4'),   # Error in primer
+                          ]
+        self.barcodes = {'ACC': 'Sample1', 'ACT': 'Sample2'}
+        self.primer = 'GTTA'
+        self.outfile = StringIO()
+        self.instance = quality_filter.PrimerBarcodeFilter(self.primer,
+                self.barcodes, self.outfile)
+
+    def test_filter_trim(self):
+        actual = list(self.instance.filter_records(self.sequences))
+        self.assertEqual(2, len(actual))
+        self.assertEqual(['CGAT', 'CGCT'], [str(s.seq) for s in actual])
+
+    def test_output_file(self):
+        list(self.instance.filter_records(self.sequences))
+        self.assertEqual("""seq1,Sample1
+seq2,Sample2
+""", self.outfile.getvalue())
