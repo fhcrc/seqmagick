@@ -93,8 +93,11 @@ def build_parser(parser):
     barcode_group = parser.add_argument_group('Barcode/Primer')
     barcode_group.add_argument('--primer', help="""IUPAC ambiguous primer to
             require""")
-    barcode_group.add_argument('--barcode-file', help="""Headerless CSV file
+    barcode_group.add_argument('--barcode-file', help="""Header CSV file
             containing sample_id,barcode rows""", type=argparse.FileType('r'))
+    barcode_group.add_argument('--barcode-header', action='store_true',
+            default=False, help="""Barcodes have a header row [default:
+            %(default)s]""")
     barcode_group.add_argument('--map-out', help="""Path to write
             sequence_id,sample_id pairs""", type=argparse.FileType('w'))
 
@@ -407,13 +410,43 @@ class PrimerBarcodeFilter(BaseFilter):
                 record = record[m.end():]
             return record
 
-def parse_barcode_file(fp):
+def parse_barcode_file(fp, header=False):
+    """
+    Load label, barcode pairs from a CSV file.
+
+    Returns a map from barcode -> label
+
+    Any additional columns are ignored
+    """
+    d = {}
     reader = csv.reader(fp)
-    barcodes = {i[1]: i[0] for i in reader}
-    lengths = map(len, barcodes)
-    if not max(lengths) == min(lengths):
-        raise ValueError("Varying lengths in barcode file!")
-    return barcodes
+
+    if header:
+        # Skip header
+        next(reader)
+
+    # Skip blank rows
+    records = (record for record in reader if record)
+
+    for record in records:
+        value, key = record[:2]
+        if key in d:
+            raise ValueError("Duplicate barcode: {0}".format(key))
+        if value in d.values():
+            raise ValueError("Duplicate sample label: {0}".format(value))
+        d[key] = value
+
+    # Require that all barcodes are the same length
+    if min(len(k) for k in d) != max(len(k) for k in d):
+        keys = d.keys()
+        keys.sort(key=len)
+        minlen_key = keys[0]
+        maxlen_key = keys[-1]
+
+        raise ValueError(("Length of barcode '{0}' does not match "
+            "length of barcode '{1}'").format(minlen_key, maxlen_key))
+
+    return d
 
 def action(arguments):
     """
@@ -465,7 +498,8 @@ def action(arguments):
 
         if arguments.barcode_file:
             with arguments.barcode_file:
-                barcodes = parse_barcode_file(arguments.barcode_file)
+                barcodes = parse_barcode_file(arguments.barcode_file,
+                        arguments.barcode_header)
             f = PrimerBarcodeFilter(arguments.primer or '', barcodes, arguments.map_out)
             filters.append(f)
 
