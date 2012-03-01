@@ -280,7 +280,8 @@ class WindowQualityScoreFilter(BaseFilter):
             else:
                 break
 
-        return record[:clip_right]
+        if clip_right:
+            return record[:clip_right]
 
 class AmbiguousBaseFilter(BaseFilter):
     """
