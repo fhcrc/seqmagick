@@ -55,22 +55,27 @@ def build_parser(parser):
             used if input file is fasta.""")
     parser.add_argument('output_file', type=argparse.FileType('w'),
             help="""Output file. Format determined from extension.""")
+    output_group = parser.add_argument_group("Output")
+
+    output_group.add_argument('--report-out', type=argparse.FileType('w'),
+            default=sys.stdout, help="""Output file for report [default:
+            stdout]""")
+    output_group.add_argument('--failure-out', type=argparse.FileType('w'),
+            help="""File to write failure report [default: None]""")
+
     parser.add_argument('--min-mean-quality', metavar='QUALITY', type=float,
             default=DEFAULT_MEAN_SCORE, help="""Minimum mean quality score for
             each read [default: %(default)s]""")
     parser.add_argument('--min-length', metavar='LENGTH', type=int,
-            help="""Minimum length to keep sequence [default: %(default)s]""")
+            default=200, help="""Minimum length to keep sequence [default:
+            %(default)s]""")
+    parser.add_argument('--max-length', metavar='LENGTH', type=int,
+            default=1000, help="""Maximum length to keep before truncating
+            [default: %(default)s]. This operation occurs before
+            --max-ambiguous""")
 
-    parser.add_argument('--report-out', type=argparse.FileType('w'),
-            default=sys.stdout, help="""Path to write report [default:
-            stdout]""")
-    parser.add_argument('--failure-out', type=argparse.FileType('w'),
-            help="""Path to write failure report [default: None]""")
 
     window_group = parser.add_argument_group('Quality window options')
-    window_group.add_argument('--max-length', metavar='LENGTH', type=int,
-            help="""Maximum length to keep before truncating [default:
-            %(default)s]. This operation occurs before --max-ambiguous""")
     window_group.add_argument('--quality-window-mean-qual', type=float,
             help="""Minimum quality score within the window defined by
             --quality-window. [default: same as --min-mean-quality]""")
@@ -93,12 +98,12 @@ def build_parser(parser):
     barcode_group = parser.add_argument_group('Barcode/Primer')
     barcode_group.add_argument('--primer', help="""IUPAC ambiguous primer to
             require""")
-    barcode_group.add_argument('--barcode-file', help="""Header CSV file
+    barcode_group.add_argument('--barcode-file', help="""CSV file
             containing sample_id,barcode rows""", type=argparse.FileType('r'))
     barcode_group.add_argument('--barcode-header', action='store_true',
             default=False, help="""Barcodes have a header row [default:
             %(default)s]""")
-    barcode_group.add_argument('--map-out', help="""Path to write
+    barcode_group.add_argument('--map-out', help="""File to write
             sequence_id,sample_id pairs""", type=argparse.FileType('w'))
 
 
@@ -501,7 +506,8 @@ def action(arguments):
             with arguments.barcode_file:
                 barcodes = parse_barcode_file(arguments.barcode_file,
                         arguments.barcode_header)
-            f = PrimerBarcodeFilter(arguments.primer or '', barcodes, arguments.map_out)
+            f = PrimerBarcodeFilter(arguments.primer or '', barcodes,
+                    arguments.map_out)
             filters.append(f)
 
         for f in filters:
