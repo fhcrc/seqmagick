@@ -129,7 +129,7 @@ class FailureReportWriter(threading.Thread):
     def __init__(self, queue, fp):
         super(FailureReportWriter, self).__init__()
         self.queue = queue
-        self.writer = csv.DictWriter(fp, ('failed_sequence', 'reason'),
+        self.writer = csv.DictWriter(fp, ('failed_sequence', 'reason', 'value'),
                 delimiter='\t', lineterminator='\n')
         self.writer.writeheader()
 
@@ -146,6 +146,18 @@ class FailureReportWriter(threading.Thread):
             self.writer.writerow(record)
             self.queue.task_done()
 
+
+class Failure(object):
+    """
+    Simple object to hold a value corresponding to a failure.  Evaluates to
+    false in boolean tests.
+    """
+    def __init__(self, value=None):
+        self.value = value
+
+    def __nonzero__(self):
+        return False
+
 class BaseFilter(object):
     """
     Base class for filters
@@ -159,6 +171,11 @@ class BaseFilter(object):
         self.failed = 0
 
     def filter_record(self, record):
+        """
+        Filter a record. If the filter succeeds, returns a SeqRecord. If it
+        fails, returns either None or an instance of Failure containing the
+        value with failed.
+        """
         raise NotImplementedError("Override in subclass")
 
     def filter_records(self, records, failure_queue=None):
@@ -177,8 +194,9 @@ class BaseFilter(object):
             else:
                 self.failed += 1
                 if failure_queue:
+                    value = filtered.value if filtered is not None else None
                     failure_queue.put({'failed_sequence': record.id,
-                                       'reason': self.name})
+                        'reason': self.name, 'value': value})
 
     @property
     def passed(self):
@@ -218,7 +236,7 @@ class QualityScoreFilter(BaseFilter):
         quality_scores = record.letter_annotations['phred_quality']
 
         mean_score = mean(quality_scores)
-        return record if mean_score >= self.min_mean_score else None
+        return record if mean_score >= self.min_mean_score else Failure(mean_score)
 
 class WindowQualityScoreFilter(BaseFilter):
     """
@@ -245,7 +263,7 @@ class WindowQualityScoreFilter(BaseFilter):
         # Simple case - window covers whole sequence
         if len(record) <= self.window_size:
             mean_score = mean(quality_scores)
-            return record if mean_score >= self.min_mean_score else None
+            return record if mean_score >= self.min_mean_score else Failure(mean_score)
 
         # Find the right clipping point. Start clipping at the beginning of the
         # sequence, then extend the window to include regions with acceptable
@@ -306,7 +324,7 @@ class MaxAmbiguousFilter(BaseFilter):
     def filter_record(self, record):
         n_count = record.seq.upper().count('N')
         if n_count > self.max_ambiguous:
-            return None
+            return Failure(n_count)
         else:
             assert n_count <= self.max_ambiguous
             return record
@@ -325,8 +343,11 @@ class MinLengthFilter(BaseFilter):
         """
         Filter record, dropping any that don't meet minimum length
         """
-        if len(record) >= self.min_length:
+        l = len(record)
+        if l >= self.min_length:
             return record
+        else:
+            return Failure(l)
 
 class MaxLengthFilter(BaseFilter):
     """

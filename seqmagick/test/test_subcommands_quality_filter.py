@@ -16,7 +16,7 @@ class QualityFilterTestCase(unittest.TestCase):
         self.sequence.letter_annotations['phred_quality'] = [25, 25, 24, 25]
         instance = quality_filter.QualityScoreFilter()
         result = instance.filter_record(self.sequence)
-        self.assertEqual(None, result)
+        self.assertFalse(result)
 
     def test_nowindow_pass(self):
         self.sequence.letter_annotations['phred_quality'] = [25, 25, 25, 25]
@@ -175,3 +175,12 @@ class PrimerBarcodeFilterTestCase(unittest.TestCase):
         self.assertEqual("""seq1,Sample1
 seq2,Sample2
 """, self.outfile.getvalue())
+
+class FailureTestCase(object):
+    def test_nonzero(self):
+        f = quality_filter.Failure()
+        self.assertFalse(f)
+        f = quality_filter.Failure(100)
+        self.assertEqual(100, f.value)
+        self.assertFalse(f)
+
