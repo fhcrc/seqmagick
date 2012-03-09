@@ -9,7 +9,8 @@
 * Add `backtrans-align` subcommand, which maps unaligned nucleotides onto a
   protein alignment (GH-20)
 * Allow FASTQ as input to quality-filter
-* Add --max-ambiguous, --max-length to quality-filter
+* Significantly expand functionality of quality-filter: identify and trim
+  barcodes/primers; report detailed failure information.
 * Cleanup, additional tests
 
 0.3.1
