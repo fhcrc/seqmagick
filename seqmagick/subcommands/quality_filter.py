@@ -104,10 +104,12 @@ def build_parser(parser):
             default=False, help="""Barcodes have a header row [default:
             %(default)s]""")
     barcode_group.add_argument('--map-out', help="""Path to write
-            sequence_id,sample_id pairs""", type=argparse.FileType('w'), metavar = 'SAMPLE_MAP')
-    barcode_group.add_argument('--quoting', help="""A string naming an attribute of the
-            csv module defining the quoting behavior for `SAMPLE_MAP`. [default: %(default)s]""",
-            default = 'QUOTE_MINIMAL', choices = [s for s in dir(csv) if s.startswith('QUOTE_')])
+            sequence_id,sample_id pairs""", type=argparse.FileType('w'),
+            metavar='SAMPLE_MAP')
+    barcode_group.add_argument('--quoting', help="""A string naming an
+            attribute of the csv module defining the quoting behavior for
+            `SAMPLE_MAP`.  [default: %(default)s]""", default='QUOTE_MINIMAL',
+            choices=[s for s in dir(csv) if s.startswith('QUOTE_')])
 
 def mean(sequence):
     """
@@ -508,7 +510,9 @@ def action(arguments):
             with arguments.barcode_file:
                 barcodes = parse_barcode_file(arguments.barcode_file,
                         arguments.barcode_header)
-            f = PrimerBarcodeFilter(arguments.primer or '', barcodes, arguments.map_out, quoting = getattr(csv, arguments.quoting))
+            f = PrimerBarcodeFilter(arguments.primer or '', barcodes,
+                    arguments.map_out,
+                    quoting=getattr(csv, arguments.quoting))
             filters.append(f)
 
         for f in filters:
