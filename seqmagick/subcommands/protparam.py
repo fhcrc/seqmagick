@@ -23,7 +23,7 @@ def build_parser(parser):
             [default: %(default)s]""")
     parser.add_argument('--sort', dest='sort',
         choices=['length-asc', 'length-desc', 'name-asc', 'name-desc',
-                 'mass', 'pi'],
+                 'mass-asc', 'mass-desc', 'pi-asc', 'pi-desc'],
         help='Sort output based on length, name, molecular weight or pI')
   
 
@@ -37,6 +37,7 @@ def action(arguments):
     with arguments.sequence_file:
         sequences = SeqIO.parse(arguments.sequence_file, source_format)
         
+        # sort based on name or length
         sorters = {'length': transform.sort_length,
                    'name': transform.sort_name,}
         directions = {'asc': 1, 'desc': 0}
@@ -54,10 +55,12 @@ def action(arguments):
           stats.append((s, params.molecular_weight(), 
                            params.isoelectric_point()))
           
-          if arguments.sort == 'mass':
-            stats = sorted(stats, key=lambda stats: stats[1])
-          elif arguments.sort == 'pi':
-            stats = sorted(stats, key=lambda stats: stats[2])
+          sort_on, direction = arguments.sort.split('-')
+          reverse = (direction=='desc')
+          if sort_on == 'mass':
+            stats = sorted(stats, key=lambda stats: stats[1], reverse=reverse)
+          elif sort_on == 'pi':
+            stats = sorted(stats, key=lambda stats: stats[2], reverse=reverse)
         
         if arguments.include_description:
             out = ((s[0].description, s[1], s[2]) for s in stats)
