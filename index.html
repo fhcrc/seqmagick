@@ -3,13 +3,16 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>seqmagick &mdash; seqmagick v0.3.1 documentation</title>
+    <title>seqmagick &mdash; seqmagick 0.3.1 documentation</title>
+    
     <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
@@ -22,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="seqmagick v0.3.1 documentation" href="#" /> 
+    <link rel="top" title="seqmagick 0.3.1 documentation" href="#" /> 
   </head>
   <body>
     <div class="related">
@@ -31,7 +34,7 @@
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
-        <li><a href="#">seqmagick v0.3.1 documentation</a> &raquo;</li> 
+        <li><a href="#">seqmagick 0.3.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
       <div class="sphinxsidebar">
@@ -62,11 +65,13 @@
 </li>
 </ul>
 </li>
+<li><a class="reference internal" href="#backtrans-align"><tt class="docutils literal"><span class="pre">backtrans-align</span></tt></a></li>
 <li><a class="reference internal" href="#extract-ids"><tt class="docutils literal"><span class="pre">extract-ids</span></tt></a></li>
 <li><a class="reference internal" href="#info"><tt class="docutils literal"><span class="pre">info</span></tt></a><ul>
 <li><a class="reference internal" href="#example">Example</a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#id2"><tt class="docutils literal"><span class="pre">backtrans-align</span></tt></a></li>
 <li><a class="reference internal" href="#primer-trim"><tt class="docutils literal"><span class="pre">primer-trim</span></tt></a></li>
 <li><a class="reference internal" href="#quality-filter"><tt class="docutils literal"><span class="pre">quality-filter</span></tt></a></li>
 </ul>
@@ -86,7 +91,7 @@
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" size="18" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
@@ -119,18 +124,20 @@
 <li><a class="reference internal" href="#command-line-arguments" id="id10">Command-line Arguments</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#extract-ids" id="id11"><tt class="docutils literal"><span class="pre">extract-ids</span></tt></a></li>
-<li><a class="reference internal" href="#info" id="id12"><tt class="docutils literal"><span class="pre">info</span></tt></a><ul>
-<li><a class="reference internal" href="#example" id="id13">Example</a></li>
+<li><a class="reference internal" href="#backtrans-align" id="id11"><tt class="docutils literal"><span class="pre">backtrans-align</span></tt></a></li>
+<li><a class="reference internal" href="#extract-ids" id="id12"><tt class="docutils literal"><span class="pre">extract-ids</span></tt></a></li>
+<li><a class="reference internal" href="#info" id="id13"><tt class="docutils literal"><span class="pre">info</span></tt></a><ul>
+<li><a class="reference internal" href="#example" id="id14">Example</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#primer-trim" id="id14"><tt class="docutils literal"><span class="pre">primer-trim</span></tt></a></li>
-<li><a class="reference internal" href="#quality-filter" id="id15"><tt class="docutils literal"><span class="pre">quality-filter</span></tt></a></li>
+<li><a class="reference internal" href="#id2" id="id15"><tt class="docutils literal"><span class="pre">backtrans-align</span></tt></a></li>
+<li><a class="reference internal" href="#primer-trim" id="id16"><tt class="docutils literal"><span class="pre">primer-trim</span></tt></a></li>
+<li><a class="reference internal" href="#quality-filter" id="id17"><tt class="docutils literal"><span class="pre">quality-filter</span></tt></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#supported-file-extensions" id="id16">Supported File Extensions</a></li>
-<li><a class="reference internal" href="#acknowledgements" id="id17">Acknowledgements</a></li>
-<li><a class="reference internal" href="#contributing" id="id18">Contributing</a></li>
+<li><a class="reference internal" href="#supported-file-extensions" id="id18">Supported File Extensions</a></li>
+<li><a class="reference internal" href="#acknowledgements" id="id19">Acknowledgements</a></li>
+<li><a class="reference internal" href="#contributing" id="id20">Contributing</a></li>
 </ul>
 </li>
 </ul>
@@ -340,8 +347,29 @@ the minimum length predicate is applied.</p>
 </div>
 </div>
 </div>
+<div class="section" id="backtrans-align">
+<h3><a class="toc-backref" href="#id11"><tt class="docutils literal"><span class="pre">backtrans-align</span></tt></a><a class="headerlink" href="#backtrans-align" title="Permalink to this headline">¶</a></h3>
+<p>Given a protein alignment and unaligned nucleotides, align the nucleotides
+using the protein alignment.  Protein and nucleotide sequence files must
+contain the same number of sequences, in the same order, with the same IDs.</p>
+<div class="highlight-python"><pre>usage: seqmagick backtrans-align [-h] [-o destination_file]
+                                [-t {standard-ambiguous,vertebrate-mito,standard}]
+                                protein_align nucl_align
+
+positional arguments:
+  protein_align         Protein Alignment
+  nucl_align            FASTA Alignment
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -o destination_file, --out-file destination_file
+                        Output destination. Default: STDOUT
+  -t {standard-ambiguous,vertebrate-mito,standard}, --translation-table {standard-ambiguous,vertebrate-mito,standard}
+                        Translation table to use. [Default: standard]</pre>
+</div>
+</div>
 <div class="section" id="extract-ids">
-<h3><a class="toc-backref" href="#id11"><tt class="docutils literal"><span class="pre">extract-ids</span></tt></a><a class="headerlink" href="#extract-ids" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id12"><tt class="docutils literal"><span class="pre">extract-ids</span></tt></a><a class="headerlink" href="#extract-ids" title="Permalink to this headline">¶</a></h3>
 <p><tt class="docutils literal"><span class="pre">seqmagick</span> <span class="pre">extract-ids</span></tt> is extremely simple - all the IDs from a sequence file
 are printed to stdout (by default) or the file of your choosing:</p>
 <div class="highlight-python"><pre>positional arguments:
@@ -357,10 +385,10 @@ optional arguments:
 </div>
 </div>
 <div class="section" id="info">
-<h3><a class="toc-backref" href="#id12"><tt class="docutils literal"><span class="pre">info</span></tt></a><a class="headerlink" href="#info" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id13"><tt class="docutils literal"><span class="pre">info</span></tt></a><a class="headerlink" href="#info" title="Permalink to this headline">¶</a></h3>
 <p><tt class="docutils literal"><span class="pre">seqmagick</span> <span class="pre">info</span></tt> describes one or more sequence files</p>
 <div class="section" id="example">
-<h4><a class="toc-backref" href="#id13">Example</a><a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h4>
+<h4><a class="toc-backref" href="#id14">Example</a><a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h4>
 <div class="highlight-python"><pre>seqmagick info examples/*.fasta
 
 name                      alignment  min_len  max_len  avg_len  num_seqs
@@ -374,8 +402,30 @@ examples/wrapped.fasta    FALSE      120      237      178.50   2</pre>
 <tt class="docutils literal"><span class="pre">seqmagick</span> <span class="pre">info</span> <span class="pre">-h</span></tt> for details.</p>
 </div>
 </div>
+<div class="section" id="id2">
+<h3><a class="toc-backref" href="#id15"><tt class="docutils literal"><span class="pre">backtrans-align</span></tt></a><a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<p>Given a protein alignment and unaligned nucleotides, align the nucleotides
+using the protein alignment. <strong>Protein and nucleotide sequence files must
+contain the same number of sequences, in the same order, with the same IDs.</strong></p>
+<div class="highlight-python"><pre>usage: seqmagick backtrans-align [-h] [-o destination_file]
+                               [-t {standard-ambiguous,vertebrate-mito,standard}]
+                               protein_align nucl_align
+
+
+positional arguments:
+  protein_align         Protein Alignment
+  nucl_align            FASTA Alignment
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -o destination_file, --out-file destination_file
+                        Output destination. Default: STDOUT
+  -t {standard-ambiguous,vertebrate-mito,standard}, --translation-table {standard-ambiguous,vertebrate-mito,standard}
+                        Translation table to use. [Default: standard]</pre>
+</div>
+</div>
 <div class="section" id="primer-trim">
-<h3><a class="toc-backref" href="#id14"><tt class="docutils literal"><span class="pre">primer-trim</span></tt></a><a class="headerlink" href="#primer-trim" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id16"><tt class="docutils literal"><span class="pre">primer-trim</span></tt></a><a class="headerlink" href="#primer-trim" title="Permalink to this headline">¶</a></h3>
 <p><tt class="docutils literal"><span class="pre">primer-trim</span></tt> trims an alignment to a region defined by a set of forward and
 reverse primers. Usage is as follows:</p>
 <div class="highlight-python"><pre>positional arguments:
@@ -411,7 +461,7 @@ optional arguments:
 </div>
 </div>
 <div class="section" id="quality-filter">
-<h3><a class="toc-backref" href="#id15"><tt class="docutils literal"><span class="pre">quality-filter</span></tt></a><a class="headerlink" href="#quality-filter" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id17"><tt class="docutils literal"><span class="pre">quality-filter</span></tt></a><a class="headerlink" href="#quality-filter" title="Permalink to this headline">¶</a></h3>
 <p><tt class="docutils literal"><span class="pre">quality-filter</span></tt> truncates and removes sequences that don&#8217;t match a set of
 quality criteria.  The subcommand takes a FASTA and quality score file, and
 writes the results to an output file:</p>
@@ -437,7 +487,7 @@ optional arguments:
 </div>
 </div>
 <div class="section" id="supported-file-extensions">
-<h2><a class="toc-backref" href="#id16">Supported File Extensions</a><a class="headerlink" href="#supported-file-extensions" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id18">Supported File Extensions</a><a class="headerlink" href="#supported-file-extensions" title="Permalink to this headline">¶</a></h2>
 <p>By default, <tt class="docutils literal"><span class="pre">seqmagick</span></tt> infers the file type from extension. Currently mapped
 extensions are:</p>
 <table border="1" class="docutils">
@@ -446,69 +496,69 @@ extensions are:</p>
 <col width="92%" />
 </colgroup>
 <thead valign="bottom">
-<tr><th class="head">Extension</th>
+<tr class="row-odd"><th class="head">Extension</th>
 <th class="head">Format</th>
 </tr>
 </thead>
 <tbody valign="top">
-<tr><td>.afa</td>
+<tr class="row-even"><td>.afa</td>
 <td>fasta</td>
 </tr>
-<tr><td>.aln</td>
+<tr class="row-odd"><td>.aln</td>
 <td>clustal</td>
 </tr>
-<tr><td>.fa</td>
+<tr class="row-even"><td>.fa</td>
 <td>fasta</td>
 </tr>
-<tr><td>.faa</td>
+<tr class="row-odd"><td>.faa</td>
 <td>fasta</td>
 </tr>
-<tr><td>.fas</td>
+<tr class="row-even"><td>.fas</td>
 <td>fasta</td>
 </tr>
-<tr><td>.fasta</td>
+<tr class="row-odd"><td>.fasta</td>
 <td>fasta</td>
 </tr>
-<tr><td>.fastq</td>
+<tr class="row-even"><td>.fastq</td>
 <td>fastq</td>
 </tr>
-<tr><td>.ffn</td>
+<tr class="row-odd"><td>.ffn</td>
 <td>fasta</td>
 </tr>
-<tr><td>.fna</td>
+<tr class="row-even"><td>.fna</td>
 <td>fasta</td>
 </tr>
-<tr><td>.frn</td>
+<tr class="row-odd"><td>.frn</td>
 <td>fasta</td>
 </tr>
-<tr><td>.gb</td>
+<tr class="row-even"><td>.gb</td>
 <td>genbank</td>
 </tr>
-<tr><td>.gbk</td>
+<tr class="row-odd"><td>.gbk</td>
 <td>genbank</td>
 </tr>
-<tr><td>.needle</td>
+<tr class="row-even"><td>.needle</td>
 <td>emboss</td>
 </tr>
-<tr><td>.phy</td>
+<tr class="row-odd"><td>.phy</td>
 <td>phylip</td>
 </tr>
-<tr><td>.phylip</td>
+<tr class="row-even"><td>.phylip</td>
 <td>phylip</td>
 </tr>
-<tr><td>.phyx</td>
+<tr class="row-odd"><td>.phyx</td>
 <td>phylip-relaxed (<strong>note:</strong> requires building BioPython from the master branch until v1.58 is released)</td>
 </tr>
-<tr><td>.qual</td>
+<tr class="row-even"><td>.qual</td>
 <td>qual</td>
 </tr>
-<tr><td>.sff</td>
+<tr class="row-odd"><td>.sff</td>
 <td>sff</td>
 </tr>
-<tr><td>.sth</td>
+<tr class="row-even"><td>.sth</td>
 <td>stockholm</td>
 </tr>
-<tr><td>.sto</td>
+<tr class="row-odd"><td>.sto</td>
 <td>stockholm</td>
 </tr>
 </tbody>
@@ -517,12 +567,12 @@ extensions are:</p>
 extension, or specify it manually via <tt class="docutils literal"><span class="pre">--input-format</span></tt> or <tt class="docutils literal"><span class="pre">--output-format</span></tt>.</p>
 </div>
 <div class="section" id="acknowledgements">
-<h2><a class="toc-backref" href="#id17">Acknowledgements</a><a class="headerlink" href="#acknowledgements" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id19">Acknowledgements</a><a class="headerlink" href="#acknowledgements" title="Permalink to this headline">¶</a></h2>
 <p>seqmagick is written and maintained by the <a class="reference external" href="http://matsen.fhcrc.org/">Matsen Group</a> at the Fred
 Hutchinson Cancer Research Center.</p>
 </div>
 <div class="section" id="contributing">
-<h2><a class="toc-backref" href="#id18">Contributing</a><a class="headerlink" href="#contributing" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id20">Contributing</a><a class="headerlink" href="#contributing" title="Permalink to this headline">¶</a></h2>
 <p>We welcome contributions! Simply fork the repository <a class="reference external" href="http://github.com/fhcrc/seqmagick/">on GitHub</a> and send a pull request.</p>
 </div>
 </div>
@@ -539,12 +589,12 @@ Hutchinson Cancer Research Center.</p>
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              >index</a></li>
-        <li><a href="#">seqmagick v0.3.1 documentation</a> &raquo;</li> 
+        <li><a href="#">seqmagick 0.3.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2011, The Matsen Group.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.
     </div>
   </body>
 </html>
