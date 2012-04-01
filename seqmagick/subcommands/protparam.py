@@ -11,6 +11,29 @@ from seqmagick import fileformat
 from seqmagick import transform
 
 from . import common
+def molecular_weight (seq):
+    """Calculate MW from a protein sequence.
+       
+       Forked version of the Bio.SeqUtils.ProtParam version
+       to handle 'X' amino acids, and not do weird things with
+       water masses.
+    """
+    # make local dictionary for speed
+    MwDict = {}
+    # remove a molecule of water from the amino acid weight.
+    for i in ProtParam.IUPACData.protein_weights:
+        MwDict[i] = ProtParam.IUPACData.protein_weights[i]
+    # assign unknown amino acids to an average mass per residue value
+    MwDict['X'] = 112.5
+    MwDict['B'] = 112.5
+    MwDict['U'] = 112.5
+    MwDict['J'] = 112.5
+    MwDict['O'] = 112.5
+    MwDict['Z'] = 112.5
+    MW = 0
+    for i in seq:
+        MW += MwDict[i]
+    return MW
 
 def build_parser(parser):
     parser.add_argument('sequence_file', help="Sequence file",
@@ -41,26 +64,27 @@ def action(arguments):
         sorters = {'length': transform.sort_length,
                    'name': transform.sort_name,}
         directions = {'asc': 1, 'desc': 0}
-        if ('length' in arguments.sort) or ('name' in arguments.sort):
-            # Sorted iterator
-            key, direction = arguments.sort.split('-')
-            sequences = sorters[key](source_file=arguments.sequence_file,
-                source_file_type=source_format,
-                direction=directions[direction])
+        if arguments.sort:
+            sort_on, direction = arguments.sort.split('-')
+            reverse = (direction=='desc')
+            if (sort_on == 'length') or (sort_on == 'name'):
+              # Sorted iterator
+              key, direction = arguments.sort.split('-')
+              sequences = sorters[key](source_file=arguments.sequence_file,
+                  source_file_type=source_format,
+                  direction=directions[direction])
         
         stats = []
         for s in sequences:
-          params = ProtParam.ProteinAnalysis(str(s.seq))
+            params = ProtParam.ProteinAnalysis(str(s.seq))
           
-          stats.append((s, params.molecular_weight(), 
-                           params.isoelectric_point()))
+            stats.append((s, molecular_weight(s.seq), 
+                             params.isoelectric_point()))
           
-          sort_on, direction = arguments.sort.split('-')
-          reverse = (direction=='desc')
-          if sort_on == 'mass':
-            stats = sorted(stats, key=lambda stats: stats[1], reverse=reverse)
-          elif sort_on == 'pi':
-            stats = sorted(stats, key=lambda stats: stats[2], reverse=reverse)
+            if arguments.sort and sort_on == 'mass':
+              stats = sorted(stats, key=lambda stats: stats[1], reverse=reverse)
+            elif arguments.sort and sort_on == 'pi':
+              stats = sorted(stats, key=lambda stats: stats[2], reverse=reverse)
         
         if arguments.include_description:
             out = ((s[0].description, s[1], s[2]) for s in stats)
