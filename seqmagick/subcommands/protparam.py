@@ -1,5 +1,6 @@
 """
-Extract the sequence IDs from a file
+Calculate molecular weight, theoretical isoelectric point 
+and other physiochemical properties of protein sequences. 
 """
 import argparse
 import sys
