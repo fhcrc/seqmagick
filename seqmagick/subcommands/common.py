@@ -53,11 +53,15 @@ def cut_range(string):
     Returns a 0-based slice corresponding to the selection defined by the slice
     """
     value_range = string.split(':')
-    if len(value_range) != 2:
+    if len(value_range) == 1:
+        start = int(value_range[0])
+        stop = start
+    elif len(value_range) == 2:
+        start, stop = tuple(int(i) if i else None for i in value_range)
+    else:
         msg = "{0} is not a valid, 1-indexed range.".format(string)
         raise argparse.ArgumentTypeError(msg)
 
-    start, stop = tuple(int(i) if i else None for i in value_range)
     # Convert from 1-indexed to 0-indexed
     if start is not None:
         start -= 1

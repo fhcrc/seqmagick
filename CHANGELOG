@@ -12,6 +12,7 @@
 * Significantly expand functionality of quality-filter: identify and trim
   barcodes/primers; report detailed failure information.
 * Cleanup, additional tests
+* Add `--drop` filter to convert and mogrify (GH-24)
 
 0.3.1
 =====
