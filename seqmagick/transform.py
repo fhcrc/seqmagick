@@ -175,6 +175,17 @@ def _cut_sequences(records, cut_slice):
     for record in records:
         yield record[cut_slice]
 
+def drop_columns(records, slices):
+    """
+    Drop all columns present in ``slices`` from records
+    """
+    for record in records:
+        # Generate a set of indices to remove
+        drop = set(i for slice in slices
+                   for i in range(*slice.indices(len(record))))
+        keep = [i not in drop for i in xrange(len(record))]
+        record.seq = Seq(''.join(itertools.compress(record.seq, keep)), record.seq.alphabet)
+        yield record
 
 def multi_cut_sequences(records, slices):
     # If only a single slice is specified, use _cut_sequences,

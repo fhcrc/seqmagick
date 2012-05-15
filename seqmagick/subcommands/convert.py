@@ -50,12 +50,17 @@ def add_options(parser):
             metavar="start:end[,start2:end2]",
             type=common.sequence_slices,
             action=partial_action(transform.multi_cut_sequences, 'slices'),
-            help="""1-indexed start and end positions for cutting sequences, :
-            separated. Includes last item. Start or end can be left unspecified
-            to indicate start/end of sequence.""")
+            help="""Keep only the residues within the 1-indexed start and end
+            positions specified, : separated. Includes last item. Start or end
+            can be left unspecified to indicate start/end of sequence.""")
     seq_mods.add_argument('--relative-to', dest='cut_relative', metavar='ID',
             help="""Apply --cut relative to the indexes of non-gap residues in
             sequence identified by ID""")
+    seq_mods.add_argument('--drop', dest='transforms',
+            metavar='start:end[,start2:end2]',
+            type=common.sequence_slices,
+            action=partial_action(transform.drop_columns, 'slices'),
+            help="""Remove the residues at the specified indices. Same format as `--cut`.""")
     seq_mods.add_argument('--dash-gap',
             action=partial_action(transform.dashes_cleanup), dest='transforms',
         help='Change . and : into - for all sequences')

@@ -457,7 +457,7 @@ class RecordBufferTestCase(unittest.TestCase):
         self.seq_iter = iter(self.sequences)
 
     def _compare(self, records):
-        self.assertTrue(len(self.sequences), len(records))
+        self.assertEqual(len(self.sequences), len(records))
 
         for e, a in zip(self.sequences, records):
             self.assertEqual(e.id, a.id)
@@ -476,3 +476,21 @@ class RecordBufferTestCase(unittest.TestCase):
 
             records = list(iter_f())
             self._compare(records)
+
+class DropColumnsTestCase(unittest.TestCase):
+    def setUp(self):
+        self.sequences = [SeqRecord(Seq("AAA"), id="s1"),
+                SeqRecord(Seq("A-G"), id="s2"),
+                SeqRecord(Seq("-A-"), id="s3"),]
+
+    def test_basic(self):
+        r = list(transform.drop_columns(self.sequences, [slice(1, None)]))
+        self.assertEqual([i.id for i in self.sequences],
+                [i.id for i in r])
+        self.assertEqual(['A', 'A', '-'], [str(i.seq) for i in r])
+
+    def test_multi(self):
+        r = list(transform.drop_columns(self.sequences, [slice(0, 1), slice(2, None)]))
+        self.assertEqual([i.id for i in self.sequences],
+                [i.id for i in r])
+        self.assertEqual(['A', '-', 'A'], [str(i.seq) for i in r])
