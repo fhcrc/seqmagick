@@ -48,13 +48,13 @@ def _record_buffer(records, buffer_size=DEFAULT_BUFFER_SIZE):
         yield record_iter
 
 
-def dashes_cleanup(records):
+def dashes_cleanup(records, prune_chars='.:?~'):
     """
     Take an alignment and convert any undesirable characters such as ? or ~ to
     -.
     """
-    logging.info("Applying _dashes_cleanup: converting any ? or ~ to -.")
-    translation_table = string.maketrans("?~", "--")
+    logging.info("Applying _dashes_cleanup: converting any . or : to -.")
+    translation_table = string.maketrans(prune_chars, '-' * len(prune_chars))
     for record in records:
         record.seq = Seq(str(record.seq).translate(translation_table),
                          record.seq.alphabet)

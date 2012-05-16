@@ -494,3 +494,19 @@ class DropColumnsTestCase(unittest.TestCase):
         self.assertEqual([i.id for i in self.sequences],
                 [i.id for i in r])
         self.assertEqual(['A', '-', 'A'], [str(i.seq) for i in r])
+
+class DashesCleanupTestCase(unittest.TestCase):
+    def setUp(self):
+        self.sequences = [SeqRecord(Seq("A~-.?~GT"), id="s1"),
+                SeqRecord(Seq("A-GGGG?-"), id="s2"),
+                SeqRecord(Seq("-A-:ACA-"), id="s3"),
+                SeqRecord(Seq("ACTGGTCA"), id="s4"),]
+
+    def test_basic(self):
+        actual = list(transform.dashes_cleanup(self.sequences))
+        actual = [(i.id, str(i.seq)) for i in actual]
+        self.assertEqual(
+                [('s1', 'A-----GT'),
+                 ('s2', 'A-GGGG--'),
+                 ('s3', '-A--ACA-'),
+                 ('s4', 'ACTGGTCA')], actual)

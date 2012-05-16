@@ -63,7 +63,8 @@ def add_options(parser):
             help="""Remove the residues at the specified indices. Same format as `--cut`.""")
     seq_mods.add_argument('--dash-gap',
             action=partial_action(transform.dashes_cleanup), dest='transforms',
-        help='Change . and : into - for all sequences')
+            help="""Replace any of the characters "?.:~" with a "-" for all
+            sequences""")
     seq_mods.add_argument('--lower',
             action=partial_action(transform.lower_sequences),
             dest='transforms', help='Translate the sequences to lower case')
