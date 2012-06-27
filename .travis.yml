@@ -1,0 +1,14 @@
+language: python
+python:
+  - "2.7"
+
+# Install numpy, then BioPython
+# BioPython doesn't always play well with pip install.
+install: 
+  - "pip install numpy"
+  - "pip install biopython"
+  - "pip install --use-mirrors ."
+script: nosetests
+
+notifications:
+  email: false
