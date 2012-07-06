@@ -417,7 +417,7 @@ def name_include(records, filter_regex):
                  ' in results.')
     regex = re.compile(filter_regex, re.I)
     for record in records:
-        if regex.search(record.id):
+        if regex.search(record.id) or regex.search(record.description):
             yield record
 
 
@@ -430,7 +430,7 @@ def name_exclude(records, filter_regex):
                  'excluding IDs matching ' + filter_regex + ' in results.')
     regex = re.compile(filter_regex, re.I)
     for record in records:
-        if not regex.search(record.id):
+        if not regex.search(record.id) and not regex.search(record.description):
             yield record
 
 
