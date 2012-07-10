@@ -4,6 +4,7 @@ Find a primer sequence in a gapped alignment, trim to amplicon
 import argparse
 import itertools
 import logging
+import operator
 import sys
 
 from Bio import Alphabet, SeqIO, pairwise2
@@ -98,11 +99,7 @@ def _iupac_ambiguous_equal(ambig_base, unambig_base):
     return unambig_base.upper() in iupac_translation[ambig_base.upper()]
 
 
-def equal(b1, b2):
-    return b1 == b2
-
-
-def hamming_distance(s1, s2, equality_function=equal):
+def hamming_distance(s1, s2, equality_function=operator.eq):
     """
     Returns the hamming distance between two strings.
     """
