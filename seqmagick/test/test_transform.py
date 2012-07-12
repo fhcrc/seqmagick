@@ -255,15 +255,15 @@ class IncludeExcludeMixIn(object):
     def setUp(self):
         ids = """sequenceid1
 sequenceid2
-sequence id 4
+sequenceid4
 """
         self.handle = StringIO(ids)
 
         self.sequences = [SeqRecord(Seq("AAA"), id="sequenceid1"),
                 SeqRecord(Seq("BBB"), id="sequenceid2"),
                 SeqRecord(Seq("CCC"), id="sequenceid3"),
-                SeqRecord(Seq("DDD"), id="sequence id 4"),
-                SeqRecord(Seq("EEE"), id="test sequence"), ]
+                SeqRecord(Seq("DDD"), id="sequenceid4", description='sequence id 4'),
+                SeqRecord(Seq("EEE"), id="test", description='test sequence'), ]
 
 
 class IncludeFromFileTestCase(IncludeExcludeMixIn, unittest.TestCase):
@@ -280,6 +280,33 @@ class ExcludeFromFileTestCase(IncludeExcludeMixIn, unittest.TestCase):
         expected = [self.sequences[2], self.sequences[4]]
         actual = list(transform.exclude_from_file(self.sequences, self.handle))
         self.assertEqual(2, len(actual))
+        self.assertEqual(expected, actual)
+
+class NameIncludeTestCase(IncludeExcludeMixIn, unittest.TestCase):
+
+    def test_filter_id(self):
+        expected = self.sequences[:2]
+        actual = list(transform.name_include(self.sequences, r'sequenceid[12]'))
+        self.assertEqual(2, len(actual))
+        self.assertEqual(expected, actual)
+
+    def test_filter_description(self):
+        expected = self.sequences[3:]
+        actual = list(transform.name_include(self.sequences, r'sequence id 4|test seq'))
+        self.assertEqual(2, len(actual))
+        self.assertEqual(expected, actual)
+
+class NameExcludeTestCase(IncludeExcludeMixIn, unittest.TestCase):
+
+    def test_filter_id(self):
+        expected = self.sequences[2:]
+        actual = list(transform.name_exclude(self.sequences, r'sequenceid[12]'))
+        self.assertEqual(3, len(actual))
+        self.assertEqual(expected, actual)
+
+    def test_filter_description(self):
+        expected = self.sequences[:3]
+        actual = list(transform.name_exclude(self.sequences, r'sequence id 4|test seq'))
         self.assertEqual(expected, actual)
 
 class CutTestCase(unittest.TestCase):

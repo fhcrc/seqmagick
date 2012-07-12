@@ -11,15 +11,35 @@ import signal
 import sys
 import tempfile
 
+def get_umask():
+    """
+    Gets the current umask
+    """
+    current_umask = os.umask(0)
+    os.umask(current_umask)
+    return current_umask
+
+def apply_umask(permission=0666, umask=None):
+    """
+    Masks the provided permission with a umask.
+
+    If umask is not given, the current umask is used.
+    """
+    if umask is None:
+        umask = get_umask()
+    return permission & (~umask)
+
 @contextlib.contextmanager
-def atomic_write(path, **kwargs):
+def atomic_write(path, permissions=None, **kwargs):
     """
     Open a file for atomic writing.
 
-    Generates a temp file, renames to dest.
+    Generates a temp file, renames to value of ``path``.
 
     Additional arguments are passed to tempfile.NamedTemporaryFile
     """
+    if permissions is None:
+        permissions = apply_umask()
     # Handle stdout:
     if path == '-':
         yield sys.stdout
@@ -33,6 +53,7 @@ def atomic_write(path, **kwargs):
                 yield tf
             # Move
             os.rename(tf.name, path)
+            os.chmod(path, permissions)
         except:
             os.remove(tf.name)
             raise

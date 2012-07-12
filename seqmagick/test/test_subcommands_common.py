@@ -1,4 +1,5 @@
 import argparse
+import os
 import os.path
 import unittest
 import tempfile
@@ -121,3 +122,22 @@ class AtomicWriteTestCase(unittest.TestCase):
 
     def tearDown(self):
         os.remove(self.input_file)
+
+class ApplyUmaskTestCase(unittest.TestCase):
+
+    def setUp(self):
+        # Set umask
+        self.orig_umask = common.get_umask()
+
+    def tearDown(self):
+        os.umask(self.orig_umask)
+
+    def test_provided_umask(self):
+        self.assertEqual('0770', oct(common.apply_umask(0777, 007)))
+        self.assertEqual('0660', oct(common.apply_umask(0666, 007)))
+        self.assertEqual('0644', oct(common.apply_umask(0666, 022)))
+
+    def test_user_umask(self):
+        os.umask(007)
+        self.assertEqual('0770', oct(common.apply_umask(0777)))
+        self.assertEqual('0660', oct(common.apply_umask(0666)))
