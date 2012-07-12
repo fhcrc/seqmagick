@@ -15,7 +15,7 @@ def get_umask():
     """
     Gets the current umask
     """
-    current_umask = os.umask(0)
+    current_umask = os.umask(0777)
     os.umask(current_umask)
     return current_umask
 

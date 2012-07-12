@@ -13,6 +13,7 @@
   barcodes/primers; report detailed failure information.
 * Cleanup, additional tests
 * Add `--drop` filter to convert and mogrify (GH-24)
+* Apply current umask when creating files (GH-26)
 
 0.3.1
 =====
