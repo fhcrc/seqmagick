@@ -312,10 +312,10 @@ class NameExcludeTestCase(IncludeExcludeMixIn, unittest.TestCase):
 class CutTestCase(unittest.TestCase):
 
     def setUp(self):
-        self.sequences = [SeqRecord(Seq("AAA"), id="sequenceid1"),
-                SeqRecord(Seq("BBB"), id="sequenceid2"),
-                SeqRecord(Seq("DDD"), id="sequence id 4"),
-                SeqRecord(Seq("EEE"), id="test sequence"), ]
+        self.sequences = [SeqRecord(Seq("ABC"), id="sequenceid1"),
+                SeqRecord(Seq("BCD"), id="sequenceid2"),
+                SeqRecord(Seq("DEF"), id="sequence id 4"),
+                SeqRecord(Seq("EFG"), id="test sequence"), ]
 
     def test_no_sequences(self):
         actual = list(transform._cut_sequences(self.sequences, slice(0, 0)))
@@ -324,16 +324,16 @@ class CutTestCase(unittest.TestCase):
 
     def test_full_sequence(self):
         actual = list(transform._cut_sequences(self.sequences, slice(0, 3)))
-        self.assertEqual(['AAA', 'BBB', 'DDD', 'EEE'], [str(s.seq) for s in
+        self.assertEqual(['ABC', 'BCD', 'DEF', 'EFG'], [str(s.seq) for s in
             actual])
 
     def test_cut_sequences(self):
         actual = list(transform._cut_sequences(self.sequences, slice(0, 2)))
-        self.assertEqual(['AA', 'BB', 'DD', 'EE'], [str(s.seq) for s in
+        self.assertEqual(['AB', 'BC', 'DE', 'EF'], [str(s.seq) for s in
             actual])
-
-
-
+        actual = list(transform._cut_sequences(self.sequences, slice(1, None)))
+        self.assertEqual(['BC', 'CD', 'EF', 'FG'], [str(s.seq) for s in
+            actual])
 
 class CodonWarningDictTestCase(unittest.TestCase):
 
