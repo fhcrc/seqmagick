@@ -1,6 +1,7 @@
 from cStringIO import StringIO
 import os
 import os.path
+import logging
 import shlex
 import shutil
 import sys
@@ -68,11 +69,15 @@ class TestConvertToStdOut(unittest.TestCase):
 
     def setUp(self):
         self.out = StringIO()
+        self.err = StringIO()
         self.actual_stdout = sys.stdout
+        self.actual_stderr = sys.stderr
         sys.stdout = self.out
+        sys.stderr = self.err
 
     def tearDown(self):
         sys.stdout = self.actual_stdout
+        sys.stderr = self.actual_stderr
 
     def test_convert(self):
         in_path = p('input2.fasta')
@@ -93,3 +98,19 @@ class TestCutRelative(CommandLineTestMixIn, unittest.TestCase):
         args = ['convert', '--cut', '2:3', '--relative-to', 'OTHER',
                 self.input_path, '-', '--output-format', 'fasta']
         self.assertRaises(ValueError, cli.main, args)
+
+class TestTranslateAmbiguous(CommandLineTestMixIn, unittest.TestCase):
+    in_suffix = '.fasta'
+    out_suffix = '.fasta'
+    input_path = p('input4_ambig.fasta')
+    expected_path = p('output4.fasta')
+    command = 'convert --translate dna2protein {input} {output}'
+
+    def setUp(self):
+        super(TestTranslateAmbiguous, self).setUp()
+        self.orig_level = logging.getLogger(None).level
+        logging.getLogger(None).setLevel(logging.FATAL)
+
+    def tearDown(self):
+        super(TestTranslateAmbiguous, self).tearDown()
+        logging.getLogger(None).setLevel(self.orig_level)

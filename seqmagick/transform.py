@@ -11,7 +11,7 @@ import string
 import tempfile
 
 from Bio import SeqIO
-from Bio.Alphabet import generic_dna, generic_rna
+from Bio.Alphabet import IUPAC
 from Bio.Data import CodonTable
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
@@ -567,36 +567,42 @@ def transcribe(records, transcribe):
         description = record.description
         name = record.id
         if transcribe == 'dna2rna':
-            dna = Seq(sequence, generic_dna)
+            dna = Seq(sequence, IUPAC.ambiguous_dna)
             rna = dna.transcribe()
             yield SeqRecord(rna, id=name, description=description)
         elif transcribe == 'rna2dna':
-            rna = Seq(sequence, generic_rna)
+            rna = Seq(sequence, IUPAC.ambiguous_rna)
             dna = rna.back_transcribe()
             yield SeqRecord(dna, id=name, description=description)
 
 # Translate-related functions
-class CodonWarningDict(collections.defaultdict):
+class CodonWarningTable(object):
     """
     Translation table for codons tht prints a warning when an unknown
     codon is requested, then returns the value passed as missing_char
     """
 
-    def __init__(self, missing_char='X'):
-        super(CodonWarningDict, self).__init__(lambda: missing_char)
+    def __init__(self, wrapped, missing_char='X'):
+        self.wrapped = wrapped
+        self.missing_char = missing_char
+        self.seen = set()
 
+    def get(self, codon, missing=None):
+        try:
+            return self.__getitem__(codon)
+        except KeyError:
+            return missing
 
-    def __missing__(self, key):
-        # All-gap codons can translate to a single protein gap
-        if key == '---':
+    def __getitem__(self, codon):
+        if codon == '---':
             return '-'
-        elif '-' in key:
-            if not key in self:
-                logging.warn("Unknown Codon: %s", key)
-            return super(CodonWarningDict, self).__missing__(key)
+        elif '-' in codon:
+            if codon not in self.seen:
+                logging.warn("Unknown Codon: %s", codon)
+                self.seen.add(codon)
+            return self.missing_char
         else:
-            raise KeyError(key)
-
+            return self.wrapped.__getitem__(codon)
 
 def translate(records, translate):
     """
@@ -615,16 +621,14 @@ def translate(records, translate):
     to_stop = translate.endswith('stop')
 
     source_type = translate[:3]
-    alphabet = {'dna': generic_dna, 'rna': generic_rna}[source_type]
+    alphabet = {'dna': IUPAC.ambiguous_dna, 'rna': IUPAC.ambiguous_rna}[source_type]
 
     # Get a translation table
-    table = {'dna': CodonTable.standard_dna_table,
-             'rna': CodonTable.standard_rna_table}[source_type]
+    table = {'dna': CodonTable.ambiguous_dna_by_name["Standard"],
+             'rna': CodonTable.ambiguous_rna_by_name["Standard"]}[source_type]
 
     # Handle ambiguities by replacing ambiguous codons with 'X'
-    forward = CodonWarningDict()
-    forward.update(table.forward_table)
-    table.forward_table = forward
+    table.forward_table = CodonWarningTable(table.forward_table)
 
     for record in records:
         sequence = str(record.seq)

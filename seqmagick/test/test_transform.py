@@ -335,15 +335,14 @@ class CutTestCase(unittest.TestCase):
         self.assertEqual(['BC', 'CD', 'EF', 'FG'], [str(s.seq) for s in
             actual])
 
-class CodonWarningDictTestCase(unittest.TestCase):
+class CodonWarningTableTestCase(unittest.TestCase):
 
     def warn(self, *args, **kwargs):
         self.warnings.append((args, kwargs))
 
     def setUp(self):
         self.warnings = []
-        self.warning_dict = transform.CodonWarningDict()
-        self.warning_dict['UUU'] = "F"
+        self.warning_dict = transform.CodonWarningTable({'UUU': 'F'})
         self.old_warn = transform.logging.warn
         transform.logging.warn = self.warn
 
