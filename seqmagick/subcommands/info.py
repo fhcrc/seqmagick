@@ -110,31 +110,34 @@ def summarize_sequence_file(source_file, file_type=None):
         file_type = fileformat.from_filename(source_file)
 
     # Get an iterator and analyze the data.
-    for record in SeqIO.parse(source_file, file_type):
-        sequence_count += 1
-        sequence_length = len(record)
-        if max_length != 0:
-            # If even one sequence is not the same length as the others,
-            # we don't consider this an alignment.
-            if sequence_length != max_length:
-                is_alignment = False
+    with argparse.FileType('rb')(source_file) as fp:
+        for record in SeqIO.parse(fp, file_type):
+            sequence_count += 1
+            sequence_length = len(record)
+            if max_length != 0:
+                # If even one sequence is not the same length as the others,
+                # we don't consider this an alignment.
+                if sequence_length != max_length:
+                    is_alignment = False
 
-        # Lengths
-        if sequence_length > max_length:
-            max_length = sequence_length
-        if sequence_length < min_length:
-            min_length = sequence_length
+            # Lengths
+            if sequence_length > max_length:
+                max_length = sequence_length
+            if sequence_length < min_length:
+                min_length = sequence_length
 
-        # Average length
-        if sequence_count == 1:
-            avg_length = float(sequence_length)
-        else:
-            avg_length = avg_length + ((sequence_length - avg_length) /
-                                       sequence_count)
+            # Average length
+            if sequence_count == 1:
+                avg_length = float(sequence_length)
+            else:
+                avg_length = avg_length + ((sequence_length - avg_length) /
+                                           sequence_count)
 
     # Handle an empty file:
     if avg_length is None:
         min_length = max_length = avg_length = 0
+    if sequence_count <= 1:
+        is_alignment = False
 
     return _SeqFileInfo(source_file, str(is_alignment).upper(), min_length,
             max_length, avg_length, sequence_count)
