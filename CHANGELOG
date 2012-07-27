@@ -1,3 +1,6 @@
+0.4.0
+=====
+
 * Fix bug in --squeeze
 * More informative messages in `seqmagick primer-trim`
 * Added `--alphabet` flag to allow writing NEXUS (GH-23)
