@@ -323,31 +323,6 @@ Example
 Output can be in comma-separated, tab-separated, or aligned formats. See
 ``seqmagick info -h`` for details.
 
-``backtrans-align``
--------------------
-
-Given a protein alignment and unaligned nucleotides, align the nucleotides
-using the protein alignment. **Protein and nucleotide sequence files must
-contain the same number of sequences, in the same order, with the same IDs.**
-
-::
-
-    usage: seqmagick backtrans-align [-h] [-o destination_file]
-                                   [-t {standard-ambiguous,vertebrate-mito,standard}]
-                                   protein_align nucl_align
-
-
-    positional arguments:
-      protein_align         Protein Alignment
-      nucl_align            FASTA Alignment
-
-    optional arguments:
-      -h, --help            show this help message and exit
-      -o destination_file, --out-file destination_file
-                            Output destination. Default: STDOUT
-      -t {standard-ambiguous,vertebrate-mito,standard}, --translation-table {standard-ambiguous,vertebrate-mito,standard}
-                            Translation table to use. [Default: standard]
-
 ``primer-trim``
 ---------------
 

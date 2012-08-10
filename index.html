@@ -71,7 +71,6 @@
 <li><a class="reference internal" href="#example">Example</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#id2"><tt class="docutils literal"><span class="pre">backtrans-align</span></tt></a></li>
 <li><a class="reference internal" href="#primer-trim"><tt class="docutils literal"><span class="pre">primer-trim</span></tt></a></li>
 <li><a class="reference internal" href="#quality-filter"><tt class="docutils literal"><span class="pre">quality-filter</span></tt></a></li>
 </ul>
@@ -110,40 +109,39 @@
           <div class="body">
             
   <a href="http://github.com/fhcrc/seqmagick"><img style="position: absolute; top: 0; left: 0; border: 0;" src="_static/fork.png" alt="Fork me on GitHub"></a><div class="section" id="seqmagick">
-<h1><a class="toc-backref" href="#id3">seqmagick</a><a class="headerlink" href="#seqmagick" title="Permalink to this headline">¶</a></h1>
+<h1><a class="toc-backref" href="#id2">seqmagick</a><a class="headerlink" href="#seqmagick" title="Permalink to this headline">¶</a></h1>
 <div class="contents new topic" id="contents">
 <p class="topic-title first">Contents</p>
 <ul class="simple">
-<li><a class="reference internal" href="#seqmagick" id="id3">seqmagick</a><ul>
-<li><a class="reference internal" href="#motivation" id="id4">Motivation</a></li>
-<li><a class="reference internal" href="#installation" id="id5">Installation</a></li>
-<li><a class="reference internal" href="#use" id="id6">Use</a></li>
-<li><a class="reference internal" href="#subcommands" id="id7">Subcommands</a><ul>
-<li><a class="reference internal" href="#convert-and-mogrify" id="id8"><tt class="docutils literal"><span class="pre">convert</span></tt> and <tt class="docutils literal"><span class="pre">mogrify</span></tt></a><ul>
-<li><a class="reference internal" href="#examples" id="id9">Examples</a></li>
-<li><a class="reference internal" href="#command-line-arguments" id="id10">Command-line Arguments</a></li>
+<li><a class="reference internal" href="#seqmagick" id="id2">seqmagick</a><ul>
+<li><a class="reference internal" href="#motivation" id="id3">Motivation</a></li>
+<li><a class="reference internal" href="#installation" id="id4">Installation</a></li>
+<li><a class="reference internal" href="#use" id="id5">Use</a></li>
+<li><a class="reference internal" href="#subcommands" id="id6">Subcommands</a><ul>
+<li><a class="reference internal" href="#convert-and-mogrify" id="id7"><tt class="docutils literal"><span class="pre">convert</span></tt> and <tt class="docutils literal"><span class="pre">mogrify</span></tt></a><ul>
+<li><a class="reference internal" href="#examples" id="id8">Examples</a></li>
+<li><a class="reference internal" href="#command-line-arguments" id="id9">Command-line Arguments</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#backtrans-align" id="id11"><tt class="docutils literal"><span class="pre">backtrans-align</span></tt></a></li>
-<li><a class="reference internal" href="#extract-ids" id="id12"><tt class="docutils literal"><span class="pre">extract-ids</span></tt></a></li>
-<li><a class="reference internal" href="#info" id="id13"><tt class="docutils literal"><span class="pre">info</span></tt></a><ul>
-<li><a class="reference internal" href="#example" id="id14">Example</a></li>
+<li><a class="reference internal" href="#backtrans-align" id="id10"><tt class="docutils literal"><span class="pre">backtrans-align</span></tt></a></li>
+<li><a class="reference internal" href="#extract-ids" id="id11"><tt class="docutils literal"><span class="pre">extract-ids</span></tt></a></li>
+<li><a class="reference internal" href="#info" id="id12"><tt class="docutils literal"><span class="pre">info</span></tt></a><ul>
+<li><a class="reference internal" href="#example" id="id13">Example</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#id2" id="id15"><tt class="docutils literal"><span class="pre">backtrans-align</span></tt></a></li>
-<li><a class="reference internal" href="#primer-trim" id="id16"><tt class="docutils literal"><span class="pre">primer-trim</span></tt></a></li>
-<li><a class="reference internal" href="#quality-filter" id="id17"><tt class="docutils literal"><span class="pre">quality-filter</span></tt></a></li>
+<li><a class="reference internal" href="#primer-trim" id="id14"><tt class="docutils literal"><span class="pre">primer-trim</span></tt></a></li>
+<li><a class="reference internal" href="#quality-filter" id="id15"><tt class="docutils literal"><span class="pre">quality-filter</span></tt></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#supported-file-extensions" id="id18">Supported File Extensions</a></li>
-<li><a class="reference internal" href="#acknowledgements" id="id19">Acknowledgements</a></li>
-<li><a class="reference internal" href="#contributing" id="id20">Contributing</a></li>
+<li><a class="reference internal" href="#supported-file-extensions" id="id16">Supported File Extensions</a></li>
+<li><a class="reference internal" href="#acknowledgements" id="id17">Acknowledgements</a></li>
+<li><a class="reference internal" href="#contributing" id="id18">Contributing</a></li>
 </ul>
 </li>
 </ul>
 </div>
 <div class="section" id="motivation">
-<h2><a class="toc-backref" href="#id4">Motivation</a><a class="headerlink" href="#motivation" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id3">Motivation</a><a class="headerlink" href="#motivation" title="Permalink to this headline">¶</a></h2>
 <p>We often have to convert between sequence formats and do little tasks on them,
 and it&#8217;s not worth writing scripts for that.  Seqmagick is a kickass little
 utility built in the spirit of <a class="reference external" href="http://www.imagemagick.org/script/command-line-tools.php">imagemagick</a> to expose the file format
@@ -156,7 +154,7 @@ seqmagick info *.fasta             # describe all FASTA files in the current dir
 <p>And more.</p>
 </div>
 <div class="section" id="installation">
-<h2><a class="toc-backref" href="#id5">Installation</a><a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id4">Installation</a><a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
 <p>First, you&#8217;ll need to install <a class="reference external" href="http://www.biopython.org/">BioPython</a>. NumPy (which parts of BioPython
 depend on) is not required for <tt class="docutils literal"><span class="pre">seqmagick</span></tt> to function. Once done, install
 with:</p>
@@ -168,7 +166,7 @@ repository:</p>
 </div>
 </div>
 <div class="section" id="use">
-<h2><a class="toc-backref" href="#id6">Use</a><a class="headerlink" href="#use" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id5">Use</a><a class="headerlink" href="#use" title="Permalink to this headline">¶</a></h2>
 <p>Seqmagick can be used to query information about sequence files, convert
 between types, and modify sequence files.  All functions are accessed through
 subcommands:</p>
@@ -176,9 +174,9 @@ subcommands:</p>
 </div>
 </div>
 <div class="section" id="subcommands">
-<h2><a class="toc-backref" href="#id7">Subcommands</a><a class="headerlink" href="#subcommands" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id6">Subcommands</a><a class="headerlink" href="#subcommands" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="convert-and-mogrify">
-<h3><a class="toc-backref" href="#id8"><tt class="docutils literal"><span class="pre">convert</span></tt> and <tt class="docutils literal"><span class="pre">mogrify</span></tt></a><a class="headerlink" href="#convert-and-mogrify" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id7"><tt class="docutils literal"><span class="pre">convert</span></tt> and <tt class="docutils literal"><span class="pre">mogrify</span></tt></a><a class="headerlink" href="#convert-and-mogrify" title="Permalink to this headline">¶</a></h3>
 <p>Convert and mogrify achieve similar goals. <tt class="docutils literal"><span class="pre">convert</span></tt> performs some operation
 on a file (from changing format to something more complicated) and writes to a
 new file. <tt class="docutils literal"><span class="pre">mogrify</span></tt> modifies a file in place, and would not normally be used
@@ -191,7 +189,7 @@ to convert formats.</p>
 </div>
 <p>Options are shared between convert and mogrify.</p>
 <div class="section" id="examples">
-<h4><a class="toc-backref" href="#id9">Examples</a><a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h4>
+<h4><a class="toc-backref" href="#id8">Examples</a><a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h4>
 <div class="section" id="basic-conversion">
 <h5>Basic Conversion<a class="headerlink" href="#basic-conversion" title="Permalink to this headline">¶</a></h5>
 <p><tt class="docutils literal"><span class="pre">convert</span></tt> can be used to convert between any file types BioPython supports
@@ -235,7 +233,7 @@ the minimum length predicate is applied.</p>
 </div>
 </div>
 <div class="section" id="command-line-arguments">
-<h4><a class="toc-backref" href="#id10">Command-line Arguments</a><a class="headerlink" href="#command-line-arguments" title="Permalink to this headline">¶</a></h4>
+<h4><a class="toc-backref" href="#id9">Command-line Arguments</a><a class="headerlink" href="#command-line-arguments" title="Permalink to this headline">¶</a></h4>
 <p>The full set of options to <tt class="docutils literal"><span class="pre">mogrify</span></tt> and <tt class="docutils literal"><span class="pre">convert</span></tt> are:</p>
 <div class="section" id="sequence-file-modification">
 <h5>Sequence File Modification<a class="headerlink" href="#sequence-file-modification" title="Permalink to this headline">¶</a></h5>
@@ -348,7 +346,7 @@ the minimum length predicate is applied.</p>
 </div>
 </div>
 <div class="section" id="backtrans-align">
-<h3><a class="toc-backref" href="#id11"><tt class="docutils literal"><span class="pre">backtrans-align</span></tt></a><a class="headerlink" href="#backtrans-align" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id10"><tt class="docutils literal"><span class="pre">backtrans-align</span></tt></a><a class="headerlink" href="#backtrans-align" title="Permalink to this headline">¶</a></h3>
 <p>Given a protein alignment and unaligned nucleotides, align the nucleotides
 using the protein alignment.  Protein and nucleotide sequence files must
 contain the same number of sequences, in the same order, with the same IDs.</p>
@@ -369,7 +367,7 @@ optional arguments:
 </div>
 </div>
 <div class="section" id="extract-ids">
-<h3><a class="toc-backref" href="#id12"><tt class="docutils literal"><span class="pre">extract-ids</span></tt></a><a class="headerlink" href="#extract-ids" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id11"><tt class="docutils literal"><span class="pre">extract-ids</span></tt></a><a class="headerlink" href="#extract-ids" title="Permalink to this headline">¶</a></h3>
 <p><tt class="docutils literal"><span class="pre">seqmagick</span> <span class="pre">extract-ids</span></tt> is extremely simple - all the IDs from a sequence file
 are printed to stdout (by default) or the file of your choosing:</p>
 <div class="highlight-python"><pre>positional arguments:
@@ -385,10 +383,10 @@ optional arguments:
 </div>
 </div>
 <div class="section" id="info">
-<h3><a class="toc-backref" href="#id13"><tt class="docutils literal"><span class="pre">info</span></tt></a><a class="headerlink" href="#info" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id12"><tt class="docutils literal"><span class="pre">info</span></tt></a><a class="headerlink" href="#info" title="Permalink to this headline">¶</a></h3>
 <p><tt class="docutils literal"><span class="pre">seqmagick</span> <span class="pre">info</span></tt> describes one or more sequence files</p>
 <div class="section" id="example">
-<h4><a class="toc-backref" href="#id14">Example</a><a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h4>
+<h4><a class="toc-backref" href="#id13">Example</a><a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h4>
 <div class="highlight-python"><pre>seqmagick info examples/*.fasta
 
 name                      alignment  min_len  max_len  avg_len  num_seqs
@@ -402,30 +400,8 @@ examples/wrapped.fasta    FALSE      120      237      178.50   2</pre>
 <tt class="docutils literal"><span class="pre">seqmagick</span> <span class="pre">info</span> <span class="pre">-h</span></tt> for details.</p>
 </div>
 </div>
-<div class="section" id="id2">
-<h3><a class="toc-backref" href="#id15"><tt class="docutils literal"><span class="pre">backtrans-align</span></tt></a><a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
-<p>Given a protein alignment and unaligned nucleotides, align the nucleotides
-using the protein alignment. <strong>Protein and nucleotide sequence files must
-contain the same number of sequences, in the same order, with the same IDs.</strong></p>
-<div class="highlight-python"><pre>usage: seqmagick backtrans-align [-h] [-o destination_file]
-                               [-t {standard-ambiguous,vertebrate-mito,standard}]
-                               protein_align nucl_align
-
-
-positional arguments:
-  protein_align         Protein Alignment
-  nucl_align            FASTA Alignment
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -o destination_file, --out-file destination_file
-                        Output destination. Default: STDOUT
-  -t {standard-ambiguous,vertebrate-mito,standard}, --translation-table {standard-ambiguous,vertebrate-mito,standard}
-                        Translation table to use. [Default: standard]</pre>
-</div>
-</div>
 <div class="section" id="primer-trim">
-<h3><a class="toc-backref" href="#id16"><tt class="docutils literal"><span class="pre">primer-trim</span></tt></a><a class="headerlink" href="#primer-trim" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id14"><tt class="docutils literal"><span class="pre">primer-trim</span></tt></a><a class="headerlink" href="#primer-trim" title="Permalink to this headline">¶</a></h3>
 <p><tt class="docutils literal"><span class="pre">primer-trim</span></tt> trims an alignment to a region defined by a set of forward and
 reverse primers. Usage is as follows:</p>
 <div class="highlight-python"><pre>positional arguments:
@@ -461,7 +437,7 @@ optional arguments:
 </div>
 </div>
 <div class="section" id="quality-filter">
-<h3><a class="toc-backref" href="#id17"><tt class="docutils literal"><span class="pre">quality-filter</span></tt></a><a class="headerlink" href="#quality-filter" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id15"><tt class="docutils literal"><span class="pre">quality-filter</span></tt></a><a class="headerlink" href="#quality-filter" title="Permalink to this headline">¶</a></h3>
 <p><tt class="docutils literal"><span class="pre">quality-filter</span></tt> truncates and removes sequences that don&#8217;t match a set of
 quality criteria.  The subcommand takes a FASTA and quality score file, and
 writes the results to an output file:</p>
@@ -487,7 +463,7 @@ optional arguments:
 </div>
 </div>
 <div class="section" id="supported-file-extensions">
-<h2><a class="toc-backref" href="#id18">Supported File Extensions</a><a class="headerlink" href="#supported-file-extensions" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id16">Supported File Extensions</a><a class="headerlink" href="#supported-file-extensions" title="Permalink to this headline">¶</a></h2>
 <p>By default, <tt class="docutils literal"><span class="pre">seqmagick</span></tt> infers the file type from extension. Currently mapped
 extensions are:</p>
 <table border="1" class="docutils">
@@ -567,12 +543,12 @@ extensions are:</p>
 extension, or specify it manually via <tt class="docutils literal"><span class="pre">--input-format</span></tt> or <tt class="docutils literal"><span class="pre">--output-format</span></tt>.</p>
 </div>
 <div class="section" id="acknowledgements">
-<h2><a class="toc-backref" href="#id19">Acknowledgements</a><a class="headerlink" href="#acknowledgements" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id17">Acknowledgements</a><a class="headerlink" href="#acknowledgements" title="Permalink to this headline">¶</a></h2>
 <p>seqmagick is written and maintained by the <a class="reference external" href="http://matsen.fhcrc.org/">Matsen Group</a> at the Fred
 Hutchinson Cancer Research Center.</p>
 </div>
 <div class="section" id="contributing">
-<h2><a class="toc-backref" href="#id20">Contributing</a><a class="headerlink" href="#contributing" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id18">Contributing</a><a class="headerlink" href="#contributing" title="Permalink to this headline">¶</a></h2>
 <p>We welcome contributions! Simply fork the repository <a class="reference external" href="http://github.com/fhcrc/seqmagick/">on GitHub</a> and send a pull request.</p>
 </div>
 </div>
