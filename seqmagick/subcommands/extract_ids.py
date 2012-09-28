@@ -15,7 +15,8 @@ def build_parser(parser):
             type=argparse.FileType('r'))
     parser.add_argument('-o', '--output-file', help="Destination trimmed file",
             type=argparse.FileType('w'), default=sys.stdout)
-    parser.add_argument('--source-format', default=None)
+    parser.add_argument('--input-format', help="""Input format for sequence
+            file""")
     parser.add_argument('-d', '--include-description', action='store_true',
             default=False, help="""Include the sequence description in output
             [default: %(default)s]""")
@@ -24,7 +25,7 @@ def action(arguments):
     common.exit_on_sigpipe()
 
     # Determine file format for input and output
-    source_format = (arguments.source_format or
+    source_format = (arguments.input_format or
             fileformat.from_filename(arguments.sequence_file.name))
 
     with arguments.sequence_file:
