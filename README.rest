@@ -22,21 +22,21 @@ Features include:
   - Trim to a range of residues
   - Change case
   - Sort by length or ID
-  - `more <http://fhcrc.github.com/seqmagick/#convert-and-mogrify>`_
+  - `more`_
 
-* Displaying `information <http://fhcrc.github.com/seqmagick/#info>`_ about
+* Displaying `information <http://fhcrc.github.com/seqmagick/info.html>`_ about
   sequence files
 * Subsetting sequence files by:
 
   - Position
   - ID
   - Deduplication
-  - `more <http://fhcrc.github.com/seqmagick/#convert-and-mogrify>`_
+  - `more`_
 
 * Filtering sequences by `quality score
-  <http://fhcrc.github.com/seqmagick/#quality-filter>`_
+  <http://fhcrc.github.com/seqmagick/quality_filter.html>`_
 * Trimming alignments to a `region of interest
-  <http://fhcrc.github.com/seqmagick/#primer-trim>`_ defined by the
+  <http://fhcrc.github.com/seqmagick/primer_trim.html>`_ defined by the
   forward and reverse primers
 
 Want to learn more? Head to the `Documentation`_.
@@ -45,3 +45,4 @@ Want to learn more? Head to the `Documentation`_.
 
 .. _`Documentation`: http://fhcrc.github.com/seqmagick/
 
+.. _`more`: http://fhcrc.github.com/seqmagick/convert_mogrify.html
