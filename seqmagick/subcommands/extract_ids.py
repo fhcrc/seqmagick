@@ -1,7 +1,6 @@
 """
 Extract the sequence IDs from a file
 """
-import argparse
 import sys
 
 from Bio import SeqIO
@@ -12,9 +11,9 @@ from . import common
 
 def build_parser(parser):
     parser.add_argument('sequence_file', help="Sequence file",
-            type=argparse.FileType('r'))
+            type=common.FileType('r'))
     parser.add_argument('-o', '--output-file', help="Destination trimmed file",
-            type=argparse.FileType('w'), default=sys.stdout)
+            type=common.FileType('w'), default=sys.stdout)
     parser.add_argument('--input-format', help="""Input format for sequence
             file""")
     parser.add_argument('-d', '--include-description', action='store_true',

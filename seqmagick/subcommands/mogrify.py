@@ -2,9 +2,7 @@
 Modify sequence file(s) in place.
 """
 
-import argparse
 import logging
-import os.path
 
 from . import convert, common
 
@@ -15,7 +13,7 @@ def build_parser(parser):
 
     parser.add_argument(
         'input_files', metavar="sequence_file", nargs='+',
-        type=argparse.FileType('r+'),
+        type=common.FileType('r+'),
         help="Sequence file(s) to mogrify")
 
     return parser

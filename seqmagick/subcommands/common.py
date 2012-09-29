@@ -11,6 +11,8 @@ import signal
 import sys
 import tempfile
 
+from seqmagick import fileformat
+
 def get_umask():
     """
     Gets the current umask
@@ -198,3 +200,26 @@ def exit_on_sigpipe(status=None):
     Set program to exit on SIGPIPE
     """
     _exit_on_signal(signal.SIGPIPE, status)
+
+class FileType(object):
+    """
+    Near clone of argparse.FileType, supporting gzip and bzip
+    """
+    def __init__(self, mode='r'):
+        self.mode = mode
+        self.ext_map = fileformat.COMPRESS_EXT.copy()
+
+    def _get_handle(self, file_path):
+        ext = os.path.splitext(file_path)[1].lower()
+        return self.ext_map.get(ext, open)(file_path, self.mode)
+
+    def __call__(self, string):
+        if string == '-':
+            if 'r' in string:
+                return sys.stdin
+            elif 'w' in string:
+                return sys.stdout
+            else:
+                raise ValueError("Invalid mode: {0}".format(string))
+        else:
+            return self._get_handle(string)

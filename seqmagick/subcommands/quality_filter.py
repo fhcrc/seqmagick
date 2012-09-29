@@ -2,7 +2,6 @@
 Filter reads based on quality scores
 """
 
-import argparse
 import collections
 import csv
 import itertools
@@ -15,7 +14,7 @@ from Bio import SeqIO
 from Bio.SeqIO import QualityIO
 
 from seqmagick import fileformat
-from .common import typed_range
+from .common import typed_range, FileType
 
 # Default minimummean quality score
 DEFAULT_MEAN_SCORE = 25.0
@@ -47,20 +46,20 @@ def build_parser(parser):
     """
     Generate a subparser
     """
-    parser.add_argument('input_fastq', type=argparse.FileType('r'),
+    parser.add_argument('input_fastq', type=FileType('r'),
             help="""Input fastq file. A fasta-format file may also be provided
             if --input-qual is also specified.""")
-    parser.add_argument('--input-qual', type=argparse.FileType('r'),
+    parser.add_argument('--input-qual', type=FileType('r'),
             help="""The quality scores associated with the input file. Only
             used if input file is fasta.""")
-    parser.add_argument('output_file', type=argparse.FileType('w'),
+    parser.add_argument('output_file', type=FileType('w'),
             help="""Output file. Format determined from extension.""")
     output_group = parser.add_argument_group("Output")
 
-    output_group.add_argument('--report-out', type=argparse.FileType('w'),
+    output_group.add_argument('--report-out', type=FileType('w'),
             default=sys.stdout, help="""Output file for report [default:
             stdout]""")
-    output_group.add_argument('--failure-out', type=argparse.FileType('w'),
+    output_group.add_argument('--failure-out', type=FileType('w'),
             help="""File to write failure report [default: None]""")
 
     parser.add_argument('--min-mean-quality', metavar='QUALITY', type=float,
@@ -99,12 +98,12 @@ def build_parser(parser):
     barcode_group.add_argument('--primer', help="""IUPAC ambiguous primer to
             require""")
     barcode_group.add_argument('--barcode-file', help="""CSV file
-            containing sample_id,barcode rows""", type=argparse.FileType('r'))
+            containing sample_id,barcode rows""", type=FileType('r'))
     barcode_group.add_argument('--barcode-header', action='store_true',
             default=False, help="""Barcodes have a header row [default:
             %(default)s]""")
     barcode_group.add_argument('--map-out', help="""Path to write
-            sequence_id,sample_id pairs""", type=argparse.FileType('w'),
+            sequence_id,sample_id pairs""", type=FileType('w'),
             metavar='SAMPLE_MAP')
     barcode_group.add_argument('--quoting', help="""A string naming an
             attribute of the csv module defining the quoting behavior for

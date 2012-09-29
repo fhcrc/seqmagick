@@ -52,6 +52,20 @@ class TestBasicConvert(CommandLineTestMixIn, unittest.TestCase):
     expected_path = p('output2.phy')
     command = 'convert {input} {output}'
 
+class TestBzipConvert(CommandLineTestMixIn, unittest.TestCase):
+    in_suffix = '.fasta.bz2'
+    out_suffix = '.phy'
+    input_path = p('input2.fasta.bz2')
+    expected_path = p('output2.phy')
+    command = 'convert {input} {output}'
+
+class TestGzipConvert(CommandLineTestMixIn, unittest.TestCase):
+    in_suffix = '.fasta.gz'
+    out_suffix = '.phy'
+    input_path = p('input2.fasta.gz')
+    expected_path = p('output2.phy')
+    command = 'convert {input} {output}'
+
 class TestConvertToNexus(CommandLineTestMixIn, unittest.TestCase):
     in_suffix = '.fasta'
     input_path = p('input2.fasta')

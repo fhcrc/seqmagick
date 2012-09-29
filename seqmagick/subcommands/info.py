@@ -2,7 +2,6 @@
 Info action
 """
 
-import argparse
 import collections
 import csv
 import sys
@@ -18,7 +17,7 @@ def build_parser(parser):
     parser.add_argument('--input-format', help="""Input format. Overrides
             extension for all input files""")
     parser.add_argument('--out-file', dest='destination_file',
-            type=argparse.FileType('w'), default=sys.stdout,
+            type=common.FileType('w'), default=sys.stdout,
             metavar='destination_file',
             help='Output destination. Default: STDOUT')
     parser.add_argument('--format', dest='output_format',
@@ -110,7 +109,7 @@ def summarize_sequence_file(source_file, file_type=None):
         file_type = fileformat.from_filename(source_file)
 
     # Get an iterator and analyze the data.
-    with argparse.FileType('rb')(source_file) as fp:
+    with common.FileType('rb')(source_file) as fp:
         for record in SeqIO.parse(fp, file_type):
             sequence_count += 1
             sequence_length = len(record)
