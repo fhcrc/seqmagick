@@ -35,8 +35,9 @@ def build_parser(parser):
             default=sys.stdout, metavar='destination_file', help="""Output
             destination. Default: STDOUT""")
     parser.add_argument('-t', '--translation-table',
-            choices=TRANSLATION_TABLES, default='standard', help="""Translation
+            choices=TRANSLATION_TABLES, default='standard-ambiguous', help="""Translation
             table to use. [Default: %(default)s]""")
+    parser.add_argument('-a', '--fail-action', choices=('fail', 'warn'), default='fail')
 
     return parser
 
@@ -54,8 +55,9 @@ def batch(iterable, chunk_size):
         yield r
 
 class AlignmentMapper(object):
-    def __init__(self, translation_table):
+    def __init__(self, translation_table, unknown_action='fail'):
         self.translation_table = translation_table
+        self.unknown_action = unknown_action
 
     def _validate_translation(self, aligned_prot, aligned_nucl):
         """
@@ -68,12 +70,15 @@ class AlignmentMapper(object):
             else:
                 try:
                     trans = self.translation_table.forward_table[codon]
+                    if not trans == aa:
+                        raise ValueError("Codon {0} translates to {1}, not {2}".format(
+                            codon, trans, aa))
                 except KeyError:
-                    raise KeyError("Unknown codon: {0}".format(codon))
-
-                if not trans == aa:
-                    raise ValueError("Codon {0} translates to {1}, not {2}".format(
-                        codon, trans, aa))
+                    if self.unknown_action == 'fail':
+                        raise ValueError("Unknown codon: {0}".format(codon))
+                    elif self.unknown_action == 'warn':
+                        logging.warn('Cannot verify that unknown codon %s '
+                                'maps to %s', codon, aa)
         return True
 
     def map_alignment(self, prot_seq, nucl_seq):
@@ -144,7 +149,8 @@ def action(arguments):
     nucl_sequences = SeqIO.parse(arguments.nucl_align,
             fileformat.from_handle(arguments.nucl_align))
 
-    instance = AlignmentMapper(TRANSLATION_TABLES[arguments.translation_table])
+    instance = AlignmentMapper(TRANSLATION_TABLES[arguments.translation_table],
+                               arguments.fail_action)
 
     SeqIO.write(instance.map_all(prot_sequences, nucl_sequences),
-            arguments.out_file, 'fasta')
+                arguments.out_file, fileformat.from_filename(arguments.out_file.name))
