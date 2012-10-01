@@ -1,13 +1,14 @@
-import os.path
 import unittest
 import tempfile
 
 from seqmagick.scripts import cli
 
-d = os.path.dirname(__file__)
-data_dir = os.path.join(d, "data")
+from seqmagick.test.integration import data_path
 
-class TestInfo(unittest.TestCase):
+class InfoMixin(object):
+    expected = """name\talignment\tmin_len\tmax_len\tavg_len\tnum_seqs
+{0}\tTRUE\t5\t5\t5.00\t3
+"""
 
     def setUp(self):
         self.infile = tempfile.NamedTemporaryFile()
@@ -17,13 +18,18 @@ class TestInfo(unittest.TestCase):
         self.infile.close()
         self.tempfile.close()
 
-    def test_simple(self):
-        seq_file = os.path.join(data_dir, 'input1.fasta')
-        args = ['info', seq_file,
+    def test_info(self):
+        args = ['info', self.seq_file,
                 '--out-file', self.tempfile.name]
 
         cli.main(args)
-        self.assertEquals("""name\talignment\tmin_len\tmax_len\tavg_len\tnum_seqs
-{0}\tTRUE\t4\t4\t4.00\t3
-""".format(seq_file), self.tempfile.read())
+        self.assertEquals(self.expected.format(self.seq_file), self.tempfile.read())
 
+class SimpleInfoTestCase(InfoMixin, unittest.TestCase):
+    seq_file = data_path('input2.fasta')
+
+class SimpleGzipInfoTestCase(InfoMixin, unittest.TestCase):
+    seq_file = data_path('input2.fasta.gz')
+
+class SimpleBzip2InfoTestCase(InfoMixin, unittest.TestCase):
+    seq_file = data_path('input2.fasta.bz2')
