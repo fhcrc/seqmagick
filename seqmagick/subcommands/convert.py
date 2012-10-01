@@ -333,5 +333,6 @@ def module_function(string):
 
 def action(arguments):
     with arguments.source_file as src, \
-            common.atomic_write(arguments.dest_file) as dest:
+            common.atomic_write(arguments.dest_file,
+                    file_factory=common.FileType('w')) as dest:
         transform_file(src, dest, arguments)
