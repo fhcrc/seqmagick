@@ -1,8 +1,8 @@
 """
 Mappings from file extensions to biopython types
 """
-import gzip
 import bz2
+import gzip
 import os.path
 
 # Define mappings in a dictionary with extension : BioPython_file_type.
@@ -28,7 +28,7 @@ EXTENSION_TO_TYPE = {'.aln': 'clustal',
                      '.sto': 'stockholm',
                      }
 
-COMPRESS_EXT = {'.bz2': bz2.BZ2File, '.gz': gzip.open}
+COMPRESS_EXT = {'.bz2': bz2.BZ2File, '.gz': gzip.open, '.bz': bz2.BZ2File}
 
 
 class UnknownExtensionError(ValueError):
