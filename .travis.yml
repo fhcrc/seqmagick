@@ -5,8 +5,8 @@ python:
 # Install numpy, then BioPython
 # BioPython doesn't always play well with pip install.
 install: 
-  - "pip install numpy > /dev/null"
-  - "pip install biopython"
+  - "pip install -q numpy > /dev/null"
+  - "pip install -q biopython"
   - "pip install --use-mirrors ."
 script: nosetests
 
