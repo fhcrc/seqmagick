@@ -11,6 +11,8 @@ import signal
 import sys
 import tempfile
 
+from seqmagick import fileformat
+
 def get_umask():
     """
     Gets the current umask
@@ -30,11 +32,16 @@ def apply_umask(permission=0666, umask=None):
     return permission & (~umask)
 
 @contextlib.contextmanager
-def atomic_write(path, permissions=None, **kwargs):
+def atomic_write(path, permissions=None, file_factory=None, **kwargs):
     """
     Open a file for atomic writing.
 
     Generates a temp file, renames to value of ``path``.
+
+    Arguments:
+    ``permissions``: Permissions to set (default: umask)
+    ``file_factory``: If given, the handle yielded will be the result of
+        calling file_factory(path)
 
     Additional arguments are passed to tempfile.NamedTemporaryFile
     """
@@ -45,9 +52,15 @@ def atomic_write(path, permissions=None, **kwargs):
         yield sys.stdout
     else:
         base_dir = os.path.dirname(path)
-        kwargs['suffix'] = '.' + os.path.splitext(path)[1]
+        kwargs['suffix'] = os.path.basename(path)
         tf = tempfile.NamedTemporaryFile(dir=base_dir, delete=False,
                                          **kwargs)
+
+        # If a file_factory is given, close, and re-open a handle using the
+        # file_factory
+        if file_factory is not None:
+            tf.close()
+            tf = file_factory(tf.name)
         try:
             with tf:
                 yield tf
@@ -198,3 +211,26 @@ def exit_on_sigpipe(status=None):
     Set program to exit on SIGPIPE
     """
     _exit_on_signal(signal.SIGPIPE, status)
+
+class FileType(object):
+    """
+    Near clone of argparse.FileType, supporting gzip and bzip
+    """
+    def __init__(self, mode='r'):
+        self.mode = mode
+        self.ext_map = fileformat.COMPRESS_EXT.copy()
+
+    def _get_handle(self, file_path):
+        ext = os.path.splitext(file_path)[1].lower()
+        return self.ext_map.get(ext, open)(file_path, self.mode)
+
+    def __call__(self, string):
+        if string == '-':
+            if 'r' in string:
+                return sys.stdin
+            elif 'w' in string:
+                return sys.stdout
+            else:
+                raise ValueError("Invalid mode: {0}".format(string))
+        else:
+            return self._get_handle(string)

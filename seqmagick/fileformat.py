@@ -1,6 +1,8 @@
 """
 Mappings from file extensions to biopython types
 """
+import bz2
+import gzip
 import os.path
 
 # Define mappings in a dictionary with extension : BioPython_file_type.
@@ -26,6 +28,8 @@ EXTENSION_TO_TYPE = {'.aln': 'clustal',
                      '.sto': 'stockholm',
                      }
 
+COMPRESS_EXT = {'.bz2': bz2.BZ2File, '.gz': gzip.open, '.bz': bz2.BZ2File}
+
 
 class UnknownExtensionError(ValueError):
     pass
@@ -35,7 +39,7 @@ def from_extension(extension):
     """
     Look up the BioPython file type corresponding with input extension.
 
-    Lookup is case insensitive; the extension is presumed to start with a '.'
+    Lookup is case insensitive.
     """
     if not extension.startswith('.'):
         raise ValueError("Extensions must begin with a period.")
@@ -50,5 +54,8 @@ def from_filename(file_name):
     """
     Lookup the BioPython file type corresponding to an input file name.
     """
-    extension = os.path.splitext(file_name)[1]
+    base, extension = os.path.splitext(file_name)
+    if extension in COMPRESS_EXT:
+        # Compressed file
+        extension = os.path.splitext(base)[1]
     return from_extension(extension)

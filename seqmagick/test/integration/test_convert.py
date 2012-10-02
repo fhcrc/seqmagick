@@ -8,6 +8,7 @@ import sys
 import unittest
 import tempfile
 
+from seqmagick.subcommands.common import FileType
 from seqmagick.scripts import cli
 
 
@@ -34,9 +35,9 @@ class CommandLineTestMixIn(object):
                 output=self.output_file)
         cli.main(shlex.split(command))
 
-        with open(self.output_file) as fp:
+        with FileType('r')(self.output_file) as fp:
             actual = fp.read()
-        with open(self.expected_path) as fp:
+        with FileType('r')(self.expected_path) as fp:
             expected = fp.read()
         self.assertEqual(expected, actual)
 
@@ -45,27 +46,55 @@ class CommandLineTestMixIn(object):
         if os.path.isfile(self.output_file):
             os.remove(self.output_file)
 
-class TestBasicConvert(CommandLineTestMixIn, unittest.TestCase):
+class BasicConvertTestCase(CommandLineTestMixIn, unittest.TestCase):
     in_suffix = '.fasta'
     out_suffix = '.phy'
     input_path = p('input2.fasta')
     expected_path = p('output2.phy')
     command = 'convert {input} {output}'
 
-class TestConvertToNexus(CommandLineTestMixIn, unittest.TestCase):
+class BzipInputConvertTestCase(CommandLineTestMixIn, unittest.TestCase):
+    in_suffix = '.fasta.bz2'
+    out_suffix = '.phy'
+    input_path = p('input2.fasta.bz2')
+    expected_path = p('output2.phy')
+    command = 'convert {input} {output}'
+
+class BzipOutputConvertTestCase(CommandLineTestMixIn, unittest.TestCase):
+    in_suffix = '.fasta'
+    out_suffix = '.phy.bz2'
+    input_path = p('input2.fasta')
+    expected_path = p('output2.phy')
+    command = 'convert {input} {output}'
+
+class GzipInputConvertTestCase(CommandLineTestMixIn, unittest.TestCase):
+    in_suffix = '.fasta.gz'
+    out_suffix = '.phy'
+    input_path = p('input2.fasta.gz')
+    expected_path = p('output2.phy')
+    command = 'convert {input} {output}'
+
+class GzipOutputConvertTestCase(CommandLineTestMixIn, unittest.TestCase):
+    in_suffix = '.fasta'
+    out_suffix = '.phy.gz'
+    input_path = p('input2.fasta')
+    expected_path = p('output2.phy')
+    command = 'convert {input} {output}'
+
+class ConvertToNexusTestCase(CommandLineTestMixIn, unittest.TestCase):
     in_suffix = '.fasta'
     input_path = p('input2.fasta')
     expected_path = p('output2.nex')
     command = 'convert {input} {output} --output-format nexus --alphabet dna-ambiguous'
 
-class TestConvertUngapCut(CommandLineTestMixIn, unittest.TestCase):
+class ConvertUngapCutTestCase(CommandLineTestMixIn, unittest.TestCase):
     in_suffix = '.fasta'
     out_suffix = '.fasta'
     input_path = p('input2.fasta')
     expected_path = p('output2_ungap_cut.fasta')
     command = 'convert --ungap --cut 1:3 --tail 2 {input} {output}'
 
-class TestConvertToStdOut(unittest.TestCase):
+class ConvertToStdOutTestCase(unittest.TestCase):
 
     def setUp(self):
         self.out = StringIO()

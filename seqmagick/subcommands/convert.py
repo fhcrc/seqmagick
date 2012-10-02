@@ -4,13 +4,12 @@ Convert between sequence formats
 import argparse
 import functools
 import logging
-import os.path
 
 from Bio import Alphabet, SeqIO
 from Bio.Alphabet import IUPAC
 from Bio.SeqIO import FastaIO
 from seqmagick import transform
-from seqmagick.fileformat import from_extension
+from seqmagick.fileformat import from_filename
 
 from . import common
 
@@ -118,18 +117,18 @@ def add_options(parser):
          'by sequence content, keep the first instance seen')
     seq_select.add_argument('--deduplicated-sequences-file', action='store',
         metavar='FILE', dest='deduplicate_sequences', default=False,
-        type=argparse.FileType('w'),
+        type=common.FileType('w'),
         help='Write all of the deduplicated sequences to a file')
     seq_select.add_argument('--deduplicate-taxa',
             action=partial_action(transform.deduplicate_taxa),
             dest='transforms', help="""Remove any duplicate sequences by ID,
             keep the first instance seen""")
     seq_select.add_argument('--exclude-from-file', metavar='FILE',
-            type=argparse.FileType('r'), help="""Filter sequences, removing
+            type=common.FileType('r'), help="""Filter sequences, removing
             those sequence IDs in the specified file""", dest='transforms',
             action=partial_action(transform.exclude_from_file, 'handle'))
     seq_select.add_argument('--include-from-file', metavar='FILE',
-            type=argparse.FileType('r'), help="""Filter sequences, keeping only
+            type=common.FileType('r'), help="""Filter sequences, keeping only
             those sequence IDs in the specified file""", dest='transforms',
             action=partial_action(transform.include_from_file, 'handle'))
     seq_select.add_argument('--head', metavar='N', dest='transforms', type=int,
@@ -212,7 +211,7 @@ def build_parser(parser):
     Add shared arguments to the convert or mogrify parser.
     """
     add_options(parser)
-    parser.add_argument('source_file', type=argparse.FileType('r'),
+    parser.add_argument('source_file', type=common.FileType('r'),
                         help="Input sequence file")
     parser.add_argument('dest_file', help="Output file")
 
@@ -220,13 +219,10 @@ def build_parser(parser):
 
 def transform_file(source_file, destination_file, arguments):
     # Get just the file name, useful for naming the temporary file.
-    file_ext = os.path.splitext(source_file.name)[1]
-    source_file_type = (arguments.input_format or from_extension(file_ext))
-
-    output_ext = os.path.splitext(getattr(destination_file, 'name', ''))[1]
+    source_file_type = (arguments.input_format or from_filename(source_file.name))
 
     destination_file_type = (arguments.output_format or
-            from_extension(output_ext))
+            from_filename(getattr(destination_file, 'name', '')))
 
     # Get an iterator.
     sorters = {'length': transform.sort_length,
@@ -337,5 +333,6 @@ def module_function(string):
 
 def action(arguments):
     with arguments.source_file as src, \
-            common.atomic_write(arguments.dest_file) as dest:
+            common.atomic_write(arguments.dest_file,
+                    file_factory=common.FileType('w')) as dest:
         transform_file(src, dest, arguments)
