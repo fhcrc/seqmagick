@@ -1,6 +1,7 @@
 import argparse
 import os
 import os.path
+import sys
 import unittest
 import tempfile
 
@@ -141,3 +142,27 @@ class ApplyUmaskTestCase(unittest.TestCase):
         os.umask(007)
         self.assertEqual('0770', oct(common.apply_umask(0777)))
         self.assertEqual('0660', oct(common.apply_umask(0666)))
+
+class FileTypeTestCase(unittest.TestCase):
+
+    def test_stdin(self):
+        self.assertIs(sys.stdin, common.FileType('r')('-'))
+
+    def test_stdout(self):
+        self.assertIs(sys.stdout, common.FileType('w')('-'))
+
+    def test_read(self):
+        with tempfile.NamedTemporaryFile() as tf:
+            tf.write('TEST')
+            tf.flush()
+            with common.FileType('r')(tf.name) as fp:
+                self.assertEqual(tf.name, fp.name)
+                self.assertEqual('TEST', fp.read())
+
+    def test_write(self):
+        with tempfile.NamedTemporaryFile() as tf:
+            with common.FileType('w')(tf.name) as fp:
+                fp.write('TEST')
+                fp.flush()
+                self.assertEqual(tf.name, fp.name)
+                self.assertEqual('TEST', tf.read())

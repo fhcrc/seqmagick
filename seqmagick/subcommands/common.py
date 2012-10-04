@@ -226,9 +226,9 @@ class FileType(object):
 
     def __call__(self, string):
         if string == '-':
-            if 'r' in string:
+            if 'r' in self.mode:
                 return sys.stdin
-            elif 'w' in string:
+            elif 'w' in self.mode:
                 return sys.stdout
             else:
                 raise ValueError("Invalid mode: {0}".format(string))
