@@ -9,7 +9,6 @@ except ImportError:
     from setuptools import setup, find_packages
 
 import sys
-from distutils import log
 
 from seqmagick import __version__ as version
 
@@ -32,6 +31,7 @@ setup(name='seqmagick',
           'console_scripts': [
               'seqmagick = seqmagick.scripts.cli:main'
       ]},
+      package_data={'seqmagick.test.integration': ['data/*']},
       install_requires=requires,
       classifiers=[
         'License :: OSI Approved :: GNU General Public License (GPL)',
