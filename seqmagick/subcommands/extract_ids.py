@@ -25,7 +25,7 @@ def action(arguments):
 
     # Determine file format for input and output
     source_format = (arguments.input_format or
-            fileformat.from_filename(arguments.sequence_file.name))
+            fileformat.from_handle(arguments.sequence_file))
 
     with arguments.sequence_file:
         sequences = SeqIO.parse(arguments.sequence_file, source_format)

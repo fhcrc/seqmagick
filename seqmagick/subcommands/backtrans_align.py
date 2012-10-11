@@ -9,7 +9,6 @@ sequences, in the same order, with the same IDs.
 # TODO: Add tests
 # TODO: Infer output format from extension, default to fasta
 
-import argparse
 import itertools
 import logging
 import sys
@@ -30,9 +29,9 @@ TRANSLATION_TABLES = {
 }
 
 def build_parser(parser):
-    parser.add_argument('protein_align', help="""Protein Alignment""")
-    parser.add_argument('nucl_align', help="""FASTA Alignment""")
-    parser.add_argument('-o', '--out-file', type=argparse.FileType('w'),
+    parser.add_argument('protein_align', help="""Protein Alignment""", type=common.FileType('r'))
+    parser.add_argument('nucl_align', help="""FASTA Alignment""", type=common.FileType('r'))
+    parser.add_argument('-o', '--out-file', type=common.FileType('w'),
             default=sys.stdout, metavar='destination_file', help="""Output
             destination. Default: STDOUT""")
     parser.add_argument('-t', '--translation-table',
@@ -126,9 +125,9 @@ def action(arguments):
     logging.basicConfig()
 
     prot_sequences = SeqIO.parse(arguments.protein_align,
-            fileformat.from_filename(arguments.protein_align))
+            fileformat.from_handle(arguments.protein_align))
     nucl_sequences = SeqIO.parse(arguments.nucl_align,
-            fileformat.from_filename(arguments.nucl_align))
+            fileformat.from_handle(arguments.nucl_align))
 
     instance = AlignmentMapper(TRANSLATION_TABLES[arguments.translation_table])
 

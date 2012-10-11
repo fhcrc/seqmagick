@@ -476,7 +476,7 @@ def action(arguments):
     qfilter = QualityScoreFilter(arguments.min_mean_quality)
     filters = [qfilter]
 
-    output_type = fileformat.from_filename(arguments.output_file.name)
+    output_type = fileformat.from_handle(arguments.output_file)
     with arguments.input_fastq as fp:
         if arguments.input_qual:
             sequences = QualityIO.PairedFastaQualIterator(fp,

@@ -116,6 +116,14 @@ class ConvertToStdOutTestCase(unittest.TestCase):
             expected = fp.read()
         self.assertEqual(expected, actual)
 
+    def test_convert_noformat(self):
+        in_path = p('input2.fasta')
+        cli.main(['convert', in_path, '-'])
+        actual = self.out.getvalue()
+        with open(in_path) as fp:
+            expected = fp.read()
+        self.assertEqual(expected, actual)
+
 class TestCutRelative(CommandLineTestMixIn, unittest.TestCase):
     in_suffix = '.fasta'
     out_suffix = '.fasta'
@@ -143,3 +151,29 @@ class TestTranslateAmbiguous(CommandLineTestMixIn, unittest.TestCase):
     def tearDown(self):
         super(TestTranslateAmbiguous, self).tearDown()
         logging.getLogger(None).setLevel(self.orig_level)
+
+class TestStdin(TestTranslateAmbiguous, unittest.TestCase):
+    command = 'convert --translate dna2protein - {output}'
+
+    def setUp(self):
+        super(TestStdin, self).setUp()
+        self.orig_stdin = sys.stdin
+        sys.stdin = open(p('input4_ambig.fasta'), 'r')
+
+    def tearDown(self):
+        super(TestStdin, self).tearDown()
+        sys.stdin.close()
+        sys.stdin = self.orig_stdin
+
+class TestConvertFromStdin(TestTranslateAmbiguous, unittest.TestCase):
+    command = 'convert --translate dna2protein - {output}'
+
+    def setUp(self):
+        super(TestConvertFromStdin, self).setUp()
+        self.orig_stdin = sys.stdin
+        sys.stdin = open(p('input4_ambig.fasta'), 'r')
+
+    def tearDown(self):
+        super(TestConvertFromStdin, self).tearDown()
+        sys.stdin.close()
+        sys.stdin = self.orig_stdin
