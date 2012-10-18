@@ -4,6 +4,8 @@ In development
 * Change `seqmagick extract-ids --source-format` to `--input-format` to match
 other commands (GH-29)
 * Support gzip- and bzip2-compressed inputs and outputs for most commands (GH-30)
+* Change default input format for `sff` to `sff-trim`, which respects the
+  clipping locations embedded in each sequence record.
 
 0.4.0
 =====
