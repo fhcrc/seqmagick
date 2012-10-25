@@ -9,7 +9,7 @@ from Bio import Alphabet, SeqIO
 from Bio.Alphabet import IUPAC
 from Bio.SeqIO import FastaIO
 from seqmagick import transform
-from seqmagick.fileformat import from_filename
+from seqmagick.fileformat import from_handle
 
 from . import common
 
@@ -219,10 +219,10 @@ def build_parser(parser):
 
 def transform_file(source_file, destination_file, arguments):
     # Get just the file name, useful for naming the temporary file.
-    source_file_type = (arguments.input_format or from_filename(source_file.name))
+    source_file_type = (arguments.input_format or from_handle(source_file))
 
     destination_file_type = (arguments.output_format or
-            from_filename(getattr(destination_file, 'name', '')))
+            from_handle(destination_file))
 
     # Get an iterator.
     sorters = {'length': transform.sort_length,

@@ -262,9 +262,9 @@ def action(arguments):
     """
     # Determine file format for input and output
     source_format = (arguments.source_format or
-            fileformat.from_filename(arguments.source_file.name))
+            fileformat.from_handle(arguments.source_file))
     output_format = (arguments.output_format or
-            fileformat.from_filename(arguments.output_file.name))
+            fileformat.from_handle(arguments.output_file))
 
     # Load the alignment
     with arguments.source_file:
