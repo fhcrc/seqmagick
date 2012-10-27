@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>&lt;no title&gt; &mdash; seqmagick 0.4.0 documentation</title>
+    <title>backtrans-align &mdash; seqmagick 0.4.0 documentation</title>
     
     <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -25,7 +25,9 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="seqmagick 0.4.0 documentation" href="index.html" /> 
+    <link rel="top" title="seqmagick 0.4.0 documentation" href="index.html" />
+    <link rel="next" title="extract-ids" href="extract_ids.html" />
+    <link rel="prev" title="convert and mogrify" href="convert_mogrify.html" /> 
   </head>
   <body>
     <div class="related">
@@ -34,6 +36,12 @@
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="extract_ids.html" title="extract-ids"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="convert_mogrify.html" title="convert and mogrify"
+             accesskey="P">previous</a> |</li>
         <li><a href="index.html">seqmagick 0.4.0 documentation</a> &raquo;</li> 
       </ul>
     </div>
@@ -42,9 +50,15 @@
             <p class="logo"><a href="index.html">
               <img class="logo" src="_static/seqmagick_logo_small.png" alt="Logo"/>
             </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="convert_mogrify.html"
+                        title="previous chapter"><tt class="docutils literal"><span class="pre">convert</span></tt> and <tt class="docutils literal"><span class="pre">mogrify</span></tt></a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="extract_ids.html"
+                        title="next chapter"><tt class="docutils literal"><span class="pre">extract-ids</span></tt></a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
-    <li><a href="_sources/extensions.txt"
+    <li><a href="_sources/backtrans_align.txt"
            rel="nofollow">Show Source</a></li>
   </ul>
 <div id="searchbox" style="display: none">
@@ -68,79 +82,32 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <table border="1" class="docutils">
-<colgroup>
-<col width="39%" />
-<col width="61%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Extension</th>
-<th class="head">Format</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td>.afa</td>
-<td>fasta</td>
-</tr>
-<tr class="row-odd"><td>.aln</td>
-<td>clustal</td>
-</tr>
-<tr class="row-even"><td>.fa</td>
-<td>fasta</td>
-</tr>
-<tr class="row-odd"><td>.faa</td>
-<td>fasta</td>
-</tr>
-<tr class="row-even"><td>.fas</td>
-<td>fasta</td>
-</tr>
-<tr class="row-odd"><td>.fasta</td>
-<td>fasta</td>
-</tr>
-<tr class="row-even"><td>.fastq</td>
-<td>fastq</td>
-</tr>
-<tr class="row-odd"><td>.ffn</td>
-<td>fasta</td>
-</tr>
-<tr class="row-even"><td>.fna</td>
-<td>fasta</td>
-</tr>
-<tr class="row-odd"><td>.frn</td>
-<td>fasta</td>
-</tr>
-<tr class="row-even"><td>.gb</td>
-<td>genbank</td>
-</tr>
-<tr class="row-odd"><td>.gbk</td>
-<td>genbank</td>
-</tr>
-<tr class="row-even"><td>.needle</td>
-<td>emboss</td>
-</tr>
-<tr class="row-odd"><td>.phy</td>
-<td>phylip</td>
-</tr>
-<tr class="row-even"><td>.phylip</td>
-<td>phylip</td>
-</tr>
-<tr class="row-odd"><td>.phyx</td>
-<td>phylip-relaxed</td>
-</tr>
-<tr class="row-even"><td>.qual</td>
-<td>qual</td>
-</tr>
-<tr class="row-odd"><td>.sff</td>
-<td>sff</td>
-</tr>
-<tr class="row-even"><td>.sth</td>
-<td>stockholm</td>
-</tr>
-<tr class="row-odd"><td>.sto</td>
-<td>stockholm</td>
-</tr>
-</tbody>
-</table>
+  <div class="section" id="backtrans-align">
+<h1><tt class="docutils literal"><span class="pre">backtrans-align</span></tt><a class="headerlink" href="#backtrans-align" title="Permalink to this headline">¶</a></h1>
+<p>Given a protein alignment and unaligned nucleotides, align the nucleotides
+using the protein alignment.  Protein and nucleotide sequence files must
+contain the same number of sequences, in the same order, with the same IDs.</p>
+<div class="highlight-text"><div class="highlight"><pre>usage: seqmagick backtrans-align [-h] [-o destination_file]
+                                 [-t {standard-ambiguous,vertebrate-mito,standard}]
+                                 protein_align nucl_align
+
+Given a protein alignment and unaligned nucleotides, align the nucleotides
+using the protein alignment. Protein and nucleotide sequence files must
+contain the same number of sequences, in the same order, with the same IDs.
+
+positional arguments:
+  protein_align         Protein Alignment
+  nucl_align            FASTA Alignment
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -o destination_file, --out-file destination_file
+                        Output destination. Default: STDOUT
+  -t {standard-ambiguous,vertebrate-mito,standard}, --translation-table {standard-ambiguous,vertebrate-mito,standard}
+                        Translation table to use. [Default: standard]
+</pre></div>
+</div>
+</div>
 
 
           </div>
@@ -154,6 +121,12 @@
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              >index</a></li>
+        <li class="right" >
+          <a href="extract_ids.html" title="extract-ids"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="convert_mogrify.html" title="convert and mogrify"
+             >previous</a> |</li>
         <li><a href="index.html">seqmagick 0.4.0 documentation</a> &raquo;</li> 
       </ul>
     </div>

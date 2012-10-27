@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>&lt;no title&gt; &mdash; seqmagick 0.4.0 documentation</title>
+    <title>quality-filter &mdash; seqmagick 0.4.0 documentation</title>
     
     <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -25,7 +25,9 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="seqmagick 0.4.0 documentation" href="index.html" /> 
+    <link rel="top" title="seqmagick 0.4.0 documentation" href="index.html" />
+    <link rel="next" title="primer-trim" href="primer_trim.html" />
+    <link rel="prev" title="info" href="info.html" /> 
   </head>
   <body>
     <div class="related">
@@ -34,6 +36,12 @@
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="primer_trim.html" title="primer-trim"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="info.html" title="info"
+             accesskey="P">previous</a> |</li>
         <li><a href="index.html">seqmagick 0.4.0 documentation</a> &raquo;</li> 
       </ul>
     </div>
@@ -42,9 +50,15 @@
             <p class="logo"><a href="index.html">
               <img class="logo" src="_static/seqmagick_logo_small.png" alt="Logo"/>
             </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="info.html"
+                        title="previous chapter"><tt class="docutils literal docutils literal docutils literal"><span class="pre">info</span></tt></a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="primer_trim.html"
+                        title="next chapter"><tt class="docutils literal docutils literal"><span class="pre">primer-trim</span></tt></a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
-    <li><a href="_sources/extensions.txt"
+    <li><a href="_sources/quality_filter.txt"
            rel="nofollow">Show Source</a></li>
   </ul>
 <div id="searchbox" style="display: none">
@@ -68,79 +82,14 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <table border="1" class="docutils">
-<colgroup>
-<col width="39%" />
-<col width="61%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Extension</th>
-<th class="head">Format</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td>.afa</td>
-<td>fasta</td>
-</tr>
-<tr class="row-odd"><td>.aln</td>
-<td>clustal</td>
-</tr>
-<tr class="row-even"><td>.fa</td>
-<td>fasta</td>
-</tr>
-<tr class="row-odd"><td>.faa</td>
-<td>fasta</td>
-</tr>
-<tr class="row-even"><td>.fas</td>
-<td>fasta</td>
-</tr>
-<tr class="row-odd"><td>.fasta</td>
-<td>fasta</td>
-</tr>
-<tr class="row-even"><td>.fastq</td>
-<td>fastq</td>
-</tr>
-<tr class="row-odd"><td>.ffn</td>
-<td>fasta</td>
-</tr>
-<tr class="row-even"><td>.fna</td>
-<td>fasta</td>
-</tr>
-<tr class="row-odd"><td>.frn</td>
-<td>fasta</td>
-</tr>
-<tr class="row-even"><td>.gb</td>
-<td>genbank</td>
-</tr>
-<tr class="row-odd"><td>.gbk</td>
-<td>genbank</td>
-</tr>
-<tr class="row-even"><td>.needle</td>
-<td>emboss</td>
-</tr>
-<tr class="row-odd"><td>.phy</td>
-<td>phylip</td>
-</tr>
-<tr class="row-even"><td>.phylip</td>
-<td>phylip</td>
-</tr>
-<tr class="row-odd"><td>.phyx</td>
-<td>phylip-relaxed</td>
-</tr>
-<tr class="row-even"><td>.qual</td>
-<td>qual</td>
-</tr>
-<tr class="row-odd"><td>.sff</td>
-<td>sff</td>
-</tr>
-<tr class="row-even"><td>.sth</td>
-<td>stockholm</td>
-</tr>
-<tr class="row-odd"><td>.sto</td>
-<td>stockholm</td>
-</tr>
-</tbody>
-</table>
+  <div class="section" id="quality-filter">
+<h1><tt class="docutils literal"><span class="pre">quality-filter</span></tt><a class="headerlink" href="#quality-filter" title="Permalink to this headline">¶</a></h1>
+<p><tt class="docutils literal"><span class="pre">quality-filter</span></tt> truncates and removes sequences that don&#8217;t match a set of
+quality criteria.  The subcommand takes a FASTA and quality score file, and
+writes the results to an output file:</p>
+<div class="highlight-python"><pre>.. prorgram-output:: seqmagick quality-filter -h</pre>
+</div>
+</div>
 
 
           </div>
@@ -154,6 +103,12 @@
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              >index</a></li>
+        <li class="right" >
+          <a href="primer_trim.html" title="primer-trim"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="info.html" title="info"
+             >previous</a> |</li>
         <li><a href="index.html">seqmagick 0.4.0 documentation</a> &raquo;</li> 
       </ul>
     </div>

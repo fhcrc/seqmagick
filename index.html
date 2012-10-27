@@ -25,7 +25,8 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="seqmagick 0.4.0 documentation" href="#" /> 
+    <link rel="top" title="seqmagick 0.4.0 documentation" href="#" />
+    <link rel="next" title="convert and mogrify" href="convert_mogrify.html" /> 
   </head>
   <body>
     <div class="related">
@@ -34,6 +35,9 @@
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="convert_mogrify.html" title="convert and mogrify"
+             accesskey="N">next</a> |</li>
         <li><a href="#">seqmagick 0.4.0 documentation</a> &raquo;</li> 
       </ul>
     </div>
@@ -48,31 +52,7 @@
 <li><a class="reference internal" href="#motivation">Motivation</a></li>
 <li><a class="reference internal" href="#installation">Installation</a></li>
 <li><a class="reference internal" href="#use">Use</a></li>
-<li><a class="reference internal" href="#subcommands">Subcommands</a><ul>
-<li><a class="reference internal" href="#convert-and-mogrify"><tt class="docutils literal"><span class="pre">convert</span></tt> and <tt class="docutils literal"><span class="pre">mogrify</span></tt></a><ul>
-<li><a class="reference internal" href="#examples">Examples</a><ul>
-<li><a class="reference internal" href="#basic-conversion">Basic Conversion</a></li>
-<li><a class="reference internal" href="#sequence-modification">Sequence Modification</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#command-line-arguments">Command-line Arguments</a><ul>
-<li><a class="reference internal" href="#sequence-file-modification">Sequence File Modification</a></li>
-<li><a class="reference internal" href="#id1">Sequence Modification</a></li>
-<li><a class="reference internal" href="#record-selection">Record Selection</a></li>
-<li><a class="reference internal" href="#sequence-id-modification">Sequence ID Modification</a></li>
-<li><a class="reference internal" href="#format-options">Format Options</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><a class="reference internal" href="#backtrans-align"><tt class="docutils literal"><span class="pre">backtrans-align</span></tt></a></li>
-<li><a class="reference internal" href="#extract-ids"><tt class="docutils literal"><span class="pre">extract-ids</span></tt></a></li>
-<li><a class="reference internal" href="#info"><tt class="docutils literal"><span class="pre">info</span></tt></a><ul>
-<li><a class="reference internal" href="#example">Example</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#primer-trim"><tt class="docutils literal"><span class="pre">primer-trim</span></tt></a></li>
-<li><a class="reference internal" href="#quality-filter"><tt class="docutils literal"><span class="pre">quality-filter</span></tt></a></li>
+<li><a class="reference internal" href="#list-of-subcommands">List of Subcommands</a><ul>
 </ul>
 </li>
 <li><a class="reference internal" href="#supported-file-extensions">Supported File Extensions</a></li>
@@ -82,6 +62,9 @@
 </li>
 </ul>
 
+  <h4>Next topic</h4>
+  <p class="topless"><a href="convert_mogrify.html"
+                        title="next chapter"><tt class="docutils literal docutils literal docutils literal"><span class="pre">convert</span></tt> and <tt class="docutils literal docutils literal docutils literal"><span class="pre">mogrify</span></tt></a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/index.txt"
@@ -109,39 +92,24 @@
           <div class="body">
             
   <a href="http://github.com/fhcrc/seqmagick"><img style="position: absolute; top: 0; left: 0; border: 0;" src="_static/fork.png" alt="Fork me on GitHub"></a><div class="section" id="seqmagick">
-<h1><a class="toc-backref" href="#id2">seqmagick</a><a class="headerlink" href="#seqmagick" title="Permalink to this headline">¶</a></h1>
+<h1><a class="toc-backref" href="#id1">seqmagick</a><a class="headerlink" href="#seqmagick" title="Permalink to this headline">¶</a></h1>
 <div class="contents new topic" id="contents">
 <p class="topic-title first">Contents</p>
 <ul class="simple">
-<li><a class="reference internal" href="#seqmagick" id="id2">seqmagick</a><ul>
-<li><a class="reference internal" href="#motivation" id="id3">Motivation</a></li>
-<li><a class="reference internal" href="#installation" id="id4">Installation</a></li>
-<li><a class="reference internal" href="#use" id="id5">Use</a></li>
-<li><a class="reference internal" href="#subcommands" id="id6">Subcommands</a><ul>
-<li><a class="reference internal" href="#convert-and-mogrify" id="id7"><tt class="docutils literal"><span class="pre">convert</span></tt> and <tt class="docutils literal"><span class="pre">mogrify</span></tt></a><ul>
-<li><a class="reference internal" href="#examples" id="id8">Examples</a></li>
-<li><a class="reference internal" href="#command-line-arguments" id="id9">Command-line Arguments</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#backtrans-align" id="id10"><tt class="docutils literal"><span class="pre">backtrans-align</span></tt></a></li>
-<li><a class="reference internal" href="#extract-ids" id="id11"><tt class="docutils literal"><span class="pre">extract-ids</span></tt></a></li>
-<li><a class="reference internal" href="#info" id="id12"><tt class="docutils literal"><span class="pre">info</span></tt></a><ul>
-<li><a class="reference internal" href="#example" id="id13">Example</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#primer-trim" id="id14"><tt class="docutils literal"><span class="pre">primer-trim</span></tt></a></li>
-<li><a class="reference internal" href="#quality-filter" id="id15"><tt class="docutils literal"><span class="pre">quality-filter</span></tt></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#supported-file-extensions" id="id16">Supported File Extensions</a></li>
-<li><a class="reference internal" href="#acknowledgements" id="id17">Acknowledgements</a></li>
-<li><a class="reference internal" href="#contributing" id="id18">Contributing</a></li>
+<li><a class="reference internal" href="#seqmagick" id="id1">seqmagick</a><ul>
+<li><a class="reference internal" href="#motivation" id="id2">Motivation</a></li>
+<li><a class="reference internal" href="#installation" id="id3">Installation</a></li>
+<li><a class="reference internal" href="#use" id="id4">Use</a></li>
+<li><a class="reference internal" href="#list-of-subcommands" id="id5">List of Subcommands</a></li>
+<li><a class="reference internal" href="#supported-file-extensions" id="id6">Supported File Extensions</a></li>
+<li><a class="reference internal" href="#acknowledgements" id="id7">Acknowledgements</a></li>
+<li><a class="reference internal" href="#contributing" id="id8">Contributing</a></li>
 </ul>
 </li>
 </ul>
 </div>
 <div class="section" id="motivation">
-<h2><a class="toc-backref" href="#id3">Motivation</a><a class="headerlink" href="#motivation" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id2">Motivation</a><a class="headerlink" href="#motivation" title="Permalink to this headline">¶</a></h2>
 <p>We often have to convert between sequence formats and do little tasks on them,
 and it&#8217;s not worth writing scripts for that.  Seqmagick is a kickass little
 utility built in the spirit of <a class="reference external" href="http://www.imagemagick.org/script/command-line-tools.php">imagemagick</a> to expose the file format
@@ -154,11 +122,11 @@ seqmagick info *.fasta             # describe all FASTA files in the current dir
 <p>And more.</p>
 </div>
 <div class="section" id="installation">
-<h2><a class="toc-backref" href="#id4">Installation</a><a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id3">Installation</a><a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
 <p>First, you&#8217;ll need to install <a class="reference external" href="http://www.biopython.org/">BioPython</a>. NumPy (which parts of BioPython
 depend on) is not required for <tt class="docutils literal"><span class="pre">seqmagick</span></tt> to function. Once done, install
 with:</p>
-<div class="highlight-python"><pre>pip install seqmagick</pre>
+<div class="highlight-python"><pre>pi install seqmagick</pre>
 </div>
 <p>Get the bleeding edge version <a class="reference external" href="https://github.com/fhcrc/seqmagick/zipball/master">here</a>, or clone our
 repository:</p>
@@ -166,310 +134,40 @@ repository:</p>
 </div>
 </div>
 <div class="section" id="use">
-<h2><a class="toc-backref" href="#id5">Use</a><a class="headerlink" href="#use" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id4">Use</a><a class="headerlink" href="#use" title="Permalink to this headline">¶</a></h2>
 <p>Seqmagick can be used to query information about sequence files, convert
 between types, and modify sequence files.  All functions are accessed through
 subcommands:</p>
 <div class="highlight-python"><pre>seqmagick &lt;subcommand&gt; [options] arguments</pre>
 </div>
 </div>
-<div class="section" id="subcommands">
-<h2><a class="toc-backref" href="#id6">Subcommands</a><a class="headerlink" href="#subcommands" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="convert-and-mogrify">
-<h3><a class="toc-backref" href="#id7"><tt class="docutils literal"><span class="pre">convert</span></tt> and <tt class="docutils literal"><span class="pre">mogrify</span></tt></a><a class="headerlink" href="#convert-and-mogrify" title="Permalink to this headline">¶</a></h3>
-<p>Convert and mogrify achieve similar goals. <tt class="docutils literal"><span class="pre">convert</span></tt> performs some operation
-on a file (from changing format to something more complicated) and writes to a
-new file. <tt class="docutils literal"><span class="pre">mogrify</span></tt> modifies a file in place, and would not normally be used
-to convert formats.</p>
-<p>The two have similar signatures:</p>
-<div class="highlight-python"><pre>seqmagick convert [options] infile outfile</pre>
-</div>
-<p>vs:</p>
-<div class="highlight-python"><pre>seqmagick mogrify [options] infile</pre>
-</div>
-<p>Options are shared between convert and mogrify.</p>
-<div class="section" id="examples">
-<h4><a class="toc-backref" href="#id8">Examples</a><a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h4>
-<div class="section" id="basic-conversion">
-<h5>Basic Conversion<a class="headerlink" href="#basic-conversion" title="Permalink to this headline">¶</a></h5>
-<p><tt class="docutils literal"><span class="pre">convert</span></tt> can be used to convert between any file types BioPython supports
-(which is many). For a full list of supported types, see the <a class="reference external" href="http://www.biopython.org/wiki/SeqIO#File_Formats">BioPython SeqIO
-wiki page</a>.</p>
-<p>By default, file type is inferred from file extension, so:</p>
-<div class="highlight-python"><pre>seqmagick convert a.fasta a.sto</pre>
-</div>
-<p>converts an existing file <tt class="docutils literal"><span class="pre">a.fasta</span></tt> from FASTA to Stockholm format. <strong>Neat!</strong>
-But there&#8217;s more.</p>
-</div>
-<div class="section" id="sequence-modification">
-<h5>Sequence Modification<a class="headerlink" href="#sequence-modification" title="Permalink to this headline">¶</a></h5>
-<p>A wealth of options await you when you&#8217;re ready to do something slightly more
-complicated with your sequences.</p>
-<p>Let&#8217;s say I just want a few of my sequences:</p>
-<div class="highlight-python"><pre>$ seqmagick convert --head 5 examples/test.fasta examples/test.head.fasta
-$ seqmagick info examples/test*.fasta
-name                      alignment  min_len  max_len  avg_len  num_seqs
-examples/test.fasta       FALSE      972      9719     1573.67  15
-examples/test.head.fasta  FALSE      978      990      984.00   5</pre>
-</div>
-<p>Or I want to remove any gaps, reverse complement, select the last 5 sequences,
-and remove any duplicates from an alignment in place:</p>
-<div class="highlight-python"><pre>seqmagick mogrify --tail 5 --reverse-complement --ungap --deduplicate-sequences examples/test.fasta examples/test.fasta</pre>
-</div>
-<p>You can even define your own functions in python and use them via
-<tt class="docutils literal"><span class="pre">--apply-function</span></tt>.</p>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p>To maximize flexibility, most transformations passed as options to
-<tt class="docutils literal"><span class="pre">mogrify</span></tt> and <tt class="docutils literal"><span class="pre">convert</span></tt> are processed <em>in order</em>, so:</p>
-<div class="highlight-python"><pre>seqmagick convert --min-length 50 --cut 1:5 a.fasta b.fasta</pre>
-</div>
-<p>will work fine, but:</p>
-<div class="highlight-python"><pre>seqmagick convert --cut 1:5 --min-length 50 a.fasta b.fasta</pre>
-</div>
-<p class="last">will never return records, since the cutting transformation happens before
-the minimum length predicate is applied.</p>
-</div>
-</div>
-</div>
-<div class="section" id="command-line-arguments">
-<h4><a class="toc-backref" href="#id9">Command-line Arguments</a><a class="headerlink" href="#command-line-arguments" title="Permalink to this headline">¶</a></h4>
-<p>The full set of options to <tt class="docutils literal"><span class="pre">mogrify</span></tt> and <tt class="docutils literal"><span class="pre">convert</span></tt> are:</p>
-<div class="section" id="sequence-file-modification">
-<h5>Sequence File Modification<a class="headerlink" href="#sequence-file-modification" title="Permalink to this headline">¶</a></h5>
-<div class="highlight-python"><pre>--line-wrap N         Adjust line wrap for sequence strings. When N is 0,
-                      all line breaks are removed. Only fasta files are
-                      supported for the output format.
---sort {length-asc,length-desc,name-asc,name-desc}
-                      Perform sorting by length or name, ascending or
-                      descending. ASCII sorting is performed for names</pre>
-</div>
-</div>
-<div class="section" id="id1">
-<h5>Sequence Modification<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h5>
-<div class="highlight-python"><pre>--apply-function /path/to/module.py:function_name
-                      Specify a custom function to apply to the input
-                      sequences, specified as
-                      /path/to/file.py:function_name. Function should accept
-                      an iterable of Bio.SeqRecord objects, and yield
-                      SeqRecords. Specify more than one to chain.
---cut start:end[,start2:end2]
-                      1-indexed start and end positions for cutting sequences, : separated. Includes last item. Start or end can be left unspecified
-                      to indicate start/end of sequence.
---relative-to ID      Apply --cut relative to the indexes of non-gap residues in sequence identified by ID
---dash-gap            Change . and : into - for all sequences
---mask start:end[,start2:end2...]
-                  Replace residues in 1-indexed slice with gap-
-                  characters. If --relative-to is also specified,
-                  coordinates are relative to the sequence ID provided.
---lower               Translate the sequences to lower case
---reverse             Reverse the order of sites in sequences
---reverse-complement  Convert sequences into reverse complements
---squeeze             Remove any gaps that are present in the same position
-                      across all sequences in an alignment (equivalent to
-                      --squeeze-threshold=1.0)
---squeeze-threshold PROP
-                      Trim columns from an alignment which have gaps in
-                      least the specified proportion of sequences.
---transcribe {dna2rna,rna2dna}
-                      Transcription and back transcription for generic DNA
-                      and RNA. Source sequences must be the correct alphabet
-                      or this action will likely produce incorrect results.
---translate {dna2protein,rna2protein,dna2proteinstop,rna2proteinstop}
-                      Translate from generic DNA/RNA to proteins. Options
-                      with "stop" suffix will NOT translate through stop
-                      codons .Source sequences must be the correct alphabet
-                      or this action will likely produce incorrect results.
---ungap               Remove gaps in the sequence alignment
---upper               Translate the sequences to upper case</pre>
-</div>
-</div>
-<div class="section" id="record-selection">
-<h5>Record Selection<a class="headerlink" href="#record-selection" title="Permalink to this headline">¶</a></h5>
-<div class="highlight-python"><pre>--deduplicate-sequences
-                      Remove any duplicate sequences by sequence content,
-                      keep the first instance seen
---deduplicated-sequences-file FILE
-                      Write all of the deduplicated sequences to a file
---deduplicate-taxa    Remove any duplicate sequences by ID, keep the first
-                      instance seen
---exclude-from-file FILE
-                      Filter sequences, removing those sequence IDs in the
-                      specified file
---include-from-file FILE
-                      Filter sequences, keeping only those sequence IDs in
-                      the specified file
---head N              Trim down to top N sequences
---max-length N        Discard any sequences beyond the specified maximum
-                      length. This operation occurs *before* all length-
-                      changing options such as cut and squeeze.
---min-length N        Discard any sequences less than the specified minimum
-                      length. This operation occurs *before* all length-
-                      changing options such as cut and squeeze.
---min-ungapped-length N
-                      Discard any sequences less than the specified minimum
-                      length, excluding gaps. This operation occurs *before*
-                      all length-changing options such as cut and squeeze.
---pattern-include regex
-                      Filter the sequences by regular expression in name
---pattern-exclude regex
-                      Filter out sequences by regular expression in name
---prune-empty         Prune sequences containing only gaps ('-')
---seq-pattern-include regex
-                      Filter the sequences by regular expression in sequence
---seq-pattern-exclude regex
-                      Filter out sequences by regular expression in sequence
---tail N              Trim down to bottom N sequences</pre>
-</div>
-</div>
-<div class="section" id="sequence-id-modification">
-<h5>Sequence ID Modification<a class="headerlink" href="#sequence-id-modification" title="Permalink to this headline">¶</a></h5>
-<div class="highlight-python"><pre>--first-name          Take only the first whitespace-delimited word as the
-                      name of the sequence
---name-suffix SUFFIX  Append a suffix to all IDs.
---name-prefix PREFIX  Insert a prefix for all IDs.
---pattern-replace search_pattern replace_pattern
-                      Replace regex pattern "search_pattern" with
-                      "replace_pattern" in sequence ID
---strip-range         Strip ranges from sequences IDs, matching &lt;/x-y&gt;</pre>
-</div>
-</div>
-<div class="section" id="format-options">
-<h5>Format Options<a class="headerlink" href="#format-options" title="Permalink to this headline">¶</a></h5>
-<p>By default, file format is inferred from extension:</p>
-<div class="highlight-python"><pre>--input-format Format
-                      Input file format (default: determine from extension)
---output-format Format
-                      Output file format (default: determine from extension)</pre>
-</div>
-</div>
-</div>
-</div>
-<div class="section" id="backtrans-align">
-<h3><a class="toc-backref" href="#id10"><tt class="docutils literal"><span class="pre">backtrans-align</span></tt></a><a class="headerlink" href="#backtrans-align" title="Permalink to this headline">¶</a></h3>
-<p>Given a protein alignment and unaligned nucleotides, align the nucleotides
-using the protein alignment.  Protein and nucleotide sequence files must
-contain the same number of sequences, in the same order, with the same IDs.</p>
-<div class="highlight-python"><pre>usage: seqmagick backtrans-align [-h] [-o destination_file]
-                                [-t {standard-ambiguous,vertebrate-mito,standard}]
-                                protein_align nucl_align
-
-positional arguments:
-  protein_align         Protein Alignment
-  nucl_align            FASTA Alignment
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -o destination_file, --out-file destination_file
-                        Output destination. Default: STDOUT
-  -t {standard-ambiguous,vertebrate-mito,standard}, --translation-table {standard-ambiguous,vertebrate-mito,standard}
-                        Translation table to use. [Default: standard]</pre>
-</div>
-</div>
-<div class="section" id="extract-ids">
-<h3><a class="toc-backref" href="#id11"><tt class="docutils literal"><span class="pre">extract-ids</span></tt></a><a class="headerlink" href="#extract-ids" title="Permalink to this headline">¶</a></h3>
-<p><tt class="docutils literal"><span class="pre">seqmagick</span> <span class="pre">extract-ids</span></tt> is extremely simple - all the IDs from a sequence file
-are printed to stdout (by default) or the file of your choosing:</p>
-<div class="highlight-python"><pre>positional arguments:
-  sequence_file         Sequence file
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -o OUTPUT_FILE, --output-file OUTPUT_FILE
-                        Destination trimmed file
-  --source-format SOURCE_FORMAT
-  -d, --include-description
-                        Include the sequence description in output [default: False]</pre>
-</div>
-</div>
-<div class="section" id="info">
-<h3><a class="toc-backref" href="#id12"><tt class="docutils literal"><span class="pre">info</span></tt></a><a class="headerlink" href="#info" title="Permalink to this headline">¶</a></h3>
-<p><tt class="docutils literal"><span class="pre">seqmagick</span> <span class="pre">info</span></tt> describes one or more sequence files</p>
-<div class="section" id="example">
-<h4><a class="toc-backref" href="#id13">Example</a><a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h4>
-<div class="highlight-python"><pre>seqmagick info examples/*.fasta
-
-name                      alignment  min_len  max_len  avg_len  num_seqs
-examples/aligned.fasta    TRUE       9797     9797     9797.00  15
-examples/dewrapped.fasta  TRUE       240      240      240.00   148
-examples/range.fasta      TRUE       119      119      119.00   2
-examples/test.fasta       FALSE      972      9719     1573.67  15
-examples/wrapped.fasta    FALSE      120      237      178.50   2</pre>
-</div>
-<p>Output can be in comma-separated, tab-separated, or aligned formats. See
-<tt class="docutils literal"><span class="pre">seqmagick</span> <span class="pre">info</span> <span class="pre">-h</span></tt> for details.</p>
-</div>
-</div>
-<div class="section" id="primer-trim">
-<h3><a class="toc-backref" href="#id14"><tt class="docutils literal"><span class="pre">primer-trim</span></tt></a><a class="headerlink" href="#primer-trim" title="Permalink to this headline">¶</a></h3>
-<p><tt class="docutils literal"><span class="pre">primer-trim</span></tt> trims an alignment to a region defined by a set of forward and
-reverse primers. Usage is as follows:</p>
-<div class="highlight-python"><pre>positional arguments:
-  source_file           Source alignment file
-  output_file           Destination trimmed file
-  forward_primer        The forward primer used
-  reverse_primer        The reverse primer used. By default the reverse primer
-                        is assumed to be a subsequence of the top strand (that
-                        is, the reverse complement of an actual downstream PCR
-                        primer). Use --reverse-is-revcomp if this is not the
-                        case.
-
-optional arguments:
-  -h, --help            show this help message and exit
-  --reverse-is-revcomp  Reverse primer is written as the reverse complement of
-                        the top strand (default: False)
-  --source-format SOURCE_FORMAT
-                        Alignment format (default: detect from extension
-  --output-format OUTPUT_FORMAT
-                        Alignment format (default: detect from extension
-  --include-primers     Include the primers in the output (default: False)
-  --max-hamming-distance MAX_HAMMING_DISTANCE
-                        Maximum Hamming distance between primer and alignment
-                        site (default: 1). IUPAC ambiguous bases in the primer
-                        matching unambiguous bases in the alignment are not
-                        penalized
-  --prune-action {trim,isolate}
-                        Action to take. Options are trim (trim to the region
-                        defined by the two primers, decreasing the width of
-                        the alignment), or isolate (convert all characters
-                        outside the primer-defined area to gaps). default:
-                        trim</pre>
-</div>
-</div>
-<div class="section" id="quality-filter">
-<h3><a class="toc-backref" href="#id15"><tt class="docutils literal"><span class="pre">quality-filter</span></tt></a><a class="headerlink" href="#quality-filter" title="Permalink to this headline">¶</a></h3>
-<p><tt class="docutils literal"><span class="pre">quality-filter</span></tt> truncates and removes sequences that don&#8217;t match a set of
-quality criteria.  The subcommand takes a FASTA and quality score file, and
-writes the results to an output file:</p>
-<div class="highlight-python"><pre>positional arguments:
-  input_fasta           Input fasta file
-  input_qual            The quality scores associated with fasta_file
-  output_file           Output file. Format determined from extension.
-
-optional arguments:
-  -h, --help            show this help message and exit
-  --min-mean-quality QUALITY
-                        Minimum mean quality score for each read [default: 25]
-  --min-length LENGTH   Minimum length to keep sequence [default: None]
-  --quality-window WINDOW_SIZE
-                        Window size for truncating sequences. When set to a
-                        non-zero value, sequences are truncated where the mean
-                        mean quality within the window drops below --min-mean-
-                        quality. [default: 0]
-  --ambiguous-action {truncate,drop}
-                        Action to take on ambiguous base in sequence (N's).
-                        [default: no action]</pre>
-</div>
+<div class="section" id="list-of-subcommands">
+<h2><a class="toc-backref" href="#id5">List of Subcommands</a><a class="headerlink" href="#list-of-subcommands" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="convert_mogrify.html"><tt class="docutils literal"><span class="pre">convert</span></tt> and <tt class="docutils literal"><span class="pre">mogrify</span></tt></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="convert_mogrify.html#examples">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="backtrans_align.html"><tt class="docutils literal"><span class="pre">backtrans-align</span></tt></a></li>
+<li class="toctree-l1"><a class="reference internal" href="extract_ids.html"><tt class="docutils literal"><span class="pre">extract-ids</span></tt></a></li>
+<li class="toctree-l1"><a class="reference internal" href="info.html"><tt class="docutils literal"><span class="pre">info</span></tt></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="info.html#example">Example</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="quality_filter.html"><tt class="docutils literal"><span class="pre">quality-filter</span></tt></a></li>
+<li class="toctree-l1"><a class="reference internal" href="primer_trim.html"><tt class="docutils literal"><span class="pre">primer-trim</span></tt></a></li>
+</ul>
 </div>
 </div>
 <div class="section" id="supported-file-extensions">
-<h2><a class="toc-backref" href="#id16">Supported File Extensions</a><a class="headerlink" href="#supported-file-extensions" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id6">Supported File Extensions</a><a class="headerlink" href="#supported-file-extensions" title="Permalink to this headline">¶</a></h2>
 <p>By default, <tt class="docutils literal"><span class="pre">seqmagick</span></tt> infers the file type from extension. Currently mapped
 extensions are:</p>
 <table border="1" class="docutils">
 <colgroup>
-<col width="8%" />
-<col width="92%" />
+<col width="39%" />
+<col width="61%" />
 </colgroup>
 <thead valign="bottom">
 <tr class="row-odd"><th class="head">Extension</th>
@@ -523,7 +221,7 @@ extensions are:</p>
 <td>phylip</td>
 </tr>
 <tr class="row-odd"><td>.phyx</td>
-<td>phylip-relaxed (<strong>note:</strong> requires building BioPython from the master branch until v1.58 is released)</td>
+<td>phylip-relaxed</td>
 </tr>
 <tr class="row-even"><td>.qual</td>
 <td>qual</td>
@@ -539,16 +237,24 @@ extensions are:</p>
 </tr>
 </tbody>
 </table>
+<p>When reading from stdin or writing to stdout, <tt class="docutils literal"><span class="pre">seqmagick</span></tt> defaults to fasta
+format.  This behavior may be overridden with the <tt class="docutils literal"><span class="pre">--input-format</span></tt> and
+<tt class="docutils literal"><span class="pre">--output-format</span></tt> flags.</p>
 <p>If an extension is not listed, you can either rename the file to a supported
 extension, or specify it manually via <tt class="docutils literal"><span class="pre">--input-format</span></tt> or <tt class="docutils literal"><span class="pre">--output-format</span></tt>.</p>
+<p>Additionally, most commands support gzip (files ending in <tt class="docutils literal"><span class="pre">.gz</span></tt>) and bzip
+(files ending in <tt class="docutils literal"><span class="pre">.bz2</span></tt> or <tt class="docutils literal"><span class="pre">.bz</span></tt>) compressed inputs and outputs. File types
+for these files are inferred using the extension of the file after stripping
+the file extension indicating that the file is compressed, so
+<tt class="docutils literal"><span class="pre">input.fasta.gz</span></tt> would be inferred to be in FASTA format.</p>
 </div>
 <div class="section" id="acknowledgements">
-<h2><a class="toc-backref" href="#id17">Acknowledgements</a><a class="headerlink" href="#acknowledgements" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id7">Acknowledgements</a><a class="headerlink" href="#acknowledgements" title="Permalink to this headline">¶</a></h2>
 <p>seqmagick is written and maintained by the <a class="reference external" href="http://matsen.fhcrc.org/">Matsen Group</a> at the Fred
 Hutchinson Cancer Research Center.</p>
 </div>
 <div class="section" id="contributing">
-<h2><a class="toc-backref" href="#id18">Contributing</a><a class="headerlink" href="#contributing" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id8">Contributing</a><a class="headerlink" href="#contributing" title="Permalink to this headline">¶</a></h2>
 <p>We welcome contributions! Simply fork the repository <a class="reference external" href="http://github.com/fhcrc/seqmagick/">on GitHub</a> and send a pull request.</p>
 </div>
 </div>
@@ -565,11 +271,14 @@ Hutchinson Cancer Research Center.</p>
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              >index</a></li>
+        <li class="right" >
+          <a href="convert_mogrify.html" title="convert and mogrify"
+             >next</a> |</li>
         <li><a href="#">seqmagick 0.4.0 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2011, The Matsen Group.
+        &copy; Copyright 2011-2012, The Matsen Group.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
   </body>

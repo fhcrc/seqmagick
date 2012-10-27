@@ -1,0 +1,302 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>convert and mogrify &mdash; seqmagick 0.4.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.4.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="seqmagick 0.4.0 documentation" href="index.html" />
+    <link rel="next" title="backtrans-align" href="backtrans_align.html" />
+    <link rel="prev" title="seqmagick" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="backtrans_align.html" title="backtrans-align"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="seqmagick"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">seqmagick 0.4.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/seqmagick_logo_small.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#"><tt class="docutils literal"><span class="pre">convert</span></tt> and <tt class="docutils literal"><span class="pre">mogrify</span></tt></a><ul>
+<li><a class="reference internal" href="#examples">Examples</a><ul>
+<li><a class="reference internal" href="#basic-conversion">Basic Conversion</a></li>
+<li><a class="reference internal" href="#sequence-modification">Sequence Modification</a><ul>
+<li><a class="reference internal" href="#command-line-arguments">Command-line Arguments</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#sequence-file-modification">Sequence File Modification</a></li>
+<li><a class="reference internal" href="#id1">Sequence Modification</a></li>
+<li><a class="reference internal" href="#record-selection">Record Selection</a></li>
+<li><a class="reference internal" href="#sequence-id-modification">Sequence ID Modification</a></li>
+<li><a class="reference internal" href="#format-options">Format Options</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">seqmagick</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="backtrans_align.html"
+                        title="next chapter"><tt class="docutils literal docutils literal"><span class="pre">backtrans-align</span></tt></a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/convert_mogrify.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="convert-and-mogrify">
+<h1><tt class="docutils literal"><span class="pre">convert</span></tt> and <tt class="docutils literal"><span class="pre">mogrify</span></tt><a class="headerlink" href="#convert-and-mogrify" title="Permalink to this headline">¶</a></h1>
+<p>Convert and mogrify achieve similar goals. <tt class="docutils literal"><span class="pre">convert</span></tt> performs some operation
+on a file (from changing format to something more complicated) and writes to a
+new file. <tt class="docutils literal"><span class="pre">mogrify</span></tt> modifies a file in place, and would not normally be used
+to convert formats.</p>
+<p>The two have similar signatures:</p>
+<div class="highlight-python"><pre>seqmagick convert [options] infile outfile</pre>
+</div>
+<p>vs:</p>
+<div class="highlight-python"><pre>seqmagick mogrify [options] infile</pre>
+</div>
+<p>Options are shared between convert and mogrify.</p>
+<div class="section" id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="basic-conversion">
+<h3>Basic Conversion<a class="headerlink" href="#basic-conversion" title="Permalink to this headline">¶</a></h3>
+<p><tt class="docutils literal"><span class="pre">convert</span></tt> can be used to convert between any file types BioPython supports
+(which is many). For a full list of supported types, see the <a class="reference external" href="http://www.biopython.org/wiki/SeqIO#File_Formats">BioPython SeqIO
+wiki page</a>.</p>
+<p>By default, file type is inferred from file extension, so:</p>
+<div class="highlight-python"><pre>seqmagick convert a.fasta a.sto</pre>
+</div>
+<p>converts an existing file <tt class="docutils literal"><span class="pre">a.fasta</span></tt> from FASTA to Stockholm format. <strong>Neat!</strong>
+But there&#8217;s more.</p>
+</div>
+<div class="section" id="sequence-modification">
+<h3>Sequence Modification<a class="headerlink" href="#sequence-modification" title="Permalink to this headline">¶</a></h3>
+<p>A wealth of options await you when you&#8217;re ready to do something slightly more
+complicated with your sequences.</p>
+<p>Let&#8217;s say I just want a few of my sequences:</p>
+<div class="highlight-python"><pre>$ seqmagick convert --head 5 examples/test.fasta examples/test.head.fasta
+$ seqmagick info examples/test*.fasta
+name                      alignment  min_len  max_len  avg_len  num_seqs
+examples/test.fasta       FALSE      972      9719     1573.67  15
+examples/test.head.fasta  FALSE      978      990      984.00   5</pre>
+</div>
+<p>Or I want to remove any gaps, reverse complement, select the last 5 sequences,
+and remove any duplicates from an alignment in place:</p>
+<div class="highlight-python"><pre>seqmagick mogrify --tail 5 --reverse-complement --ungap --deduplicate-sequences examples/test.fasta examples/test.fasta</pre>
+</div>
+<p>You can even define your own functions in python and use them via
+<tt class="docutils literal"><span class="pre">--apply-function</span></tt>.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>To maximize flexibility, most transformations passed as options to
+<tt class="docutils literal"><span class="pre">mogrify</span></tt> and <tt class="docutils literal"><span class="pre">convert</span></tt> are processed <em>in order</em>, so:</p>
+<div class="highlight-python"><pre>seqmagick convert --min-length 50 --cut 1:5 a.fasta b.fasta</pre>
+</div>
+<p>will work fine, but:</p>
+<div class="highlight-python"><pre>seqmagick convert --cut 1:5 --min-length 50 a.fasta b.fasta</pre>
+</div>
+<p class="last">will never return records, since the cutting transformation happens before
+the minimum length predicate is applied.</p>
+</div>
+<div class="section" id="command-line-arguments">
+<h4>Command-line Arguments<a class="headerlink" href="#command-line-arguments" title="Permalink to this headline">¶</a></h4>
+<p>The full set of options to <tt class="docutils literal"><span class="pre">mogrify</span></tt> and <tt class="docutils literal"><span class="pre">convert</span></tt> are:</p>
+</div>
+</div>
+<div class="section" id="sequence-file-modification">
+<h3>Sequence File Modification<a class="headerlink" href="#sequence-file-modification" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python"><pre>--line-wrap N         Adjust line wrap for sequence strings. When N is 0,
+                      all line breaks are removed. Only fasta files are
+                      supported for the output format.
+--sort {length-asc,length-desc,name-asc,name-desc}
+                      Perform sorting by length or name, ascending or
+                      descending. ASCII sorting is performed for names</pre>
+</div>
+</div>
+<div class="section" id="id1">
+<h3>Sequence Modification<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python"><pre>--apply-function /path/to/module.py:function_name
+                      Specify a custom function to apply to the input
+                      sequences, specified as
+                      /path/to/file.py:function_name. Function should accept
+                      an iterable of Bio.SeqRecord objects, and yield
+                      SeqRecords. Specify more than one to chain.
+--cut start:end[,start2:end2]
+                      1-indexed start and end positions for cutting sequences, : separated. Includes last item. Start or end can be left unspecified
+                      to indicate start/end of sequence.
+--relative-to ID      Apply --cut relative to the indexes of non-gap residues in sequence identified by ID
+--dash-gap            Change . and : into - for all sequences
+--mask start:end[,start2:end2...]
+                  Replace residues in 1-indexed slice with gap-
+                  characters. If --relative-to is also specified,
+                  coordinates are relative to the sequence ID provided.
+--lower               Translate the sequences to lower case
+--reverse             Reverse the order of sites in sequences
+--reverse-complement  Convert sequences into reverse complements
+--squeeze             Remove any gaps that are present in the same position
+                      across all sequences in an alignment (equivalent to
+                      --squeeze-threshold=1.0)
+--squeeze-threshold PROP
+                      Trim columns from an alignment which have gaps in
+                      least the specified proportion of sequences.
+--transcribe {dna2rna,rna2dna}
+                      Transcription and back transcription for generic DNA
+                      and RNA. Source sequences must be the correct alphabet
+                      or this action will likely produce incorrect results.
+--translate {dna2protein,rna2protein,dna2proteinstop,rna2proteinstop}
+                      Translate from generic DNA/RNA to proteins. Options
+                      with "stop" suffix will NOT translate through stop
+                      codons .Source sequences must be the correct alphabet
+                      or this action will likely produce incorrect results.
+--ungap               Remove gaps in the sequence alignment
+--upper               Translate the sequences to upper case</pre>
+</div>
+</div>
+<div class="section" id="record-selection">
+<h3>Record Selection<a class="headerlink" href="#record-selection" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python"><pre>--deduplicate-sequences
+                      Remove any duplicate sequences by sequence content,
+                      keep the first instance seen
+--deduplicated-sequences-file FILE
+                      Write all of the deduplicated sequences to a file
+--deduplicate-taxa    Remove any duplicate sequences by ID, keep the first
+                      instance seen
+--exclude-from-file FILE
+                      Filter sequences, removing those sequence IDs in the
+                      specified file
+--include-from-file FILE
+                      Filter sequences, keeping only those sequence IDs in
+                      the specified file
+--head N              Trim down to top N sequences
+--max-length N        Discard any sequences beyond the specified maximum
+                      length. This operation occurs *before* all length-
+                      changing options such as cut and squeeze.
+--min-length N        Discard any sequences less than the specified minimum
+                      length. This operation occurs *before* all length-
+                      changing options such as cut and squeeze.
+--min-ungapped-length N
+                      Discard any sequences less than the specified minimum
+                      length, excluding gaps. This operation occurs *before*
+                      all length-changing options such as cut and squeeze.
+--pattern-include regex
+                      Filter the sequences by regular expression in name
+--pattern-exclude regex
+                      Filter out sequences by regular expression in name
+--prune-empty         Prune sequences containing only gaps ('-')
+--seq-pattern-include regex
+                      Filter the sequences by regular expression in sequence
+--seq-pattern-exclude regex
+                      Filter out sequences by regular expression in sequence
+--tail N              Trim down to bottom N sequences</pre>
+</div>
+</div>
+<div class="section" id="sequence-id-modification">
+<h3>Sequence ID Modification<a class="headerlink" href="#sequence-id-modification" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python"><pre>--first-name          Take only the first whitespace-delimited word as the
+                      name of the sequence
+--name-suffix SUFFIX  Append a suffix to all IDs.
+--name-prefix PREFIX  Insert a prefix for all IDs.
+--pattern-replace search_pattern replace_pattern
+                      Replace regex pattern "search_pattern" with
+                      "replace_pattern" in sequence ID
+--strip-range         Strip ranges from sequences IDs, matching &lt;/x-y&gt;</pre>
+</div>
+</div>
+<div class="section" id="format-options">
+<h3>Format Options<a class="headerlink" href="#format-options" title="Permalink to this headline">¶</a></h3>
+<p>By default, file format is inferred from extension:</p>
+<div class="highlight-python"><pre>--input-format Format
+                      Input file format (default: determine from extension)
+--output-format Format
+                      Output file format (default: determine from extension)</pre>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="backtrans_align.html" title="backtrans-align"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="seqmagick"
+             >previous</a> |</li>
+        <li><a href="index.html">seqmagick 0.4.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011-2012, The Matsen Group.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

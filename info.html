@@ -1,0 +1,161 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>info &mdash; seqmagick 0.4.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.4.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="seqmagick 0.4.0 documentation" href="index.html" />
+    <link rel="next" title="quality-filter" href="quality_filter.html" />
+    <link rel="prev" title="extract-ids" href="extract_ids.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="quality_filter.html" title="quality-filter"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="extract_ids.html" title="extract-ids"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">seqmagick 0.4.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/seqmagick_logo_small.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#"><tt class="docutils literal"><span class="pre">info</span></tt></a><ul>
+<li><a class="reference internal" href="#example">Example</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="extract_ids.html"
+                        title="previous chapter"><tt class="docutils literal docutils literal docutils literal"><span class="pre">extract-ids</span></tt></a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="quality_filter.html"
+                        title="next chapter"><tt class="docutils literal"><span class="pre">quality-filter</span></tt></a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/info.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="info">
+<h1><tt class="docutils literal"><span class="pre">info</span></tt><a class="headerlink" href="#info" title="Permalink to this headline">¶</a></h1>
+<p><tt class="docutils literal"><span class="pre">seqmagick</span> <span class="pre">info</span></tt> describes one or more sequence files</p>
+<div class="section" id="example">
+<h2>Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><pre>seqmagick info examples/*.fasta
+
+name                      alignment  min_len  max_len  avg_len  num_seqs
+examples/aligned.fasta    TRUE       9797     9797     9797.00  15
+examples/dewrapped.fasta  TRUE       240      240      240.00   148
+examples/range.fasta      TRUE       119      119      119.00   2
+examples/test.fasta       FALSE      972      9719     1573.67  15
+examples/wrapped.fasta    FALSE      120      237      178.50   2</pre>
+</div>
+<p>Output can be in comma-separated, tab-separated, or aligned formats. See
+<tt class="docutils literal"><span class="pre">seqmagick</span> <span class="pre">info</span> <span class="pre">-h</span></tt> for details.</p>
+<p>Usage:</p>
+<div class="highlight-text"><div class="highlight"><pre>usage: seqmagick info [-h] [--input-format INPUT_FORMAT]
+                      [--out-file destination_file] [--format {tab,csv,align}]
+                      sequence_files [sequence_files ...]
+
+Info action
+
+positional arguments:
+  sequence_files
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --input-format INPUT_FORMAT
+                        Input format. Overrides extension for all input files
+  --out-file destination_file
+                        Output destination. Default: STDOUT
+  --format {tab,csv,align}
+                        Specify output format as tab-delimited, CSV or aligned
+                        in a borderless table. Default is tab-delimited if the
+                        output is directed to a file, aligned if output to the
+                        console.
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="quality_filter.html" title="quality-filter"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="extract_ids.html" title="extract-ids"
+             >previous</a> |</li>
+        <li><a href="index.html">seqmagick 0.4.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011-2012, The Matsen Group.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>
