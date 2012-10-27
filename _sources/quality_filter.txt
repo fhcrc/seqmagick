@@ -3,7 +3,6 @@
 
 ``quality-filter`` truncates and removes sequences that don't match a set of
 quality criteria.  The subcommand takes a FASTA and quality score file, and
-writes the results to an output file::
+writes the results to an output file:
 
-
-.. prorgram-output:: seqmagick quality-filter -h
+.. program-output:: seqmagick quality-filter -h
