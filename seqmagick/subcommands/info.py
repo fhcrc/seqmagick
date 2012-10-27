@@ -105,11 +105,11 @@ def summarize_sequence_file(source_file, file_type=None):
     min_length = sys.maxint
     max_length = 0
     sequence_count = 0
-    if not file_type:
-        file_type = fileformat.from_filename(source_file)
 
     # Get an iterator and analyze the data.
     with common.FileType('rb')(source_file) as fp:
+        if not file_type:
+            file_type = fileformat.from_handle(fp)
         for record in SeqIO.parse(fp, file_type):
             sequence_count += 1
             sequence_length = len(record)
