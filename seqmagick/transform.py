@@ -9,6 +9,7 @@ import logging
 import re
 import string
 import tempfile
+import random
 
 from Bio import SeqIO
 from Bio.Alphabet import IUPAC
@@ -465,6 +466,8 @@ def seq_exclude(records, filter_regex):
         if not regex.search(str(record.seq)):
             yield record
 
+def sample(records, sample):
+    return random.sample(list(records), sample)
 
 def head(records, head):
     """
