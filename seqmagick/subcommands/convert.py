@@ -111,6 +111,9 @@ def add_options(parser):
 
     seq_select = parser.add_argument_group("Record Selection")
 
+    seq_select.add_argument('--sample', metavar='N', dest='transforms', type=int,
+            action=partial_action(transform.sample, 'sample'),
+            help = """ Select a random sampling of sequences """)
     seq_select.add_argument('--deduplicate-sequences',
         action='store_const', const=None, default=False,
          dest='deduplicate_sequences', help='Remove any duplicate sequences '
