@@ -59,6 +59,9 @@ def build_parser(parser):
     output_group.add_argument('--report-out', type=FileType('w'),
             default=sys.stdout, help="""Output file for report [default:
             stdout]""")
+    output_group.add_argument('--details-out', type=FileType('w'),
+            help="""Output file for details of length, quality, and fate of
+            each read""")
     output_group.add_argument('--failure-out', type=FileType('w'),
             help="""File to write failure report [default: None]""")
 
@@ -176,10 +179,14 @@ class BaseFilter(object):
     report_fields = ['name', 'passed_unchanged', 'passed_changed', 'failed',
             'total_filtered', 'proportion_passed']
 
+    # values to store in self._details for a binary result
+    PASS, FAIL = 'P', 'F'
+
     def __init__(self):
         self.passed_unchanged = 0
         self.passed_changed = 0
         self.failed = 0
+        self.store_details = False
 
     def filter_record(self, record):
         """
@@ -189,10 +196,17 @@ class BaseFilter(object):
         """
         raise NotImplementedError("Override in subclass")
 
-    def filter_records(self, records, failure_queue=None):
+    def filter_records(self, records, failure_queue=None, store_details = False):
         """
         Apply the filter to records
         """
+
+        # subclass can optionally set self._details[record.id] =
+        # <whatever> in self.filter_record() if self.store_details is
+        # True.
+        self.store_details = store_details
+        self._details = collections.OrderedDict() if store_details else None
+
         for record in records:
             filtered = self.filter_record(record)
             if filtered:
@@ -223,9 +237,44 @@ class BaseFilter(object):
             return 0
         return float(self.passed) / self.total_filtered
 
+    @property
+    def details(self):
+        return getattr(self, '_details', {})
+
+    def save_detail(self, record, val):
+        if self.store_details:
+            self._details[record.id] = val
+
     def report_dict(self):
         return dict((f, getattr(self, f)) for f in self.report_fields)
 
+class RecordLengthFilter(BaseFilter):
+    """
+    Store the original length of the record in self._details and
+    return the record unchanged.
+    """
+
+    def __init__(self, name = "length"):
+        super(RecordLengthFilter, self).__init__()
+        self.name = name
+
+    def filter_record(self, record):
+        self.save_detail(record, len(record))
+        return record
+
+class RecordMeanQSFilter(BaseFilter):
+    """
+    Store the original mean quality score of the record in
+    self._details["mean_qual_score"] and return the record unchanged.
+    """
+
+    def __init__(self, name = "mean_qual_score"):
+        super(RecordMeanQSFilter, self).__init__()
+        self.name = name
+
+    def filter_record(self, record):
+        self.save_detail(record, mean(record.letter_annotations['phred_quality']))
+        return record
 
 class QualityScoreFilter(BaseFilter):
     """
@@ -244,9 +293,12 @@ class QualityScoreFilter(BaseFilter):
 
         Returns None if the record failed.
         """
+
         quality_scores = record.letter_annotations['phred_quality']
 
         mean_score = mean(quality_scores)
+        self.save_detail(record, self.PASS if mean_score >= self.min_mean_score else self.FAIL)
+
         return record if mean_score >= self.min_mean_score else Failure(mean_score)
 
 class WindowQualityScoreFilter(BaseFilter):
@@ -289,6 +341,7 @@ class WindowQualityScoreFilter(BaseFilter):
                 break
 
         if clip_right:
+            self.save_detail(record, len(record[:clip_right]))
             return record[:clip_right]
 
 class AmbiguousBaseFilter(BaseFilter):
@@ -335,6 +388,8 @@ class MaxAmbiguousFilter(BaseFilter):
 
     def filter_record(self, record):
         n_count = record.seq.upper().count('N')
+        self.save_detail(record, self.PASS if n_count <= self.max_ambiguous else self.FAIL)
+
         if n_count > self.max_ambiguous:
             return Failure(n_count)
         else:
@@ -356,6 +411,8 @@ class MinLengthFilter(BaseFilter):
         Filter record, dropping any that don't meet minimum length
         """
         l = len(record)
+        self.save_detail(record, self.PASS if l >= self.min_length else self.FAIL)
+
         if l >= self.min_length:
             return record
         else:
@@ -375,6 +432,9 @@ class MaxLengthFilter(BaseFilter):
         """
         Filter record, truncating any over some maximum length
         """
+
+        self.save_detail(record, len(record[:self.max_length]))
+
         if len(record) >= self.max_length:
             return record[:self.max_length]
         else:
@@ -413,6 +473,8 @@ class PrimerBarcodeFilter(BaseFilter):
 
     def filter_record(self, record):
         m = self.pattern.match(str(record.seq))
+        self.save_detail(record, self.barcodes[m.group(1)] if m else None)
+
         if m:
             self._report_match(record, self.barcodes[m.group(1)])
             if self.trim:
@@ -501,8 +563,8 @@ def action(arguments):
         if arguments.quality_window:
             min_qual = arguments.quality_window_mean_qual or \
                     arguments.min_mean_quality
-            window_filter = WindowQualityScoreFilter(arguments.quality_window,
-                    min_qual)
+            window_filter = WindowQualityScoreFilter(
+                arguments.quality_window, min_qual)
             filters.insert(0, window_filter)
 
         if arguments.barcode_file:
@@ -514,11 +576,27 @@ def action(arguments):
                     quoting=getattr(csv, arguments.quoting))
             filters.append(f)
 
+        # filter order is significant, so this should be the last
+        # statement that modifies the filter list.
+        if arguments.details_out:
+            filters.insert(0, RecordMeanQSFilter('orig_mean_qual_score'))
+            filters.insert(0, RecordLengthFilter('orig_length'))
+            filters.append(RecordLengthFilter('final_length'))
+
         for f in filters:
-            sequences = f.filter_records(sequences, queue)
+            sequences = f.filter_records(
+                sequences, queue, store_details = bool(arguments.details_out))
 
         with arguments.output_file:
             SeqIO.write(sequences, arguments.output_file, output_type)
+
+        if arguments.details_out:
+            details_writer = csv.writer(arguments.details_out)
+            has_details = [f for f in filters if f.details]
+            details_writer.writerow(['seqname'] + [f.name for f in has_details])
+            for record_id in filters[0].details.keys():
+                details_writer.writerow(
+                    [record_id] + [f.details.get(record_id) for f in has_details])
 
     rpt_rows = (f.report_dict() for f in filters)
 
