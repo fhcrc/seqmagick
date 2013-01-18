@@ -547,12 +547,12 @@ def action(arguments):
             sequences = SeqIO.parse(fp, 'fastq')
 
         # Add filters
-        if arguments.max_length:
-            max_length_filter = MaxLengthFilter(arguments.max_length)
-            filters.append(max_length_filter)
         if arguments.min_length:
             min_length_filter = MinLengthFilter(arguments.min_length)
             filters.append(min_length_filter)
+        if arguments.max_length:
+            max_length_filter = MaxLengthFilter(arguments.max_length)
+            filters.append(max_length_filter)
         if arguments.max_ambiguous is not None:
             max_ambig_filter = MaxAmbiguousFilter(arguments.max_ambiguous)
             filters.append(max_ambig_filter)
