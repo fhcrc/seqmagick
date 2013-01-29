@@ -5,10 +5,9 @@ Filter reads based on quality scores
 import collections
 import csv
 import itertools
+import logging
 import re
 import sys
-from Queue import Queue, Empty
-import threading
 
 from Bio import SeqIO
 from Bio.SeqIO import QualityIO
@@ -59,8 +58,8 @@ def build_parser(parser):
     output_group.add_argument('--report-out', type=FileType('w'),
             default=sys.stdout, help="""Output file for report [default:
             stdout]""")
-    output_group.add_argument('--failure-out', type=FileType('w'),
-            help="""File to write failure report [default: None]""")
+    output_group.add_argument('--details-out', type=FileType('w'),
+             help="""Output file to report fate of each sequence""")
 
     parser.add_argument('--min-mean-quality', metavar='QUALITY', type=float,
             default=DEFAULT_MEAN_SCORE, help="""Minimum mean quality score for
@@ -132,20 +131,6 @@ def moving_average(iterable, n):
         d.append(elem)
         yield s / float(n)
 
-class FailureReportWriter(object):
-    """
-    Writes a log of sequences that failed filtering, and the filter that
-    removed them.
-    """
-    def __init__(self, fp):
-        self.writer = csv.DictWriter(fp, ('failed_sequence', 'reason', 'value'),
-                delimiter='\t', lineterminator='\n')
-        self.writer.writeheader()
-
-    def __call__(self, record):
-        self.writer.writerow(record)
-
-
 class Failure(object):
     """
     Simple object to hold a value corresponding to a failure.  Evaluates to
@@ -157,6 +142,91 @@ class Failure(object):
     def __nonzero__(self):
         return False
 
+class RecordEventListener(object):
+    """
+    Contains and dispatches to handlers on events around sequence records
+
+    Event handlers take a single positional argument, the record, and optional
+    additional keyword arguments.
+    """
+    def __init__(self):
+        self.listeners = collections.defaultdict(set)
+
+    def __call__(self, event, record, **kwargs):
+        """
+        Trigger an event
+
+        :param event: Event name
+        :param record: Record affected
+        :param **kwargs: Optional additional arguments to pass to handlers
+        """
+        if event in self.listeners:
+            for listener in self.listeners[event]:
+                listener(record, **kwargs)
+
+    def register_handler(self, event, handler):
+        """
+        Register ``handler`` for ``event``
+        """
+        self.listeners[event].add(handler)
+
+    def iterable_hook(self, name, iterable):
+        """
+        Fire an event named ``name`` with each item in iterable
+        """
+        for record in iterable:
+            self(name, record)
+            yield record
+
+class RecordReportHandler(object):
+    """
+    Generates a CSV report for every record processed.
+
+    Listens for events: [read, write, failed_filter, found_barcode]
+    """
+    HEADERS = ('sequence_name', 'in_length', 'in_mean_qual', 'sample',
+               'out_length', 'out_mean_qual', 'fail_filter', 'fail_value')
+    def __init__(self, fp):
+        self.writer = csv.DictWriter(fp, self.HEADERS, lineterminator='\n',
+                quoting=csv.QUOTE_NONNUMERIC)
+        self.writer.writeheader()
+        self.current_record = None
+
+    def register_with(self, listener):
+        listener.register_handler('failed_filter', self._record_failed)
+        listener.register_handler('read', self._read_record)
+        listener.register_handler('write', self._wrote_record)
+        listener.register_handler('found_barcode', self._found_barcode)
+
+    def _write(self):
+        assert self.current_record
+        self.writer.writerow(self.current_record)
+        self.current_record = None
+
+    def _record_failed(self, record, filter_name, value=None):
+        self.current_record.update({'fail_filter': filter_name,
+                                    'fail_value': value})
+        self._write()
+
+    def _read_record(self, record):
+        self.current_record = {'sequence_name': record.id,
+                               'in_length': len(record)}
+        if 'phred_quality' in record.letter_annotations:
+            self.current_record['in_mean_qual'] = \
+                    mean(record.letter_annotations['phred_quality'])
+
+    def _found_barcode(self, record, sample, barcode=None):
+        """Hook called when barcode is found"""
+        assert record.id == self.current_record['sequence_name']
+        self.current_record['sample'] = sample
+
+    def _wrote_record(self, record):
+        self.current_record['out_length'] = len(record)
+        if 'phred_quality' in record.letter_annotations:
+            self.current_record['out_mean_qual'] = \
+                    mean(record.letter_annotations['phred_quality'])
+        self._write()
+
 class BaseFilter(object):
     """
     Base class for filters
@@ -164,10 +234,11 @@ class BaseFilter(object):
     report_fields = ['name', 'passed_unchanged', 'passed_changed', 'failed',
             'total_filtered', 'proportion_passed']
 
-    def __init__(self):
+    def __init__(self, listener=None):
         self.passed_unchanged = 0
         self.passed_changed = 0
         self.failed = 0
+        self.listener = listener
 
     def filter_record(self, record):
         """
@@ -177,7 +248,7 @@ class BaseFilter(object):
         """
         raise NotImplementedError("Override in subclass")
 
-    def filter_records(self, records, failure_handler=None):
+    def filter_records(self, records):
         """
         Apply the filter to records
         """
@@ -192,10 +263,9 @@ class BaseFilter(object):
                 yield filtered
             else:
                 self.failed += 1
-                if failure_handler:
-                    value = filtered.value if filtered is not None else None
-                    failure_handler({'failed_sequence': record.id,
-                        'reason': self.name, 'value': value})
+                v = filtered.value if filtered is not None else None
+                if self.listener:
+                    self.listener('failed_filter', record, filter_name=self.name, value=v)
 
     @property
     def passed(self):
@@ -213,7 +283,6 @@ class BaseFilter(object):
 
     def report_dict(self):
         return dict((f, getattr(self, f)) for f in self.report_fields)
-
 
 class QualityScoreFilter(BaseFilter):
     """
@@ -385,24 +454,16 @@ class PrimerBarcodeFilter(BaseFilter):
         self.primer = primer
         self.barcodes = barcodes
         self.trim = True
-        if output_file:
-            self.writer = csv.writer(output_file, lineterminator='\n', quoting = quoting)
-        else:
-            self.writer = None
 
         self.pattern = re.compile('^({0}){1}'.format('|'.join(barcodes),
                                                     _ambiguous_pattern(primer)),
                                   re.IGNORECASE)
 
-    def _report_match(self, record, sample):
-        if not self.writer:
-            return
-        self.writer.writerow((record.id, sample))
-
     def filter_record(self, record):
         m = self.pattern.match(str(record.seq))
         if m:
-            self._report_match(record, self.barcodes[m.group(1)])
+            if self.listener:
+                self.listener('found_barcode', record, barcode=m.group(1), sample=self.barcodes[m.group(1)])
             if self.trim:
                 record = record[m.end():]
             return record
@@ -453,9 +514,6 @@ def action(arguments):
         raise ValueError("--quality-window-mean-qual specified without "
                 "--quality-window")
 
-    failure_writer = None
-    if arguments.failure_out:
-        failure_writer = FailureReportWriter(arguments.failure_out)
 
     # Always filter with a quality score
     qfilter = QualityScoreFilter(arguments.min_mean_quality)
@@ -468,6 +526,14 @@ def action(arguments):
                     arguments.input_qual)
         else:
             sequences = SeqIO.parse(fp, 'fastq')
+
+        listener = RecordEventListener()
+        if arguments.details_out:
+            rh = RecordReportHandler(arguments.details_out)
+            rh.register_with(listener)
+
+        # Track read sequences
+        sequences = listener.iterable_hook('read', sequences)
 
         # Add filters
         if arguments.max_length:
@@ -494,13 +560,22 @@ def action(arguments):
             with arguments.barcode_file:
                 barcodes = parse_barcode_file(arguments.barcode_file,
                         arguments.barcode_header)
-            f = PrimerBarcodeFilter(arguments.primer or '', barcodes,
-                    arguments.map_out,
-                    quoting=getattr(csv, arguments.quoting))
+            f = PrimerBarcodeFilter(arguments.primer or '', barcodes)
             filters.append(f)
 
+            if arguments.map_out:
+                barcode_writer = csv.writer(arguments.map_out,
+                        quoting=getattr(csv, arguments.quoting),
+                        lineterminator='\n')
+                def barcode_handler(record, sample, barcode=None):
+                    barcode_writer.writerow((record.id, sample))
+                listener.register_handler('found_barcode', barcode_handler)
         for f in filters:
-            sequences = f.filter_records(sequences, failure_writer)
+            f.listener = listener
+            sequences = f.filter_records(sequences)
+
+        # Track sequences which passed all filters
+        sequences = listener.iterable_hook('write', sequences)
 
         with arguments.output_file:
             SeqIO.write(sequences, arguments.output_file, output_type)

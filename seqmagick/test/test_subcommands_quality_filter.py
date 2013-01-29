@@ -170,12 +170,6 @@ class PrimerBarcodeFilterTestCase(unittest.TestCase):
         self.assertEqual(2, len(actual))
         self.assertEqual(['CGAT', 'CGCT'], [str(s.seq) for s in actual])
 
-    def test_output_file(self):
-        list(self.instance.filter_records(self.sequences))
-        self.assertEqual("""seq1,Sample1
-seq2,Sample2
-""", self.outfile.getvalue())
-
 class FailureTestCase(object):
     def test_nonzero(self):
         f = quality_filter.Failure()
