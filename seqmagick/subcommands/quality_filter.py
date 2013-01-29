@@ -132,30 +132,18 @@ def moving_average(iterable, n):
         d.append(elem)
         yield s / float(n)
 
-class FailureReportWriter(threading.Thread):
+class FailureReportWriter(object):
     """
     Writes a log of sequences that failed filtering, and the filter that
     removed them.
     """
-    def __init__(self, queue, fp):
-        super(FailureReportWriter, self).__init__()
-        self.queue = queue
+    def __init__(self, fp):
         self.writer = csv.DictWriter(fp, ('failed_sequence', 'reason', 'value'),
                 delimiter='\t', lineterminator='\n')
         self.writer.writeheader()
 
-    def run(self):
-        while True:
-            try:
-                record = self.queue.get(timeout=1)
-            except Empty:
-                continue
-
-            if record is None:
-                self.queue.task_done()
-                return
-            self.writer.writerow(record)
-            self.queue.task_done()
+    def __call__(self, record):
+        self.writer.writerow(record)
 
 
 class Failure(object):
@@ -189,7 +177,7 @@ class BaseFilter(object):
         """
         raise NotImplementedError("Override in subclass")
 
-    def filter_records(self, records, failure_queue=None):
+    def filter_records(self, records, failure_handler=None):
         """
         Apply the filter to records
         """
@@ -204,9 +192,9 @@ class BaseFilter(object):
                 yield filtered
             else:
                 self.failed += 1
-                if failure_queue:
+                if failure_handler:
                     value = filtered.value if filtered is not None else None
-                    failure_queue.put({'failed_sequence': record.id,
+                    failure_handler({'failed_sequence': record.id,
                         'reason': self.name, 'value': value})
 
     @property
@@ -465,12 +453,9 @@ def action(arguments):
         raise ValueError("--quality-window-mean-qual specified without "
                 "--quality-window")
 
-    queue = None
+    failure_writer = None
     if arguments.failure_out:
-        queue = Queue()
-        t = FailureReportWriter(queue, arguments.failure_out)
-        t.setDaemon(True)
-        t.start()
+        failure_writer = FailureReportWriter(arguments.failure_out)
 
     # Always filter with a quality score
     qfilter = QualityScoreFilter(arguments.min_mean_quality)
@@ -515,7 +500,7 @@ def action(arguments):
             filters.append(f)
 
         for f in filters:
-            sequences = f.filter_records(sequences, queue)
+            sequences = f.filter_records(sequences, failure_writer)
 
         with arguments.output_file:
             SeqIO.write(sequences, arguments.output_file, output_type)
@@ -528,6 +513,3 @@ def action(arguments):
                 lineterminator='\n', delimiter='\t')
         writer.writeheader()
         writer.writerows(rpt_rows)
-
-    if queue:
-        queue.join()
