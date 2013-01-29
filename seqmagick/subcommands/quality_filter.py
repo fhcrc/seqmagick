@@ -563,7 +563,7 @@ def action(arguments):
         if arguments.quality_window:
             window_filter = WindowQualityScoreFilter(
                 arguments.quality_window,
-                mean_min_score = arguments.quality_window_mean_qual or \
+                min_mean_score = arguments.quality_window_mean_qual or \
                     arguments.min_mean_quality)
             filters.append(window_filter)
 
