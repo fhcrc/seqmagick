@@ -561,20 +561,21 @@ def action(arguments):
                     arguments.ambiguous_action)
             filters.append(ambiguous_filter)
         if arguments.quality_window:
-            min_qual = arguments.quality_window_mean_qual or \
-                    arguments.min_mean_quality
             window_filter = WindowQualityScoreFilter(
-                arguments.quality_window, min_qual)
-            filters.insert(0, window_filter)
+                arguments.quality_window,
+                mean_min_score = arguments.quality_window_mean_qual or \
+                    arguments.min_mean_quality)
+            filters.append(window_filter)
 
         if arguments.barcode_file:
             with arguments.barcode_file:
-                barcodes = parse_barcode_file(arguments.barcode_file,
-                        arguments.barcode_header)
-            f = PrimerBarcodeFilter(arguments.primer or '', barcodes,
-                    arguments.map_out,
-                    quoting=getattr(csv, arguments.quoting))
-            filters.append(f)
+                barcodes = parse_barcode_file(
+                    arguments.barcode_file, arguments.barcode_header)
+            f = PrimerBarcodeFilter(
+                arguments.primer or '', barcodes,
+                arguments.map_out,
+                quoting=getattr(csv, arguments.quoting))
+            filters.insert(0, f)
 
         # filter order is significant, so this should be the last
         # statement that modifies the filter list.
