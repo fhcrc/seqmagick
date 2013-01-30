@@ -131,16 +131,12 @@ def moving_average(iterable, n):
         d.append(elem)
         yield s / float(n)
 
-class Failure(object):
+class FailedFilter(Exception):
     """
-    Simple object to hold a value corresponding to a failure.  Evaluates to
-    false in boolean tests.
+    A read failed filtering
     """
     def __init__(self, value=None):
         self.value = value
-
-    def __nonzero__(self):
-        return False
 
 class RecordEventListener(object):
     """
@@ -180,7 +176,7 @@ class RecordEventListener(object):
 
 class RecordReportHandler(object):
     """
-    Generates a CSV report for every record processed.
+    Generates a report to a CSV file detailing every record processed.
 
     Listens for events: [read, write, failed_filter, found_barcode]
     """
@@ -231,8 +227,8 @@ class BaseFilter(object):
     """
     Base class for filters
     """
-    report_fields = ['name', 'passed_unchanged', 'passed_changed', 'failed',
-            'total_filtered', 'proportion_passed']
+    report_fields = ('name', 'passed_unchanged', 'passed_changed', 'failed',
+                     'total_filtered', 'proportion_passed')
 
     def __init__(self, listener=None):
         self.passed_unchanged = 0
@@ -243,8 +239,7 @@ class BaseFilter(object):
     def filter_record(self, record):
         """
         Filter a record. If the filter succeeds, returns a SeqRecord. If it
-        fails, returns either None or an instance of Failure containing the
-        value with failed.
+        fails, raises an instance of FailedFilter with an optional value.
         """
         raise NotImplementedError("Override in subclass")
 
@@ -253,17 +248,18 @@ class BaseFilter(object):
         Apply the filter to records
         """
         for record in records:
-            filtered = self.filter_record(record)
-            if filtered:
+            try:
+                filtered = self.filter_record(record)
+                assert(filtered)
                 # Quick tracking whether the sequence was modified
                 if filtered == record:
                     self.passed_unchanged += 1
                 else:
                     self.passed_changed += 1
                 yield filtered
-            else:
+            except FailedFilter as e:
                 self.failed += 1
-                v = filtered.value if filtered is not None else None
+                v = e.value
                 if self.listener:
                     self.listener('failed_filter', record, filter_name=self.name, value=v)
 
@@ -298,13 +294,14 @@ class QualityScoreFilter(BaseFilter):
     def filter_record(self, record):
         """
         Filter a single record
-
-        Returns None if the record failed.
         """
         quality_scores = record.letter_annotations['phred_quality']
 
         mean_score = mean(quality_scores)
-        return record if mean_score >= self.min_mean_score else Failure(mean_score)
+        if mean_score >= self.min_mean_score:
+            return record
+        else:
+            raise FailedFilter(mean_score)
 
 class WindowQualityScoreFilter(BaseFilter):
     """
@@ -323,15 +320,16 @@ class WindowQualityScoreFilter(BaseFilter):
     def filter_record(self, record):
         """
         Filter a single record
-
-        Returns None if the record failed.
         """
         quality_scores = record.letter_annotations['phred_quality']
 
         # Simple case - window covers whole sequence
         if len(record) <= self.window_size:
             mean_score = mean(quality_scores)
-            return record if mean_score >= self.min_mean_score else Failure(mean_score)
+            if mean_score >= self.min_mean_score:
+                return record
+            else:
+                raise FailedFilter(mean_score)
 
         # Find the right clipping point. Start clipping at the beginning of the
         # sequence, then extend the window to include regions with acceptable
@@ -374,7 +372,7 @@ class AmbiguousBaseFilter(BaseFilter):
         elif self.action == 'truncate':
             return record[:nloc]
         elif self.action == 'drop':
-            return None
+            raise FailedFilter()
         else:
             assert False
 
@@ -393,7 +391,7 @@ class MaxAmbiguousFilter(BaseFilter):
     def filter_record(self, record):
         n_count = record.seq.upper().count('N')
         if n_count > self.max_ambiguous:
-            return Failure(n_count)
+            raise FailedFilter(n_count)
         else:
             assert n_count <= self.max_ambiguous
             return record
@@ -416,7 +414,7 @@ class MinLengthFilter(BaseFilter):
         if l >= self.min_length:
             return record
         else:
-            return Failure(l)
+            raise FailedFilter(l)
 
 class MaxLengthFilter(BaseFilter):
     """
@@ -467,6 +465,8 @@ class PrimerBarcodeFilter(BaseFilter):
             if self.trim:
                 record = record[m.end():]
             return record
+        else:
+            raise FailedFilter()
 
 def parse_barcode_file(fp, header=False):
     """
