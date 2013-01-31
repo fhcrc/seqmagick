@@ -352,6 +352,9 @@ class WindowQualityScoreFilter(BaseFilter):
 
         if clip_right:
             return record[:clip_right]
+        else:
+            # First window failed - record fails
+            raise FailedFilter()
 
 class AmbiguousBaseFilter(BaseFilter):
     """
