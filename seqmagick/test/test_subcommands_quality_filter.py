@@ -36,8 +36,7 @@ class WindowQualityFilterTestCase(unittest.TestCase):
 
     def test_window_truncate_noseq(self):
         self.sequence.letter_annotations['phred_quality'] = [25, 24, 25, 25]
-        result = self.instance.filter_record(self.sequence)
-        self.assertIsNone(result)
+        self.assertRaises(quality_filter.FailedFilter, self.instance.filter_record, self.sequence)
 
     def test_window_truncate_mid(self):
         self.sequence.letter_annotations['phred_quality'] = [25, 25, 23, 25]
