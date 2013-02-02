@@ -7,11 +7,10 @@ import csv
 import itertools
 import logging
 import os
-import re
 import sys
 import time
 
-from Bio import SeqIO
+from Bio import SeqIO, trie, triefind
 from Bio.SeqIO import QualityIO
 
 from seqmagick import fileformat, __version__
@@ -23,25 +22,28 @@ DEFAULT_MEAN_SCORE = 25.0
 # Tools for working with ambiguous bases
 # Map from Ambiguous Base to regex
 _AMBIGUOUS_MAP = {
-       'R': '[GA]',
-       'Y': '[TC]',
-       'K': '[GT]',
-       'M': '[AC]',
-       'S': '[GC]',
-       'W': '[AT]',
-       'B': '[GTC]',
-       'D': '[GAT]',
-       'H': '[ACT]',
-       'V': '[GCA]',
-       'N': '[AGCT]',
+       'R': 'GA',
+       'Y': 'TC',
+       'K': 'GT',
+       'M': 'AC',
+       'S': 'GC',
+       'W': 'AT',
+       'B': 'GTC',
+       'D': 'GAT',
+       'H': 'ACT',
+       'V': 'GCA',
+       'N': 'AGCT',
 }
 
-def _ambiguous_pattern(sequence_str):
+def all_unambiguous(sequence_str):
     """
-    Convert an IUPAC ambiguous string to a regular expression pattern string
+    All unambiguous versions of sequence_str
     """
-    return ''.join(_AMBIGUOUS_MAP.get(c, c) for c in sequence_str)
-
+    result = [[]]
+    for c in sequence_str:
+        result = [i + [a] for i in result
+                  for a in _AMBIGUOUS_MAP.get(c, c)]
+    return [''.join(i) for i in result]
 
 def build_parser(parser):
     """
@@ -99,10 +101,16 @@ def build_parser(parser):
             will be removed.""", type=int)
 
     barcode_group = parser.add_argument_group('Barcode/Primer')
-    barcode_group.add_argument('--primer', help="""IUPAC ambiguous primer to
+    primer_group = barcode_group.add_mutually_exclusive_group()
+    primer_group.add_argument('--primer', help="""IUPAC ambiguous primer to
             require""")
-    barcode_group.add_argument('--barcode-file', help="""CSV file
-            containing sample_id,barcode rows""", type=FileType('r'))
+    primer_group.add_argument('--no-primer', help="""Do not use a primer.""",
+            action='store_const', const='', dest='primer')
+    barcode_group.add_argument('--barcode-file', help="""CSV file containing
+            sample_id,barcode[,primer] in the rows. A single primer for all
+            sequences may be specified with `--primer`, or `--no-primer` may be
+            used to indicate barcodes should be used without a primer
+            check.""", type=FileType('r'))
     barcode_group.add_argument('--barcode-header', action='store_true',
             default=False, help="""Barcodes have a header row [default:
             %(default)s]""")
@@ -485,36 +493,31 @@ class PrimerBarcodeFilter(BaseFilter):
     """
     name = "Primer/Barcode"
 
-    def __init__(self, primer, barcodes, output_file=None, trim=True, quoting=csv.QUOTE_MINIMAL):
+    def __init__(self, trie, output_file=None, trim=True, quoting=csv.QUOTE_MINIMAL):
         super(PrimerBarcodeFilter, self).__init__()
-        self.primer = primer
-        self.barcodes = barcodes
         self.trim = True
-
-        self.pattern = re.compile('^({0}){1}'.format('|'.join(barcodes),
-                                                    _ambiguous_pattern(primer)),
-                                  re.IGNORECASE)
+        self.trie = trie
 
     def filter_record(self, record):
-        m = self.pattern.match(str(record.seq))
+        m = triefind.match(str(record.seq), self.trie)
         if m:
             if self.listener:
-                self.listener('found_barcode', record, barcode=m.group(1), sample=self.barcodes[m.group(1)])
+                self.listener('found_barcode', record, barcode=m, sample=self.trie[m])
             if self.trim:
-                record = record[m.end():]
+                record = record[len(m):]
             return record
         else:
             raise FailedFilter()
 
-def parse_barcode_file(fp, header=False):
+def parse_barcode_file(fp, primer=None, header=False):
     """
-    Load label, barcode pairs from a CSV file.
+    Load label, barcode, primer records from a CSV file.
 
     Returns a map from barcode -> label
 
     Any additional columns are ignored
     """
-    d = {}
+    tr = trie.trie()
     reader = csv.reader(fp)
 
     if header:
@@ -525,24 +528,19 @@ def parse_barcode_file(fp, header=False):
     records = (record for record in reader if record)
 
     for record in records:
-        value, key = record[:2]
-        if key in d:
-            raise ValueError("Duplicate barcode: {0}".format(key))
-        if value in d.values():
-            raise ValueError("Duplicate sample label: {0}".format(value))
-        d[key] = value
+        specimen, barcode = record[:2]
+        if primer is not None:
+            pr = primer
+        else:
+            pr = record[2]
+        for sequence in all_unambiguous(barcode + pr):
+            if tr.has_key(sequence):
+                raise ValueError("Duplicate sample: {0}, {1} both have {2}",
+                        specimen, tr[sequence], sequence)
+            logging.info('%s->%s', sequence, specimen)
+            tr[sequence] = specimen
 
-    # Require that all barcodes are the same length
-    if min(len(k) for k in d) != max(len(k) for k in d):
-        keys = d.keys()
-        keys.sort(key=len)
-        minlen_key = keys[0]
-        maxlen_key = keys[-1]
-
-        raise ValueError(("Length of barcode '{0}' does not match "
-            "length of barcode '{1}'").format(minlen_key, maxlen_key))
-
-    return d
+    return tr
 
 def action(arguments):
     """
@@ -597,9 +595,9 @@ def action(arguments):
 
         if arguments.barcode_file:
             with arguments.barcode_file:
-                barcodes = parse_barcode_file(arguments.barcode_file,
-                        arguments.barcode_header)
-            f = PrimerBarcodeFilter(arguments.primer or '', barcodes)
+                tr = parse_barcode_file(arguments.barcode_file,
+                        arguments.primer, arguments.barcode_header)
+            f = PrimerBarcodeFilter(tr)
             filters.append(f)
 
             if arguments.map_out:

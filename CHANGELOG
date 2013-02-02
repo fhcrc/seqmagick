@@ -8,6 +8,8 @@ other commands (GH-29)
   clipping locations embedded in each sequence record.
 * Add `--details-out` option to `seqmagick quality-filter`, which writes
   details on each read processed.
+* Match barcode/primer `seqmagick quality-filter` against a trie; allows
+  per-specimen barcodes.
 * Remove `--failure-out` option from `seqmagick quality-filter`. See `--details-out`
 
 0.4.0
