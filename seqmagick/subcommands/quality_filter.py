@@ -9,6 +9,7 @@ import logging
 import os
 import re
 import sys
+import time
 
 from Bio import SeqIO
 from Bio.SeqIO import QualityIO
@@ -197,6 +198,11 @@ class RecordReportHandler(object):
         self.writer.writeheader()
         self.current_record = None
 
+        self.read = 0
+        self.failed = 0
+        self.start = time.time()
+        self.last_report = 0.0
+
     def register_with(self, listener):
         listener.register_handler('failed_filter', self._record_failed)
         listener.register_handler('read', self._read_record)
@@ -211,7 +217,10 @@ class RecordReportHandler(object):
     def _record_failed(self, record, filter_name, value=None):
         self.current_record.update({'fail_filter': filter_name,
                                     'fail_value': value})
+
         self._write()
+        self.failed += 1
+        self._report()
 
     def _read_record(self, record):
         self.current_record = {'sequence_name': record.id,
@@ -219,6 +228,7 @@ class RecordReportHandler(object):
         if 'phred_quality' in record.letter_annotations:
             self.current_record['in_mean_qual'] = \
                     mean(record.letter_annotations['phred_quality'])
+        self.read += 1
 
     def _found_barcode(self, record, sample, barcode=None):
         """Hook called when barcode is found"""
@@ -231,6 +241,22 @@ class RecordReportHandler(object):
             self.current_record['out_mean_qual'] = \
                     mean(record.letter_annotations['phred_quality'])
         self._write()
+        self._report()
+
+    def _report(self):
+        if not sys.stdout.isatty():
+            return
+        t = time.time()
+        if t - self.last_report < 0.4 or not self.read:
+            return
+
+        self.last_report = t
+        sys.stderr.write('{0:10.1f}s Processed {1:10d} records; {2:10d} passed ({3:6.2f}%)\r'.format(
+            t - self.start,
+            self.read,
+            self.read - self.failed,
+            float(self.read - self.failed) / self.read * 100.0))
+
 
 class BaseFilter(object):
     """
