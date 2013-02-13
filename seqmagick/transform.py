@@ -3,6 +3,7 @@ Functions to transform / filter sequences
 """
 import collections
 import contextlib
+import copy
 import cPickle as pickle
 import itertools
 import logging
@@ -631,6 +632,7 @@ def translate(records, translate):
              'rna': CodonTable.ambiguous_rna_by_name["Standard"]}[source_type]
 
     # Handle ambiguities by replacing ambiguous codons with 'X'
+    table = copy.deepcopy(table)
     table.forward_table = CodonWarningTable(table.forward_table)
 
     for record in records:
