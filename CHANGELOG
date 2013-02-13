@@ -1,5 +1,5 @@
-In development
-==============
+0.5.0
+=====
 
 * Change `seqmagick extract-ids --source-format` to `--input-format` to match
 other commands (GH-29)
@@ -13,6 +13,7 @@ other commands (GH-29)
 * Remove `--failure-out` option from `seqmagick quality-filter`. See `--details-out`
 * Raise an error if number of codons does not match number of amino acids in
   `seqmagick backtrans-align`
+* Add `--sample` subcommand (GH-31)
 
 0.4.0
 =====
