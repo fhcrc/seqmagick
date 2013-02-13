@@ -10,7 +10,12 @@ import os
 import sys
 import time
 
-from Bio import SeqIO, trie, triefind
+from Bio import SeqIO
+try:
+    from Bio import trie, triefind
+except ImportError:
+    trie = None
+    triefind = None
 from Bio.SeqIO import QualityIO
 
 from seqmagick import fileformat, __version__
@@ -550,6 +555,8 @@ def action(arguments):
         raise ValueError("--quality-window-mean-qual specified without "
                 "--quality-window")
 
+    if trie is None or triefind is None:
+        raise ValueError('Missing Bio.trie and/or Bio.triefind modules. Cannot continue')
 
     # Always filter with a quality score
     qfilter = QualityScoreFilter(arguments.min_mean_quality)

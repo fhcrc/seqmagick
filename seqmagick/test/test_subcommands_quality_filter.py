@@ -1,4 +1,5 @@
 from cStringIO import StringIO
+import sys
 import unittest
 
 from Bio.Seq import Seq
@@ -7,6 +8,8 @@ from Bio.SeqRecord import SeqRecord
 from seqmagick.subcommands import quality_filter
 
 from Bio import triefind
+
+IS_PYPY = hasattr(sys, 'pypy_version_info')
 
 class QualityFilterTestCase(unittest.TestCase):
 
@@ -152,6 +155,7 @@ class MaxLengthFilterTestCase(unittest.TestCase):
         self.assertEqual(['ACG', 'ACT'], [str(s.seq) for s in actual])
         self.assertEqual([i.id for i in self.sequences], [i.id for i in actual])
 
+@unittest.skipIf(IS_PYPY, "Bio.trie not available on pypy.")
 class PrimerBarcodeFilterTestCase(unittest.TestCase):
     def setUp(self):
         self.sequences = [SeqRecord(Seq('ACCGTTACGAT'), 'seq1'),
@@ -192,6 +196,7 @@ class RecordEventListenerTestCase(unittest.TestCase):
         rle('other', record, n=5)
         self.assertEqual(events, [1, 5])
 
+@unittest.skipIf(IS_PYPY, "Bio.trie not available on pypy.")
 class BarcodePrimerTrieTestCase(unittest.TestCase):
 
     def setUp(self):
