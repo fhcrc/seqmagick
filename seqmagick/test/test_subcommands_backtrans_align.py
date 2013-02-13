@@ -58,4 +58,19 @@ class AlignmentMapperTestCase(unittest.TestCase):
                           ('2', '---AAGGTCTTC'),
                           ('3', 'GGG---GTTTTT')], result)
 
-        pass
+    def test_map_alignment_insufficient_codons(self):
+        nucl = [SeqRecord(Seq('AAGTTT'), id='1'), # KF
+                SeqRecord(Seq('AAGGTC'), id='2')]  # KV
+        prot = [SeqRecord(Seq('K-F'), id='1'),
+                SeqRecord(Seq('KVF'), id='2')]
+
+        mapped = self.instance.map_all(prot, nucl)
+        self.assertRaises(ValueError, list, mapped)
+
+    def test_map_alignment_excess_codons(self):
+        nucl = [SeqRecord(Seq('AAGTTT'), id='1'), # KF
+                SeqRecord(Seq('AAGGTCTTC'), id='2')]  # KVF
+        prot = [SeqRecord(Seq('K-F'), id='1'),
+                SeqRecord(Seq('KV-'), id='2')]
+        mapped = self.instance.map_all(prot, nucl)
+        self.assertRaises(ValueError, list, mapped)
