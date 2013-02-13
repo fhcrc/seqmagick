@@ -11,6 +11,8 @@ other commands (GH-29)
 * Match barcode/primer `seqmagick quality-filter` against a trie; allows
   per-specimen barcodes.
 * Remove `--failure-out` option from `seqmagick quality-filter`. See `--details-out`
+* Raise an error if number of codons does not match number of amino acids in
+  `seqmagick backtrans-align`
 
 0.4.0
 =====
