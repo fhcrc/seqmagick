@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>quality-filter &mdash; seqmagick 0.4.0 documentation</title>
+    <title>quality-filter &mdash; seqmagick 0.5.0 documentation</title>
     
     <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.4.0',
+        VERSION:     '0.5.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="seqmagick 0.4.0 documentation" href="index.html" />
+    <link rel="top" title="seqmagick 0.5.0 documentation" href="index.html" />
     <link rel="next" title="primer-trim" href="primer_trim.html" />
     <link rel="prev" title="info" href="info.html" /> 
   </head>
@@ -42,7 +42,7 @@
         <li class="right" >
           <a href="info.html" title="info"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">seqmagick 0.4.0 documentation</a> &raquo;</li> 
+        <li><a href="index.html">seqmagick 0.5.0 documentation</a> &raquo;</li> 
       </ul>
     </div>
       <div class="sphinxsidebar">
@@ -89,7 +89,8 @@ quality criteria.  The subcommand takes a FASTA and quality score file, and
 writes the results to an output file:</p>
 <div class="highlight-text"><div class="highlight"><pre>usage: seqmagick quality-filter [-h] [--input-qual INPUT_QUAL]
                                 [--report-out REPORT_OUT]
-                                [--failure-out FAILURE_OUT]
+                                [--details-out DETAILS_OUT]
+                                [--no-details-comment]
                                 [--min-mean-quality QUALITY]
                                 [--min-length LENGTH] [--max-length LENGTH]
                                 [--quality-window-mean-qual QUALITY_WINDOW_MEAN_QUAL]
@@ -97,7 +98,7 @@ writes the results to an output file:</p>
                                 [--quality-window WINDOW_SIZE]
                                 [--ambiguous-action {truncate,drop}]
                                 [--max-ambiguous MAX_AMBIGUOUS]
-                                [--primer PRIMER]
+                                [--primer PRIMER] [--no-primer]
                                 [--barcode-file BARCODE_FILE]
                                 [--barcode-header] [--map-out SAMPLE_MAP]
                                 [--quoting {QUOTE_ALL,QUOTE_MINIMAL,QUOTE_NONE,QUOTE_NONNUMERIC}]
@@ -131,8 +132,10 @@ optional arguments:
 Output:
   --report-out REPORT_OUT
                         Output file for report [default: stdout]
-  --failure-out FAILURE_OUT
-                        File to write failure report [default: None]
+  --details-out DETAILS_OUT
+                        Output file to report fate of each sequence
+  --no-details-comment  Do not write comment lines with version and call to
+                        start --details-out
 
 Quality window options:
   --quality-window-mean-qual QUALITY_WINDOW_MEAN_QUAL
@@ -150,8 +153,13 @@ Quality window options:
 
 Barcode/Primer:
   --primer PRIMER       IUPAC ambiguous primer to require
+  --no-primer           Do not use a primer.
   --barcode-file BARCODE_FILE
-                        CSV file containing sample_id,barcode rows
+                        CSV file containing sample_id,barcode[,primer] in the
+                        rows. A single primer for all sequences may be
+                        specified with `--primer`, or `--no-primer` may be
+                        used to indicate barcodes should be used without a
+                        primer check.
   --barcode-header      Barcodes have a header row [default: False]
   --map-out SAMPLE_MAP  Path to write sequence_id,sample_id pairs
   --quoting {QUOTE_ALL,QUOTE_MINIMAL,QUOTE_NONE,QUOTE_NONNUMERIC}
@@ -180,7 +188,7 @@ Barcode/Primer:
         <li class="right" >
           <a href="info.html" title="info"
              >previous</a> |</li>
-        <li><a href="index.html">seqmagick 0.4.0 documentation</a> &raquo;</li> 
+        <li><a href="index.html">seqmagick 0.5.0 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
