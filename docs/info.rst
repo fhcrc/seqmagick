@@ -21,4 +21,4 @@ Output can be in comma-separated, tab-separated, or aligned formats. See
 
 Usage:
 
-.. program-output:: seqmagick info -h
+.. program-output:: ../seqmagick.py info -h
