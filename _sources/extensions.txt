@@ -18,7 +18,7 @@ Extension Format
 .phylip   phylip        
 .phyx     phylip-relaxed
 .qual     qual          
-.sff      sff           
+.sff      sff-trim      
 .sth      stockholm     
 .sto      stockholm     
 ========= ==============

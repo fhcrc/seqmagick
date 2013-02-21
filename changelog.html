@@ -1,0 +1,209 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Changelog &mdash; seqmagick 0.5.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.5.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="seqmagick 0.5.0 documentation" href="index.html" />
+    <link rel="next" title="convert and mogrify" href="convert_mogrify.html" />
+    <link rel="prev" title="seqmagick" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="convert_mogrify.html" title="convert and mogrify"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="seqmagick"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">seqmagick 0.5.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/seqmagick_logo_small.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Changelog</a><ul>
+<li><a class="reference internal" href="#id1">0.5.0</a></li>
+<li><a class="reference internal" href="#id2">0.4.0</a></li>
+<li><a class="reference internal" href="#id3">0.3.1</a></li>
+<li><a class="reference internal" href="#id4">0.3.0</a></li>
+<li><a class="reference internal" href="#id5">0.2.0</a></li>
+<li><a class="reference internal" href="#id6">0.1.0</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">seqmagick</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="convert_mogrify.html"
+                        title="next chapter"><tt class="docutils literal docutils literal"><span class="pre">convert</span></tt> and <tt class="docutils literal docutils literal"><span class="pre">mogrify</span></tt></a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/changelog.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="changelog">
+<h1>Changelog<a class="headerlink" href="#changelog" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="id1">
+<h2>0.5.0<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Change <tt class="docutils literal"><span class="pre">seqmagick</span> <span class="pre">extract-ids</span> <span class="pre">--source-format</span></tt> to <tt class="docutils literal"><span class="pre">--input-format</span></tt> to match
+other commands (GH-29)</li>
+<li>Support gzip- and bzip2-compressed inputs and outputs for most commands (GH-30)</li>
+<li>Change default input format for <tt class="docutils literal"><span class="pre">sff</span></tt> to <tt class="docutils literal"><span class="pre">sff-trim</span></tt>, which respects the
+clipping locations embedded in each sequence record.</li>
+<li>Add <tt class="docutils literal"><span class="pre">--details-out</span></tt> option to <tt class="docutils literal"><span class="pre">seqmagick</span> <span class="pre">quality-filter</span></tt>, which writes
+details on each read processed.</li>
+<li>Match barcode/primer <tt class="docutils literal"><span class="pre">seqmagick</span> <span class="pre">quality-filter</span></tt> against a trie; allows
+per-specimen barcodes.</li>
+<li>Remove <tt class="docutils literal"><span class="pre">--failure-out</span></tt> option from <tt class="docutils literal"><span class="pre">seqmagick</span> <span class="pre">quality-filter</span></tt>. See <tt class="docutils literal"><span class="pre">--details-out</span></tt></li>
+<li>Raise an error if number of codons does not match number of amino acids in
+<tt class="docutils literal"><span class="pre">seqmagick</span> <span class="pre">backtrans-align</span></tt></li>
+<li>Add <tt class="docutils literal"><span class="pre">--sample</span></tt> subcommand (GH-31)</li>
+</ul>
+</div>
+<div class="section" id="id2">
+<h2>0.4.0<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Fix bug in <tt class="docutils literal"><span class="pre">--squeeze</span></tt></li>
+<li>More informative messages in <tt class="docutils literal"><span class="pre">seqmagick</span> <span class="pre">primer-trim</span></tt></li>
+<li>Added <tt class="docutils literal"><span class="pre">--alphabet</span></tt> flag to allow writing NEXUS (GH-23)</li>
+<li>Exiting without error on SIGPIPE in extract-ids, info (GH-17)</li>
+<li>Ambiguities are translated as &#8216;X&#8217; in &#8211;translate (GH-16)</li>
+<li>Allowing &#8216;.&#8217; or &#8216;-&#8216; as gap character (GH-18)</li>
+<li><tt class="docutils literal"><span class="pre">--name-prefix</span></tt> and <tt class="docutils literal"><span class="pre">--name-suffix</span></tt> no longer create a mangled description (GH-19)</li>
+<li>Files owned by another user can be mogrified, as long as they are group writeable (GH-14)</li>
+<li>Add <tt class="docutils literal"><span class="pre">backtrans-align</span></tt> subcommand, which maps unaligned nucleotides onto a
+protein alignment (GH-20)</li>
+<li>Allow FASTQ as input to quality-filter</li>
+<li>Significantly expand functionality of quality-filter: identify and trim
+barcodes/primers; report detailed failure information.</li>
+<li>Cleanup, additional tests</li>
+<li>Add <tt class="docutils literal"><span class="pre">--drop</span></tt> filter to convert and mogrify (GH-24)</li>
+<li>Apply current umask when creating files (GH-26)</li>
+<li>Support stdin in <tt class="docutils literal"><span class="pre">seqmagick</span> <span class="pre">info</span></tt> (GH-27)</li>
+<li>Support translating ambiguous nucleotides, if codon translation is unambiguous</li>
+</ul>
+</div>
+<div class="section" id="id3">
+<h2>0.3.1<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Fix bug in <tt class="docutils literal"><span class="pre">quality-filter</span></tt> MinLengthFilter</li>
+<li>Case consistency in seqmagick</li>
+</ul>
+</div>
+<div class="section" id="id4">
+<h2>0.3.0<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Internal reorganization - transformations are converted to partial functions,
+then applied.</li>
+<li>Argument order now affects order of tranformation application.</li>
+<li>Change default output format to &#8216;align&#8217; for TTYs in seqmagick info</li>
+<li>Add BioPython as dependency (closes GH-7)</li>
+<li>Add <tt class="docutils literal"><span class="pre">primer-trim</span></tt> subcommand</li>
+<li>Add option to apply custom function(s) to sequences</li>
+<li>Add new filtering options: <tt class="docutils literal"><span class="pre">--squeeze-threshold</span></tt>, <tt class="docutils literal"><span class="pre">--min-ungapped-length</span></tt>
+<tt class="docutils literal"><span class="pre">--include-from-file</span></tt> <tt class="docutils literal"><span class="pre">--exclude-from-file</span></tt></li>
+<li>Removed seqmagick muscle</li>
+<li>Added new subcommand <tt class="docutils literal"><span class="pre">quality-filter</span></tt></li>
+<li>Added new subcommand <tt class="docutils literal"><span class="pre">extract-ids</span></tt> (closes GH-13)</li>
+<li>Allow use of &#8216;-&#8216; to indicate stdin / stdout (closes GH-11)</li>
+<li>Add mapping from .phyx to <tt class="docutils literal"><span class="pre">phylip-relaxed</span></tt> (targeted for BioPython 1.58)</li>
+</ul>
+</div>
+<div class="section" id="id5">
+<h2>0.2.0<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Refactoring</li>
+<li>Added hyphenation to multi-word command line options (e.g.
+<tt class="docutils literal"><span class="pre">--deduplicatetaxa</span></tt> -&gt; <tt class="docutils literal"><span class="pre">--deduplicate-taxa</span></tt>)</li>
+<li>Add support for <tt class="docutils literal"><span class="pre">.needle</span></tt>, <tt class="docutils literal"><span class="pre">.sff</span></tt> formats</li>
+<li>Close GH-4</li>
+</ul>
+</div>
+<div class="section" id="id6">
+<h2>0.1.0<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
+<p>Initial release</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="convert_mogrify.html" title="convert and mogrify"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="seqmagick"
+             >previous</a> |</li>
+        <li><a href="index.html">seqmagick 0.5.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011-2012, The Matsen Group.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>
