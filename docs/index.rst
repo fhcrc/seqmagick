@@ -23,6 +23,11 @@ seqmagick
    :depth: 4
    :class: new
 
+.. toctree::
+   :maxdepth: 1
+
+   changelog
+
 
 Motivation
 ==========
@@ -48,7 +53,7 @@ the latest release with::
 
     pip install seqmagick
 
-Or install the bleeding edge version:
+Or install the bleeding edge version::
 
     pip install git+git://github.com/fhcrc/seqmagick.git@master#egg-info=seqmagick
 
