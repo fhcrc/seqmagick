@@ -44,15 +44,13 @@ Installation
 
 First, you'll need to install `BioPython`_. NumPy (which parts of BioPython
 depend on) is not required for ``seqmagick`` to function. Once done, install
-with::
+the latest release with::
 
-    pi install seqmagick
+    pip install seqmagick
 
-Get the bleeding edge version `here
-<https://github.com/fhcrc/seqmagick/zipball/master>`_, or clone our
-repository::
+Or install the bleeding edge version:
 
-    git clone git://github.com/fhcrc/seqmagick.git
+    pip install git+git://github.com/fhcrc/seqmagick.git@master#egg-info=seqmagick
 
 Use
 ===
