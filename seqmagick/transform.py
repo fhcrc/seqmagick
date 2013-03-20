@@ -467,8 +467,20 @@ def seq_exclude(records, filter_regex):
         if not regex.search(str(record.seq)):
             yield record
 
-def sample(records, sample):
-    return random.sample(list(records), sample)
+def sample(records, k):
+    """
+    Choose a length-``k`` subset of ``records`` using reservoir sampling.  if k < len(records),
+    all are returned.
+    """
+    result = []
+    for i, record in enumerate(records):
+        if len(result) < k:
+            result.append(record)
+        else:
+            r = random.randint(0, i)
+            if r < k:
+                result[r] = record
+    return result
 
 def head(records, head):
     """
