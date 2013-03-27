@@ -14,6 +14,7 @@ Extension Format
 .gb       genbank       
 .gbk      genbank       
 .needle   emboss        
+.nex      nexus         
 .phy      phylip        
 .phylip   phylip        
 .phyx     phylip-relaxed

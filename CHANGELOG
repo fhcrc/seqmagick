@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.6.0 (in development)
+----------------------
+
+* Map ``.nex`` extension to NEXUS-format (--alphabet must be specified if writing)
+* Use reservoir sampling in ``--sample`` selector (lower memory use)
+
 0.5.0
 -----
 
