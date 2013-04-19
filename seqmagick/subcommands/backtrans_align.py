@@ -69,7 +69,7 @@ class AlignmentMapper(object):
                 try:
                     trans = self.translation_table.forward_table[codon]
                 except KeyError:
-                    raise ValueError("Unknown codon: {0}".format(codon))
+                    raise KeyError("Unknown codon: {0}".format(codon))
 
                 if not trans == aa:
                     raise ValueError("Codon {0} translates to {1}, not {2}".format(
@@ -84,17 +84,32 @@ class AlignmentMapper(object):
             logging.warn(
                 'ID mismatch: %s != %s. Are the sequences in the same order?',
                  prot_seq.id, nucl_seq.id)
+
         # Ungap nucleotides
         codons = batch(str(nucl_seq.seq.ungap('-')), 3)
-        codons = (''.join(i) for i in codons)
-        nucl_align = ['---' if p == '-' else next(codons)
-                      for p in str(prot_seq.seq)]
+        codons = [''.join(i) for i in codons]
+        codon_iter = iter(codons)
+
+        ungapped_prot = str(prot_seq.seq).translate(None, '-')
+
+        if len(ungapped_prot) != len(codons):
+            table = self.translation_table.forward_table
+            prot_str = ' '.join(' ' + p + ' ' for p in ungapped_prot)
+            codon_str = ' '.join(codons)
+            trans_str = ' '.join(' ' + table.get(codon, 'X') + ' '
+                                 for codon in codons)
+            raise ValueError("""Length of codon sequence ({0}) does not match \
+length of protein sequence ({1})
+Protein:       {2}
+Codons:        {3}
+Trans. Codons: {4}""".format(len(codons), len(ungapped_prot), prot_str,
+                             codon_str, trans_str))
+
         try:
-            next(codons)
-            raise ValueError("Additional codons present")
-        except:
-            # OK
-            pass
+            nucl_align = ['---' if p == '-' else next(codon_iter)
+                          for p in str(prot_seq.seq)]
+        except StopIteration:
+            assert False  # Should be checked above
 
         result = SeqRecord(Seq(''.join(nucl_align)), id=nucl_seq.id,
                            description=nucl_seq.description)

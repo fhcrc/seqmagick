@@ -23,6 +23,11 @@ seqmagick
    :depth: 4
    :class: new
 
+.. toctree::
+   :maxdepth: 1
+
+   changelog
+
 
 Motivation
 ==========
@@ -44,15 +49,13 @@ Installation
 
 First, you'll need to install `BioPython`_. NumPy (which parts of BioPython
 depend on) is not required for ``seqmagick`` to function. Once done, install
-with::
+the latest release with::
 
-    pi install seqmagick
+    pip install seqmagick
 
-Get the bleeding edge version `here
-<https://github.com/fhcrc/seqmagick/zipball/master>`_, or clone our
-repository::
+Or install the bleeding edge version::
 
-    git clone git://github.com/fhcrc/seqmagick.git
+    pip install git+git://github.com/fhcrc/seqmagick.git@master#egg-info=seqmagick
 
 Use
 ===
@@ -84,6 +87,13 @@ extensions are:
 
 .. include:: extensions.rst
 
+.. note::
+
+    NEXUS-format output requires the ``--alphabet`` flag.
+
+Default Format
+--------------
+
 When reading from stdin or writing to stdout, ``seqmagick`` defaults to fasta
 format.  This behavior may be overridden with the ``--input-format`` and
 ``--output-format`` flags.
@@ -91,11 +101,14 @@ format.  This behavior may be overridden with the ``--input-format`` and
 If an extension is not listed, you can either rename the file to a supported
 extension, or specify it manually via ``--input-format`` or ``--output-format``.
 
-Additionally, most commands support gzip (files ending in ``.gz``) and bzip
-(files ending in ``.bz2`` or ``.bz``) compressed inputs and outputs. File types
-for these files are inferred using the extension of the file after stripping
-the file extension indicating that the file is compressed, so
-``input.fasta.gz`` would be inferred to be in FASTA format.
+Compressed file support
+-----------------------
+
+most commands support gzip (files ending in ``.gz``) and bzip (files ending in
+``.bz2`` or ``.bz``) compressed inputs and outputs. File types for these files
+are inferred using the extension of the file after stripping the file extension
+indicating that the file is compressed, so ``input.fasta.gz`` would be inferred
+to be in FASTA format.
 
 Acknowledgements
 ================

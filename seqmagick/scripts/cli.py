@@ -62,6 +62,7 @@ def parse_arguments(argv):
         actions[name] = mod.action
 
     arguments = parser.parse_args(argv)
+    arguments.argv = argv
     action = arguments.subparser_name
 
     if action == 'help':

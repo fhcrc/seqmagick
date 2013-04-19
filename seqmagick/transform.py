@@ -3,6 +3,7 @@ Functions to transform / filter sequences
 """
 import collections
 import contextlib
+import copy
 import cPickle as pickle
 import itertools
 import logging
@@ -466,8 +467,20 @@ def seq_exclude(records, filter_regex):
         if not regex.search(str(record.seq)):
             yield record
 
-def sample(records, sample):
-    return random.sample(list(records), sample)
+def sample(records, k):
+    """
+    Choose a length-``k`` subset of ``records`` using reservoir sampling.  if k < len(records),
+    all are returned.
+    """
+    result = []
+    for i, record in enumerate(records):
+        if len(result) < k:
+            result.append(record)
+        else:
+            r = random.randint(0, i)
+            if r < k:
+                result[r] = record
+    return result
 
 def head(records, head):
     """
@@ -631,6 +644,7 @@ def translate(records, translate):
              'rna': CodonTable.ambiguous_rna_by_name["Standard"]}[source_type]
 
     # Handle ambiguities by replacing ambiguous codons with 'X'
+    table = copy.deepcopy(table)
     table.forward_table = CodonWarningTable(table.forward_table)
 
     for record in records:

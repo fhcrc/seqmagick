@@ -14,11 +14,12 @@ Extension Format
 .gb       genbank       
 .gbk      genbank       
 .needle   emboss        
+.nex      nexus         
 .phy      phylip        
 .phylip   phylip        
 .phyx     phylip-relaxed
 .qual     qual          
-.sff      sff           
+.sff      sff-trim      
 .sth      stockholm     
 .sto      stockholm     
 ========= ==============

@@ -1,67 +1,84 @@
-In development
-==============
+Changelog
+=========
 
-* Change `seqmagick extract-ids --source-format` to `--input-format` to match
-other commands (GH-29)
+0.6.0 (in development)
+----------------------
+
+* Map ``.nex`` extension to NEXUS-format (--alphabet must be specified if writing)
+* Use reservoir sampling in ``--sample`` selector (lower memory use)
+
+0.5.0
+-----
+
+* Change ``seqmagick extract-ids --source-format`` to ``--input-format`` to match
+  other commands (GH-29)
 * Support gzip- and bzip2-compressed inputs and outputs for most commands (GH-30)
-* Change default input format for `sff` to `sff-trim`, which respects the
+* Change default input format for ``sff`` to ``sff-trim``, which respects the
   clipping locations embedded in each sequence record.
+* Add ``--details-out`` option to ``seqmagick quality-filter``, which writes
+  details on each read processed.
+* Match barcode/primer ``seqmagick quality-filter`` against a trie; allows
+  per-specimen barcodes.
+* Remove ``--failure-out`` option from ``seqmagick quality-filter``. See ``--details-out``
+* Raise an error if number of codons does not match number of amino acids in
+  ``seqmagick backtrans-align``
+* Add ``--sample`` subcommand (GH-31)
 
 0.4.0
-=====
+-----
 
-* Fix bug in --squeeze
-* More informative messages in `seqmagick primer-trim`
-* Added `--alphabet` flag to allow writing NEXUS (GH-23)
+* Fix bug in ``--squeeze``
+* More informative messages in ``seqmagick primer-trim``
+* Added ``--alphabet`` flag to allow writing NEXUS (GH-23)
 * Exiting without error on SIGPIPE in extract-ids, info (GH-17)
 * Ambiguities are translated as 'X' in --translate (GH-16)
 * Allowing '.' or '-' as gap character (GH-18)
-* --name-prefix and --name-suffix no longer create a mangled description (GH-19)
+* ``--name-prefix`` and ``--name-suffix`` no longer create a mangled description (GH-19)
 * Files owned by another user can be mogrified, as long as they are group writeable (GH-14)
-* Add `backtrans-align` subcommand, which maps unaligned nucleotides onto a
+* Add ``backtrans-align`` subcommand, which maps unaligned nucleotides onto a
   protein alignment (GH-20)
 * Allow FASTQ as input to quality-filter
 * Significantly expand functionality of quality-filter: identify and trim
   barcodes/primers; report detailed failure information.
 * Cleanup, additional tests
-* Add `--drop` filter to convert and mogrify (GH-24)
+* Add ``--drop`` filter to convert and mogrify (GH-24)
 * Apply current umask when creating files (GH-26)
-* Support stdin in `seqmagick info` (GH-27)
+* Support stdin in ``seqmagick info`` (GH-27)
 * Support translating ambiguous nucleotides, if codon translation is unambiguous
 
 0.3.1
-=====
+-----
 
-* Fix bug in quality-filter MinLengthFilter
+* Fix bug in ``quality-filter`` MinLengthFilter
 * Case consistency in seqmagick
 
 0.3.0
-=====
+-----
 
 * Internal reorganization - transformations are converted to partial functions,
   then applied.
 * Argument order now affects order of tranformation application.
 * Change default output format to 'align' for TTYs in seqmagick info
 * Add BioPython as dependency (closes GH-7)
-* Add primer-trim subcommand
+* Add ``primer-trim`` subcommand
 * Add option to apply custom function(s) to sequences
-* Add new filtering options: --squeeze-threshold, --min-ungapped-length
-  --include-from-file --exclude-from-file
+* Add new filtering options: ``--squeeze-threshold``, ``--min-ungapped-length``
+  ``--include-from-file`` ``--exclude-from-file``
 * Removed seqmagick muscle
-* Added new subcommand `quality-filter`
-* Added new subcommand `extract ids` (closes GH-13)
+* Added new subcommand ``quality-filter``
+* Added new subcommand ``extract-ids`` (closes GH-13)
 * Allow use of '-' to indicate stdin / stdout (closes GH-11)
-* Add mapping from .phyx to phylip-relaxed (targeted for BioPython 1.58)
+* Add mapping from .phyx to ``phylip-relaxed`` (targeted for BioPython 1.58)
 
 0.2.0
-=====
+-----
 
 * Refactoring
 * Added hyphenation to multi-word command line options (e.g.
-  --deduplicatetaxa -> --deduplicate-taxa)
-* Add support for .needle, .sff formats
+  ``--deduplicatetaxa`` -> ``--deduplicate-taxa``)
+* Add support for ``.needle``, ``.sff`` formats
 * Close GH-4
 
 0.1.0
-=====
+-----
 Initial release

@@ -1,10 +1,15 @@
 from cStringIO import StringIO
+import sys
 import unittest
 
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 
 from seqmagick.subcommands import quality_filter
+
+from Bio import triefind
+
+IS_PYPY = hasattr(sys, 'pypy_version_info')
 
 class QualityFilterTestCase(unittest.TestCase):
 
@@ -15,8 +20,7 @@ class QualityFilterTestCase(unittest.TestCase):
     def test_nowindow_fail(self):
         self.sequence.letter_annotations['phred_quality'] = [25, 25, 24, 25]
         instance = quality_filter.QualityScoreFilter()
-        result = instance.filter_record(self.sequence)
-        self.assertFalse(result)
+        self.assertRaises(quality_filter.FailedFilter, instance.filter_record, self.sequence)
 
     def test_nowindow_pass(self):
         self.sequence.letter_annotations['phred_quality'] = [25, 25, 25, 25]
@@ -37,8 +41,7 @@ class WindowQualityFilterTestCase(unittest.TestCase):
 
     def test_window_truncate_noseq(self):
         self.sequence.letter_annotations['phred_quality'] = [25, 24, 25, 25]
-        result = self.instance.filter_record(self.sequence)
-        self.assertIsNone(result)
+        self.assertRaises(quality_filter.FailedFilter, self.instance.filter_record, self.sequence)
 
     def test_window_truncate_mid(self):
         self.sequence.letter_annotations['phred_quality'] = [25, 25, 23, 25]
@@ -152,6 +155,7 @@ class MaxLengthFilterTestCase(unittest.TestCase):
         self.assertEqual(['ACG', 'ACT'], [str(s.seq) for s in actual])
         self.assertEqual([i.id for i in self.sequences], [i.id for i in actual])
 
+@unittest.skipIf(IS_PYPY, "Bio.trie not available on pypy.")
 class PrimerBarcodeFilterTestCase(unittest.TestCase):
     def setUp(self):
         self.sequences = [SeqRecord(Seq('ACCGTTACGAT'), 'seq1'),
@@ -159,28 +163,77 @@ class PrimerBarcodeFilterTestCase(unittest.TestCase):
                           SeqRecord(Seq('AACTGTTA'), 'seq3'), # Homopolymer in bc
                           SeqRecord(Seq('ACCGTA'), 'seq4'),   # Error in primer
                           ]
-        self.barcodes = {'ACC': 'Sample1', 'ACT': 'Sample2'}
+
+        barcode_str = """Sample1,ACC\nSample2,ACT\n"""
         self.primer = 'GTTA'
+        self.trie = quality_filter.parse_barcode_file(StringIO(barcode_str), primer=self.primer)
         self.outfile = StringIO()
-        self.instance = quality_filter.PrimerBarcodeFilter(self.primer,
-                self.barcodes, self.outfile)
+        self.instance = quality_filter.PrimerBarcodeFilter(self.trie, self.outfile)
 
     def test_filter_trim(self):
         actual = list(self.instance.filter_records(self.sequences))
         self.assertEqual(2, len(actual))
         self.assertEqual(['CGAT', 'CGCT'], [str(s.seq) for s in actual])
 
-    def test_output_file(self):
-        list(self.instance.filter_records(self.sequences))
-        self.assertEqual("""seq1,Sample1
-seq2,Sample2
-""", self.outfile.getvalue())
+class RecordEventListenerTestCase(unittest.TestCase):
 
-class FailureTestCase(object):
-    def test_nonzero(self):
-        f = quality_filter.Failure()
-        self.assertFalse(f)
-        f = quality_filter.Failure(100)
-        self.assertEqual(100, f.value)
-        self.assertFalse(f)
+    def test_send(self):
+        events = []
+        record = object()
+        def e_handler(record, n=1):
+            events.append(n)
+
+        rle = quality_filter.RecordEventListener()
+        rle.register_handler('e', e_handler)
+
+        rle('e', record)
+        self.assertEqual(events, [1])
+
+        rle('e', record, n=5)
+        self.assertEqual(events, [1, 5])
+
+        # Test another event
+        rle('other', record, n=5)
+        self.assertEqual(events, [1, 5])
+
+@unittest.skipIf(IS_PYPY, "Bio.trie not available on pypy.")
+class BarcodePrimerTrieTestCase(unittest.TestCase):
+
+    def setUp(self):
+        self.barcode_str = """p1d1bc205,TACTAGCG,CATTGCCTATG
+p1d1bc206,TACTCGTC,CATTGCCTATG
+p1d1bc207,TACTGTGC,CATTGCCTATG
+p1d1bc208,TACTGCAG,CATTGCCTATG
+p1d1bc209,TACACAGC,CATTGCCTATG
+p1d1bc210,TACAGTCG,CAYGGCTA
+p1d1bc211,TACGTACG,CAYGGCTA
+p1d1bc212,TACGTCTC,CAYGGCTA
+p1d1bc213,TACGAGAC,CAYGGCTA"""
+        self.fp = StringIO(self.barcode_str)
+
+    def test_primer_provided(self):
+        res = quality_filter.parse_barcode_file(self.fp, primer='CATTGCCTATG')
+        self.assertEqual(9, len(res.keys()))
+        self.assertEqual('p1d1bc210', res['TACAGTCGCATTGCCTATG'])
+        self.assertEqual(None, triefind.match('TACAGTCGCATTGCCTAT', res))
+        self.assertEqual('TACAGTCGCATTGCCTATG', triefind.match('TACAGTCGCATTGCCTATGCTACCTA', res))
+
+    def test_primer_in_file(self):
+        res = quality_filter.parse_barcode_file(self.fp, primer=None)
+        self.assertEqual(13, len(res.keys()))
+
+        # Test ambiguities
+        self.assertEqual('p1d1bc212', res['TACGTCTCCATGGCTA'])
+        self.assertEqual('p1d1bc212', res['TACGTCTCCACGGCTA'])
+        self.assertIsNone(res.get('TACGTCTCCAAGGCTA'))
+        self.assertIsNone(res.get('TACGTCTCCAGGGCTA'))
+
+class AllUnambiguousTestCase(unittest.TestCase):
+    def test_one_nt(self):
+        self.assertEqual(set('ACGT'), set(quality_filter.all_unambiguous('N')))
+
+    def test_four_nt(self):
+        self.assertEqual(set(['ACCG', 'ACCA']),
+                         set(quality_filter.all_unambiguous('ACCR')))
+        self.assertEqual(4**4, len(quality_filter.all_unambiguous('NNNN')))
 
