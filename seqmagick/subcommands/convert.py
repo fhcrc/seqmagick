@@ -111,9 +111,6 @@ def add_options(parser):
 
     seq_select = parser.add_argument_group("Record Selection")
 
-    seq_select.add_argument('--sample', metavar='N', dest='transforms', type=int,
-            action=partial_action(transform.sample, 'sample'),
-            help = """ Select a random sampling of sequences """)
     seq_select.add_argument('--deduplicate-sequences',
         action='store_const', const=None, default=False,
          dest='deduplicate_sequences', help='Remove any duplicate sequences '
@@ -163,6 +160,9 @@ def add_options(parser):
     seq_select.add_argument('--prune-empty',
             action=partial_action(transform.prune_empty), dest='transforms',
             help="Prune sequences containing only gaps ('-')")
+    seq_select.add_argument('--sample', metavar='N', dest='transforms', type=int,
+            action=partial_action(transform.sample, 'k'),
+            help = """ Select a random sampling of sequences """)
     seq_select.add_argument('--seq-pattern-include', metavar='regex',
             action=partial_action(transform.seq_include, 'filter_regex'),
             dest='transforms', help="""Filter the sequences by regular
