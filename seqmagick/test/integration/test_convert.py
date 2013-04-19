@@ -2,6 +2,7 @@ from cStringIO import StringIO
 import os
 import os.path
 import logging
+import random
 import shlex
 import shutil
 import sys
@@ -152,6 +153,23 @@ class TestTranslateAmbiguous(CommandLineTestMixIn, unittest.TestCase):
         super(TestTranslateAmbiguous, self).tearDown()
         logging.getLogger(None).setLevel(self.orig_level)
 
+class TestSample(CommandLineTestMixIn, unittest.TestCase):
+    in_suffix = '.fasta'
+    out_suffix = '.fasta'
+    input_path = p('input5.fasta')
+    expected_path = p('output5.fasta')
+    command = 'convert --sample 2 {input} {output}'
+
+    def setUp(self):
+        super(TestSample, self).setUp()
+        self.orig_level = logging.getLogger(None).level
+        logging.getLogger(None).setLevel(logging.FATAL)
+        random.seed(0)
+
+    def tearDown(self):
+        super(TestSample, self).tearDown()
+        logging.getLogger(None).setLevel(self.orig_level)
+
 class TestStdin(TestTranslateAmbiguous, unittest.TestCase):
     command = 'convert --translate dna2protein - {output}'
 
@@ -164,6 +182,7 @@ class TestStdin(TestTranslateAmbiguous, unittest.TestCase):
         super(TestStdin, self).tearDown()
         sys.stdin.close()
         sys.stdin = self.orig_stdin
+
 
 class TestConvertFromStdin(TestTranslateAmbiguous, unittest.TestCase):
     command = 'convert --translate dna2protein - {output}'
