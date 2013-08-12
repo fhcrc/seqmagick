@@ -52,8 +52,10 @@ def add_options(parser):
             help="""Keep only the residues within the 1-indexed start and end
             positions specified, : separated. Includes last item. Start or end
             can be left unspecified to indicate start/end of sequence. A
-            negative start may be provided to indicate an offset
-            from the end of the sequence.""")
+            negative start may be provided to indicate an offset from the end
+            of the sequence. Note that to prevent negative numbers being
+            interpreted as flags, this should be written with an equals
+            sign between `--cut` and the argument, e.g.: `--cut=-10:`""")
     seq_mods.add_argument('--relative-to', dest='cut_relative', metavar='ID',
             help="""Apply --cut relative to the indexes of non-gap residues in
             sequence identified by ID""")
