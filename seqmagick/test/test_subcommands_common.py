@@ -59,10 +59,6 @@ class PositiveValueTestCase(unittest.TestCase):
         self.assertEqual(0, common.positive_value(int)('0'))
 
 class CutRangeTestCase(unittest.TestCase):
-    def test_negative(self):
-        self.assertRaises(argparse.ArgumentTypeError,
-                common.cut_range, '0:5')
-
     def test_out_of_order(self):
         self.assertRaises(argparse.ArgumentTypeError,
                 common.cut_range, '10:5')
@@ -71,6 +67,14 @@ class CutRangeTestCase(unittest.TestCase):
         actual = common.cut_range('5:10')
         self.assertEqual(4, actual.start)
         self.assertEqual(10, actual.stop)
+
+    def test_negative(self):
+        actual = common.cut_range('-500:')
+        self.assertEqual(-500, actual.start)
+        self.assertIsNone(actual.stop)
+        actual = common.cut_range('-500:-203')
+        self.assertEqual(-500, actual.start)
+        self.assertEqual(-203, actual.stop)
 
     def test_no_start(self):
         actual = common.cut_range(':10')

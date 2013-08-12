@@ -51,7 +51,9 @@ def add_options(parser):
             action=partial_action(transform.multi_cut_sequences, 'slices'),
             help="""Keep only the residues within the 1-indexed start and end
             positions specified, : separated. Includes last item. Start or end
-            can be left unspecified to indicate start/end of sequence.""")
+            can be left unspecified to indicate start/end of sequence. A
+            negative start may be provided to indicate an offset
+            from the end of the sequence.""")
     seq_mods.add_argument('--relative-to', dest='cut_relative', metavar='ID',
             help="""Apply --cut relative to the indexes of non-gap residues in
             sequence identified by ID""")

@@ -96,14 +96,13 @@ def cut_range(string):
         msg = "{0} is not a valid, 1-indexed range.".format(string)
         raise argparse.ArgumentTypeError(msg)
 
-    # Convert from 1-indexed to 0-indexed
-    if start is not None:
-        start -= 1
-
-    if ((start or 0) < 0
-            or (stop if stop is not None else sys.maxint) < (start or 0)):
+    if start == 0 or (stop or sys.maxint) < (start or 0):
         msg = "{0} is not a valid, 1-indexed range.".format(string)
         raise argparse.ArgumentTypeError(msg)
+
+    # Convert from 1-indexed to 0-indexed
+    if start is not None and start > 0:
+        start -= 1
 
     return slice(start, stop)
 
