@@ -65,17 +65,20 @@ class AlignmentMapper(object):
         """
         codons = [''.join(i) for i in batch(str(aligned_nucl), 3)]
         for codon, aa in zip(codons, str(aligned_prot)):
+            # Check gaps
             if codon == '---' and aa == '-':
                 continue
-            else:
-                try:
-                    trans = self.translation_table.forward_table[codon]
-                    if not trans == aa:
-                        raise ValueError("Codon {0} translates to {1}, not {2}".format(
-                            codon, trans, aa))
-                except KeyError:
+
+            try:
+                trans = self.translation_table.forward_table[codon]
+                if not trans == aa:
+                    raise ValueError("Codon {0} translates to {1}, not {2}".format(
+                        codon, trans, aa))
+            except (KeyError, CodonTable.TranslationError):
+                if aa != 'X':
                     if self.unknown_action == 'fail':
-                        raise ValueError("Unknown codon: {0}".format(codon))
+                        raise ValueError("Unknown codon: {0} mapped to {1}".format(
+                            codon, aa))
                     elif self.unknown_action == 'warn':
                         logging.warn('Cannot verify that unknown codon %s '
                                      'maps to %s', codon, aa)
