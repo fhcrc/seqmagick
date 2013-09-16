@@ -36,7 +36,8 @@ def build_parser(parser):
     parser.add_argument('-t', '--translation-table',
                         choices=TRANSLATION_TABLES, default='standard-ambiguous', help="""Translation
                         table to use. [Default: %(default)s]""")
-    parser.add_argument('-a', '--fail-action', choices=('fail', 'warn'), default='fail')
+    parser.add_argument('-a', '--fail-action', choices=('fail', 'warn', 'none'), default='fail',
+                        help="""Action to take on an ambiguous codon [default: %(default)s]""")
 
     return parser
 
