@@ -31,8 +31,8 @@ def build_parser(parser):
     parser.add_argument('protein_align', help="""Protein Alignment""", type=common.FileType('r'))
     parser.add_argument('nucl_align', help="""FASTA Alignment""", type=common.FileType('r'))
     parser.add_argument('-o', '--out-file', type=common.FileType('w'),
-            default=sys.stdout, metavar='destination_file', help="""Output
-                        destination. Default: STDOUT""")
+                        default=sys.stdout, metavar='destination_file',
+                        help="""Output destination. Default: STDOUT""")
     parser.add_argument('-t', '--translation-table',
                         choices=TRANSLATION_TABLES, default='standard-ambiguous', help="""Translation
                         table to use. [Default: %(default)s]""")
