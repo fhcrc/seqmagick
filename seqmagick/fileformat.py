@@ -14,6 +14,7 @@ EXTENSION_TO_TYPE = {'.aln': 'clustal',
                      '.fas': 'fasta',
                      '.fasta': 'fasta',
                      '.fastq': 'fastq',
+                     '.fq': 'fastq',
                      '.ffn': 'fasta',
                      '.fna': 'fasta',
                      '.frn': 'fasta',
@@ -27,8 +28,7 @@ EXTENSION_TO_TYPE = {'.aln': 'clustal',
                      '.qual': 'qual',
                      '.sff': 'sff-trim',
                      '.sth': 'stockholm',
-                     '.sto': 'stockholm',
-                     }
+                     '.sto': 'stockholm',}
 
 COMPRESS_EXT = {'.bz2': bz2.BZ2File, '.gz': gzip.open, '.bz': bz2.BZ2File}
 

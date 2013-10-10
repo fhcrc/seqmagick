@@ -10,6 +10,7 @@ Extension Format
 .fastq    fastq         
 .ffn      fasta         
 .fna      fasta         
+.fq       fastq         
 .frn      fasta         
 .gb       genbank       
 .gbk      genbank       

@@ -8,6 +8,7 @@ Changelog
 * Use reservoir sampling in ``--sample`` selector (lower memory use)
 * Support specifying negative indices to ``--cut`` [GH-33]
 * Optionally allow invalid codons in ``backtrans-align`` [GH-34]
+* Map ``.fq`` extension to FASTQ format
 
 0.5.0
 -----
