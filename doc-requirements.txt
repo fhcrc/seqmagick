@@ -1,0 +1,2 @@
+sphinx>=1.1
+sphinxcontrib-programoutput==0.8
