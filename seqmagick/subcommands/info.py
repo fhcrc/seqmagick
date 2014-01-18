@@ -4,7 +4,10 @@ Info action
 
 import collections
 import csv
+import multiprocessing
 import sys
+
+from functools import partial
 
 from Bio import SeqIO
 
@@ -25,16 +28,19 @@ def build_parser(parser):
         tab-delimited, CSV or aligned in a borderless table.  Default is
         tab-delimited if the output is directed to a file, aligned if output to
         the console.""")
+    parser.add_argument('--threads', default=multiprocessing.cpu_count(),
+            type=int,
+            help="""Number of threads (CPUs). [%(default)s] """)
 
 class SeqInfoWriter(object):
     """
     Base writer for sequence files
     """
 
-    def __init__(self, sequence_files, output, input_format=None):
+    def __init__(self, sequence_files, rows, output):
         self.sequence_files = sequence_files
+        self.rows = rows
         self.output = output
-        self.input_format = input_format
 
     def write_row(self, row):
         raise NotImplementedError("Override in subclass")
@@ -45,18 +51,16 @@ class SeqInfoWriter(object):
     def write(self):
         header = ('name', 'alignment', 'min_len', 'max_len', 'avg_len',
                   'num_seqs')
-        self.write_header(header)
-        rows = (summarize_sequence_file(source_file, self.input_format)
-                for source_file in self.sequence_files)
 
-        for row in rows:
-            self.write_row(row)
+        self.write_header(header)
+
+        for row in self.rows:
+            self.write_row(_SeqFileInfo(*row))
 
 class CsvSeqInfoWriter(SeqInfoWriter):
     delimiter = ','
-    def __init__(self, sequence_files, output, input_format=None):
-        super(CsvSeqInfoWriter, self).__init__(sequence_files, output,
-                input_format)
+    def __init__(self, sequence_files, rows, output):
+        super(CsvSeqInfoWriter, self).__init__(sequence_files, rows, output)
         self.writer = csv.writer(self.output, delimiter=self.delimiter,
                 lineterminator='\n')
 
@@ -70,9 +74,8 @@ class TsvSeqInfoWriter(CsvSeqInfoWriter):
     delimiter = '\t'
 
 class AlignedSeqInfoWriter(SeqInfoWriter):
-    def __init__(self, sequence_files, output, input_format=None):
-        super(AlignedSeqInfoWriter, self).__init__(sequence_files, output,
-                input_format)
+    def __init__(self, sequence_files, rows, output):
+        super(AlignedSeqInfoWriter, self).__init__(sequence_files, rows, output)
         self.max_name_length = max(len(f) for f in self.sequence_files)
 
     def write_header(self, header):
@@ -85,14 +88,12 @@ class AlignedSeqInfoWriter(SeqInfoWriter):
                 '{min_len:10d}{max_len:10d}{avg_len:10.2f}{num_seqs:10d}')
         print >> self.output, fmt.format(**row._asdict())
 
-
 _WRITERS = {'csv': CsvSeqInfoWriter, 'tab': TsvSeqInfoWriter, 'align':
         AlignedSeqInfoWriter}
 
 _HEADERS = ('name', 'alignment', 'min_len', 'max_len', 'avg_len',
               'num_seqs')
 _SeqFileInfo = collections.namedtuple('SeqFileInfo', _HEADERS)
-
 
 def summarize_sequence_file(source_file, file_type=None):
     """
@@ -138,7 +139,7 @@ def summarize_sequence_file(source_file, file_type=None):
     if sequence_count <= 1:
         is_alignment = False
 
-    return _SeqFileInfo(source_file, str(is_alignment).upper(), min_length,
+    return (source_file, str(is_alignment).upper(), min_length,
             max_length, avg_length, sequence_count)
 
 def action(arguments):
@@ -161,7 +162,11 @@ def action(arguments):
             output_format = 'tab'
 
     writer_cls = _WRITERS[output_format]
+
     with handle:
-        writer = writer_cls(arguments.source_files, handle,
-                arguments.input_format)
+        ssf = partial(summarize_sequence_file, file_type = arguments.input_format)
+        pool = multiprocessing.Pool(processes = arguments.threads)
+        rows = pool.imap(ssf, arguments.source_files)
+        writer = writer_cls(arguments.source_files, rows, handle)
         writer.write()
+
