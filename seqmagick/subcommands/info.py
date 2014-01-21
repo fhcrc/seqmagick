@@ -163,10 +163,11 @@ def action(arguments):
 
     writer_cls = _WRITERS[output_format]
 
+    ssf = partial(summarize_sequence_file, file_type = arguments.input_format)
+    pool = multiprocessing.Pool(processes = arguments.threads)
+    summary = pool.imap(ssf, arguments.source_files)
+
     with handle:
-        ssf = partial(summarize_sequence_file, file_type = arguments.input_format)
-        pool = multiprocessing.Pool(processes = arguments.threads)
-        rows = pool.imap(ssf, arguments.source_files)
-        writer = writer_cls(arguments.source_files, rows, handle)
+        writer = writer_cls(arguments.source_files, summary, handle)
         writer.write()
 
