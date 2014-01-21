@@ -164,8 +164,14 @@ def action(arguments):
     writer_cls = _WRITERS[output_format]
 
     ssf = partial(summarize_sequence_file, file_type = arguments.input_format)
-    pool = multiprocessing.Pool(processes = arguments.threads)
-    summary = pool.imap(ssf, arguments.source_files)
+
+    # if only one thread, do not use the multithreading so parent process
+    # can be terminated using ctrl+c
+    if arguments.threads > 1:
+        pool = multiprocessing.Pool(processes=arguments.threads)
+        summary = pool.imap(ssf, arguments.source_files)
+    else:
+        summary = (ssf(f) for f in arguments.source_files)
 
     with handle:
         writer = writer_cls(arguments.source_files, summary, handle)
