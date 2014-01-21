@@ -9,6 +9,7 @@ Changelog
 * Support specifying negative indices to ``--cut`` [GH-33]
 * Optionally allow invalid codons in ``backtrans-align`` [GH-34]
 * Map ``.fq`` extension to FASTQ format
+* Optional multithreaded I/O in ``info`` [GH-36]
 
 0.5.0
 -----
