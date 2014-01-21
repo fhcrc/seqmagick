@@ -28,7 +28,7 @@ def build_parser(parser):
         tab-delimited, CSV or aligned in a borderless table.  Default is
         tab-delimited if the output is directed to a file, aligned if output to
         the console.""")
-    parser.add_argument('--threads', default=multiprocessing.cpu_count(),
+    parser.add_argument('--threads', default=1,
             type=int,
             help="""Number of threads (CPUs). [%(default)s] """)
 
