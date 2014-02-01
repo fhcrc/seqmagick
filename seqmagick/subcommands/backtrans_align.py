@@ -107,10 +107,10 @@ class AlignmentMapper(object):
             trans_str = ' '.join(' ' + table.get(codon, 'X') + ' '
                                  for codon in codons)
             raise ValueError("""Length of codon sequence ({0}) does not match \
-length of protein sequence ({1})
-Protein:       {2}
-Codons:        {3}
-Trans. Codons: {4}""".format(len(codons), len(ungapped_prot), prot_str,
+length of protein sequence ({1}) for {2}
+Protein:       {3}
+Codons:        {4}
+Trans. Codons: {5}""".format(len(codons), len(ungapped_prot), nucl_seq.id, prot_str,
                             codon_str, trans_str))
 
         try:
