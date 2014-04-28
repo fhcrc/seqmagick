@@ -153,7 +153,7 @@ class HeadTestCase(unittest.TestCase):
                           for i in xrange(100)]
 
     def test_zero(self):
-        result = list(transform.head(self.sequences, 0))
+        result = list(transform.head(self.sequences, '0'))
         self.assertEqual([], result)
 
     def test_more_seqs_than_available(self):
@@ -161,17 +161,23 @@ class HeadTestCase(unittest.TestCase):
         Specifying more sequences than are in input records should return
         them all
         """
-        result = list(transform.head(self.sequences, 10000))
-        self.assertEqual(self.sequences, result)
+        result = list(transform.head(self.sequences, '10000'))
+        self.assertEqual([s.id for s in self.sequences],
+                         [r.id for r in result])
+        self.assertEqual([str(s.seq) for s in self.sequences],
+                         [str(r.seq) for r in result])
 
     def test_values(self):
         """
         Try specifying some values.
         """
         for h in xrange(len(self.sequences) + 1):
-            result = list(transform.head(self.sequences, h))
+            result = list(transform.head(self.sequences, str(h)))
             self.assertEqual(h, len(result))
-            self.assertEqual(self.sequences[:h], result)
+            self.assertEqual([s.id for s in self.sequences[:h]],
+                             [r.id for r in result])
+            self.assertEqual([str(s.seq) for s in self.sequences[:h]],
+                             [str(r.seq) for r in result])
 
 class TailTestCase(unittest.TestCase):
     def setUp(self):
@@ -182,7 +188,7 @@ class TailTestCase(unittest.TestCase):
         ]
 
     def _do_test(self, size):
-        actual = list(transform.tail(self.records, size))
+        actual = list(transform.tail(self.records, str(size)))
         expected = self.records[-size:]
         self.assertEqual([e.id for e in expected], [a.id for a in actual])
         self.assertEqual([str(e.seq) for e in expected], [str(a.seq) for a in actual])

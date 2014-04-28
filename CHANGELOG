@@ -11,6 +11,7 @@ Changelog
 * Map ``.fq`` extension to FASTQ format
 * Optional multithreaded I/O in ``info`` [GH-36]
 * Print sequence name on length mismatch in ``backtrans-align`` [GH-37]
+* Support for `+' and `-' in head and tail to mimick Linux head and tail commands.
 
 0.5.0
 -----

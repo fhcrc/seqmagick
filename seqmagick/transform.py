@@ -485,22 +485,45 @@ def sample(records, k):
 def head(records, head):
     """
     Limit results to the top N records.
+    With the leading `-', print all but the last N records.
     """
     logging.info('Applying _head generator: '
-                 'limiting results to top ' + str(head) + ' records.')
-    return itertools.islice(records, head)
+                 'limiting results to top ' + head + ' records.')
 
+    with _record_buffer(records) as r:
+        if head == '-0':
+            it = r()
+        elif '-' in head:
+            record_count = sum(1 for record in r())
+            end_index = max(record_count + int(head), 0)
+            it = itertools.islice(r(), end_index)
+        else:
+            it = itertools.islice(r(), int(head))
+
+        for i in it:
+            yield i
 
 def tail(records, tail):
     """
     Limit results to the bottom N records.
+    Use +N to output records starting with the Nth.
     """
+    logging.info('Applying _tail generator: '
+                 'limiting results to top ' + tail + ' records.')
+
     with _record_buffer(records) as r:
-        record_count = sum(1 for record in r())
-        start_index = record_count - tail
-        rec_iter = r()
-        for record in itertools.islice(rec_iter, start_index, None):
-            yield record
+        if tail == '+0':
+            it = r()
+        elif '+' in tail:
+            tail = int(tail) - 1
+            it = itertools.islice(r(), tail, None)
+        else:
+            record_count = sum(1 for record in r())
+            start_index = max(record_count - int(tail), 0)
+            it = itertools.islice(r(), start_index, None)
+
+        for i in it:
+            yield i
 
 # Squeeze-related
 def gap_proportion(sequences, gap_chars='-'):

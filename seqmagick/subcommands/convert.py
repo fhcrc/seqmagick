@@ -135,9 +135,9 @@ def add_options(parser):
             type=common.FileType('r'), help="""Filter sequences, keeping only
             those sequence IDs in the specified file""", dest='transforms',
             action=partial_action(transform.include_from_file, 'handle'))
-    seq_select.add_argument('--head', metavar='N', dest='transforms', type=int,
+    seq_select.add_argument('--head', metavar='N', dest='transforms',
             action=partial_action(transform.head, 'head'), help="""Trim
-            down to top N sequences""")
+            down to top N sequences. With the leading `-', print all but the last N sequences.""")
     seq_select.add_argument('--max-length', dest='transforms', metavar='N',
             action=partial_action(transform.max_length_discard, 'max_length'),
             type=int, help="""Discard any sequences beyond the specified
@@ -175,9 +175,9 @@ def add_options(parser):
             action=partial_action(transform.seq_exclude, 'filter_regex'),
             dest='transforms', help="""Filter the sequences by regular
             expression in sequence""")
-    seq_select.add_argument('--tail', metavar='N', dest='transforms', type=int,
+    seq_select.add_argument('--tail', metavar='N', dest='transforms',
             action=partial_action(transform.tail, 'tail'),
-        help='Trim down to bottom N sequences')
+        help="""Trim down to bottom N sequences.  Use +N to output sequences starting with the Nth.""")
 
     id_mods = parser.add_argument_group("Sequence ID Modification")
     id_mods.add_argument('--first-name',
