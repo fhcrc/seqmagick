@@ -490,18 +490,18 @@ def head(records, head):
     logging.info('Applying _head generator: '
                  'limiting results to top ' + head + ' records.')
 
-    with _record_buffer(records) as r:
-        if head == '-0':
-            it = r()
-        elif '-' in head:
+    if head == '-0':
+        for record in records:
+            yield record
+    elif '-' in head:
+        with _record_buffer(records) as r:
             record_count = sum(1 for record in r())
             end_index = max(record_count + int(head), 0)
-            it = itertools.islice(r(), end_index)
-        else:
-            it = itertools.islice(r(), int(head))
-
-        for i in it:
-            yield i
+            for record in itertools.islice(r(), end_index):
+                yield record
+    else:
+        for record in itertools.islice(records, int(head)):
+            yield record
 
 def tail(records, tail):
     """
@@ -511,19 +511,19 @@ def tail(records, tail):
     logging.info('Applying _tail generator: '
                  'limiting results to top ' + tail + ' records.')
 
-    with _record_buffer(records) as r:
-        if tail == '+0':
-            it = r()
-        elif '+' in tail:
-            tail = int(tail) - 1
-            it = itertools.islice(r(), tail, None)
-        else:
+    if tail == '+0':
+        for record in records:
+            yield record
+    elif '+' in tail:
+        tail = int(tail) - 1
+        for record in itertools.islice(records, tail, None):
+            yield record
+    else:
+        with _record_buffer(records) as r:
             record_count = sum(1 for record in r())
             start_index = max(record_count - int(tail), 0)
-            it = itertools.islice(r(), start_index, None)
-
-        for i in it:
-            yield i
+            for record in itertools.islice(r(), start_index, None):
+                yield record
 
 # Squeeze-related
 def gap_proportion(sequences, gap_chars='-'):

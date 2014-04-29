@@ -179,6 +179,28 @@ class HeadTestCase(unittest.TestCase):
             self.assertEqual([str(s.seq) for s in self.sequences[:h]],
                              [str(r.seq) for r in result])
 
+    def test_minus_zero(self):
+        """
+        Test that -0 returns all sequences
+        """
+        result = list(transform.head(self.sequences, '-0'))
+        self.assertEqual([s.id for s in self.sequences],
+                         [r.id for r in result])
+        self.assertEqual([str(s.seq) for s in self.sequences],
+                         [str(r.seq) for r in result])
+
+    def test_minus_values(self):
+        """
+        Try specifying some minus values.
+        """
+        for h in xrange(1, len(self.sequences) + 1):
+            result = list(transform.head(self.sequences, str(-h)))
+            self.assertEqual(h, len(self.sequences) - len(result))
+            self.assertEqual([s.id for s in self.sequences[:-h]],
+                             [r.id for r in result])
+            self.assertEqual([str(s.seq) for s in self.sequences[:-h]],
+                             [str(r.seq) for r in result])
+
 class TailTestCase(unittest.TestCase):
     def setUp(self):
         self.records = [
@@ -201,6 +223,28 @@ class TailTestCase(unittest.TestCase):
 
     def test_tail_3(self):
         self._do_test(3)
+
+    def test_plus_zero(self):
+        """
+        Test that +0 returns all sequences
+        """
+        result = list(transform.tail(self.records, '+0'))
+        self.assertEqual([s.id for s in self.records],
+                         [r.id for r in result])
+        self.assertEqual([str(s.seq) for s in self.records],
+                         [str(r.seq) for r in result])
+
+    def test_plus_values(self):
+        """
+        Try specifying some plus values.
+        """
+        for h in xrange(1, len(self.records) + 1):
+            result = list(transform.tail(self.records, '+{}'.format(h)))
+            self.assertEqual(len(self.records) + 1 - h, len(result))
+            self.assertEqual([s.id for s in self.records[h-1:]],
+                             [r.id for r in result])
+            self.assertEqual([str(s.seq) for s in self.records[h-1:]],
+                             [str(r.seq) for r in result])
 
 class IsolateRegionTestCase(unittest.TestCase):
 
