@@ -22,8 +22,9 @@ from Bio.SeqUtils.CheckSum import seguid
 # Characters to be treated as gaps
 GAP_CHARS = "-."
 
-# Size of temporary file buffer: default to 20MB
-DEFAULT_BUFFER_SIZE = 20971520 # 20*2**20
+# Size of temporary file buffer: default to 256MB
+DEFAULT_BUFFER_SIZE = 268435456  # 256 * 2**20
+
 
 @contextlib.contextmanager
 def _record_buffer(records, buffer_size=DEFAULT_BUFFER_SIZE):
