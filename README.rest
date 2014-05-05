@@ -24,7 +24,7 @@ Features include:
   - Sort by length or ID
   - `more`_
 
-* Displaying `information <http://fhcrc.github.com/seqmagick/info.html>`_ about
+* Displaying `information <http://seqmagick.readthedocs.org/en/latest/info.html>`_ about
   sequence files
 * Subsetting sequence files by:
 
@@ -34,15 +34,15 @@ Features include:
   - `more`_
 
 * Filtering sequences by `quality score
-  <http://fhcrc.github.com/seqmagick/quality_filter.html>`_
+  <http://seqmagick.readthedocs.org/en/latest/quality_filter.html>`_
 * Trimming alignments to a `region of interest
-  <http://fhcrc.github.com/seqmagick/primer_trim.html>`_ defined by the
+  <http://seqmagick.readthedocs.org/en/latest/primer_trim.html>`_ defined by the
   forward and reverse primers
 
 Want to learn more? Head to the `Documentation`_.
 
 ``seqmagick`` is free software under the GPL v3.
 
-.. _`Documentation`: http://fhcrc.github.com/seqmagick/
+.. _`Documentation`: http://seqmagick.readthedocs.org/en/latest/
 
-.. _`more`: http://fhcrc.github.com/seqmagick/convert_mogrify.html
+.. _`more`: http://seqmagick.readthedocs.org/en/latest/convert_mogrify.html
