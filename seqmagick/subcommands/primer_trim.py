@@ -144,7 +144,7 @@ class PrimerAligner(object):
         relative to the input sequence.
         """
         seq_aln, primer_aln, score, start, end = \
-                pairwise2.align.globalms(str(sequence), str(self.primer),
+                pairwise2.align.globalms(str(sequence).upper(), str(self.primer).upper(),
                         self.match, self.difference, self.gap_open,
                         self.gap_extend, one_alignment_only=True)[0]
 
@@ -156,18 +156,21 @@ class PrimerAligner(object):
         start = ungap_map[0]
         end = ungap_map[len(self.primer) - 1]
 
+        trimmed = seq_aln[start:end+1]
+
         ham_dist = hamming_distance(primer_aln[start:end+1],
-                seq_aln[start:end+1], _iupac_ambiguous_equal)
+                trimmed, _iupac_ambiguous_equal)
         #assert primer_aln[start:end].replace('-', '') == str(self.primer)
 
         # TODO: handle start or end being gap better. For now, just give up
         # and return maxint for the hamming distance
-        if seq_aln[start:end+1].endswith('-'):
-            end = index_map[end-1] + 1
+        if trimmed.endswith('-'):
+            tail = len(trimmed) - len(trimmed.rstrip('-'))
+            end = index_map[end-tail] + 1
             ham_dist = sys.maxint
         else:
             end = index_map[end]
-        if seq_aln[start:end+1].startswith('-'):
+        if trimmed.startswith('-'):
             start = 0
             ham_dist = sys.maxint
         else:
