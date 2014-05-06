@@ -12,7 +12,8 @@ Changelog
 * Optional multithreaded I/O in ``info`` [GH-36]
 * Print sequence name on length mismatch in ``backtrans-align`` [GH-37]
 * Support for `+' and `-' in head and tail to mimick Linux head and tail commands.
-* Fix bug in ``primer-trim``
+* Fix scoring for mixed-case sequences in ``primer-trim``.
+* Fix bug in ``primer-trim`` - failed when sequence had multiple 5' gaps compared to the primer.
 
 0.5.0
 -----
