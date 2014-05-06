@@ -420,7 +420,7 @@ def name_include(records, filter_regex):
                  ' in results.')
     regex = re.compile(filter_regex, re.I)
     for record in records:
-        if regex.search(record.id) or regex.search(record.description):
+        if regex.search(record.description):
             yield record
 
 
@@ -433,7 +433,7 @@ def name_exclude(records, filter_regex):
                  'excluding IDs matching ' + filter_regex + ' in results.')
     regex = re.compile(filter_regex, re.I)
     for record in records:
-        if not regex.search(record.id) and not regex.search(record.description):
+        if not regex.search(record.description):
             yield record
 
 
@@ -444,8 +444,10 @@ def name_replace(records, search_regex, replace_pattern):
     """
     regex = re.compile(search_regex, re.I)
     for record in records:
-        record.id = regex.sub(replace_pattern, record.id)
+        if not record.description.startswith(record.id):
+            record.description = record.id + ' ' + record.description
         record.description = regex.sub(replace_pattern, record.description)
+        record.id = record.description.split(None, 1)[0]
         yield record
 
 
