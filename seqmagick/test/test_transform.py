@@ -142,8 +142,11 @@ class SeqPatternTestCase(unittest.TestCase):
             seqrecord('sequence_3', '-T-AG-'),
         ]
 
-        self.tests = [('^$', []), ('.*', self.sequences),
-                ('^AC', [self.sequences[0]])]
+        self.tests = [('^$', []),
+                      ('.*', self.sequences),
+                      ('^AC', [self.sequences[0]]),
+                      ('^ac', []),
+                      ('^ac(?i)', [self.sequences[0]])]
 
     def test_include(self):
         result = transform.seq_include(self.sequences, '^$')
