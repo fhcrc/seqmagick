@@ -196,7 +196,7 @@ def add_options(parser):
             action=partial_action(transform.name_replace, ('search_regex',
                 'replace_pattern')),
             dest='transforms', help="""Replace regex pattern "search_pattern"
-            with "replace_pattern" in sequence ID""")
+            with "replace_pattern" in sequence identifier""")
     id_mods.add_argument('--strip-range', dest='transforms',
             action=partial_action(transform.strip_range), help="""Strip ranges
             from sequences IDs, matching </x-y>""")

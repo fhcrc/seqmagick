@@ -19,20 +19,21 @@ def _alignment_record(sequence):
     return SeqRecord(Seq(sequence,
         alphabet=Alphabet.Gapped(Alphabet.generic_dna)))
 
-def seqrecord(sequence_id, sequence_text, alphabet=Alphabet.generic_dna):
+def seqrecord(sequence_id, sequence_text, alphabet=Alphabet.generic_dna,
+              description=None):
     """
     Quick shortcut to make a SeqRecord
     """
-    return SeqRecord(Seq(sequence_text, alphabet), id=sequence_id)
+    return SeqRecord(Seq(sequence_text, alphabet),
+                     id=sequence_id,
+                     description=description or sequence_id)
 
 class PatternReplaceTestCase(unittest.TestCase):
 
     def create_sequences(self):
-        return [
-    seqrecord('test_sequence_1', 'ACTGT'),
-    seqrecord('test_REPLACE_2', 'ACTGT'),
-    seqrecord('other_sequence', 'ATGAG'),
-    ]
+        return [seqrecord('test_sequence_1', 'ACTGT'),
+                seqrecord('test_REPLACE_2', 'ACTGT'),
+                seqrecord('other_sequence', 'ATGAG'), ]
 
     def setUp(self):
         super(PatternReplaceTestCase, self).setUp()
@@ -40,6 +41,22 @@ class PatternReplaceTestCase(unittest.TestCase):
 
     def tearDown(self):
         super(PatternReplaceTestCase, self).tearDown()
+
+    def test_pattern_replace_anchored_nomatch(self):
+        sequences = [seqrecord('hello', 'A', description='hello friend')]
+        transformed = next(transform.name_replace(sequences, '^hello$', 'bye'))
+
+        self.assertEqual(str(sequences[0].seq), str(transformed.seq))
+        self.assertEqual('hello', transformed.id)
+        self.assertEqual('hello friend', transformed.description)
+
+    def test_pattern_replace_anchored_match(self):
+        sequences = [seqrecord('hello', 'A', description='hello friend')]
+        transformed = next(transform.name_replace(sequences, '^hello', 'bye'))
+
+        self.assertEqual(str(sequences[0].seq), str(transformed.seq))
+        self.assertEqual('bye', transformed.id)
+        self.assertEqual('bye friend', transformed.description)
 
     def test_pattern_replace_none(self):
         result = transform.name_replace(self.sequences, 'ZZZ', 'MATCH')
@@ -309,11 +326,13 @@ sequenceid4
 """
         self.handle = StringIO(ids)
 
-        self.sequences = [SeqRecord(Seq("AAA"), id="sequenceid1"),
-                SeqRecord(Seq("BBB"), id="sequenceid2"),
-                SeqRecord(Seq("CCC"), id="sequenceid3"),
-                SeqRecord(Seq("DDD"), id="sequenceid4", description='sequence id 4'),
-                SeqRecord(Seq("EEE"), id="test", description='test sequence'), ]
+        self.sequences = [seqrecord("sequenceid1", "AAA"),
+                          seqrecord("sequenceid2", "BBB"),
+                          seqrecord("sequenceid3", "CCC"),
+                          seqrecord("sequenceid4", "DDD",
+                                    description='sequence id 4'),
+                          seqrecord("test", "EEE",
+                                    description='test sequence'), ]
 
 
 class IncludeFromFileTestCase(IncludeExcludeMixIn, unittest.TestCase):
