@@ -418,7 +418,7 @@ def name_include(records, filter_regex):
     logging.info('Applying _name_include generator: '
                  'including only IDs matching ' + filter_regex +
                  ' in results.')
-    regex = re.compile(filter_regex, re.I)
+    regex = re.compile(filter_regex)
     for record in records:
         if regex.search(record.description):
             yield record
@@ -431,7 +431,7 @@ def name_exclude(records, filter_regex):
     """
     logging.info('Applying _name_exclude generator: '
                  'excluding IDs matching ' + filter_regex + ' in results.')
-    regex = re.compile(filter_regex, re.I)
+    regex = re.compile(filter_regex)
     for record in records:
         if not regex.search(record.description):
             yield record
@@ -442,7 +442,7 @@ def name_replace(records, search_regex, replace_pattern):
     Given a set of sequences, replace all occurrences of search_regex
     with replace_pattern. Ignore case.
     """
-    regex = re.compile(search_regex, re.I)
+    regex = re.compile(search_regex)
     for record in records:
         if not record.description.startswith(record.id):
             record.description = record.id + ' ' + record.description
@@ -455,7 +455,7 @@ def seq_include(records, filter_regex):
     """
     Filter any sequences who's seq does not match the filter. Ignore case.
     """
-    regex = re.compile(filter_regex, re.I)
+    regex = re.compile(filter_regex)
     for record in records:
         if regex.search(str(record.seq)):
             yield record
@@ -465,7 +465,7 @@ def seq_exclude(records, filter_regex):
     """
     Filter any sequences who's seq matches the filter. Ignore case.
     """
-    regex = re.compile(filter_regex, re.I)
+    regex = re.compile(filter_regex)
     for record in records:
         if not regex.search(str(record.seq)):
             yield record

@@ -36,6 +36,9 @@ def add_options(parser):
         help='Perform sorting by length or name, ascending or descending. '
         'ASCII sorting is performed for names')
 
+    parser.epilog = """Filters using regular expressions are case-sensitive
+    by default. Append "(?i)" to a pattern to make it case-insensitive."""
+
     seq_mods = parser.add_argument_group("Sequence Modificaton")
     seq_mods.add_argument('--apply-function', type=module_function,
             metavar='/path/to/module.py:function_name[:parameter]',
@@ -153,11 +156,11 @@ def add_options(parser):
                 than the specified minimum length, excluding gaps. This
                 operation occurs *before* cut and squeeze.""",
                 dest='transforms')
-    seq_select.add_argument('--pattern-include', metavar='regex',
+    seq_select.add_argument('--pattern-include', metavar='REGEX',
             action=partial_action(transform.name_include, 'filter_regex'),
             dest='transforms', help="""Filter the sequences by regular
             expression in name""")
-    seq_select.add_argument('--pattern-exclude', metavar='regex',
+    seq_select.add_argument('--pattern-exclude', metavar='REGEX',
             action=partial_action(transform.name_exclude, 'filter_regex'),
             dest='transforms', help="""Filter the sequences by regular
             expression in name""")
@@ -167,11 +170,11 @@ def add_options(parser):
     seq_select.add_argument('--sample', metavar='N', dest='transforms', type=int,
             action=partial_action(transform.sample, 'k'),
             help = """ Select a random sampling of sequences """)
-    seq_select.add_argument('--seq-pattern-include', metavar='regex',
+    seq_select.add_argument('--seq-pattern-include', metavar='REGEX',
             action=partial_action(transform.seq_include, 'filter_regex'),
             dest='transforms', help="""Filter the sequences by regular
             expression in sequence""")
-    seq_select.add_argument('--seq-pattern-exclude', metavar='regex',
+    seq_select.add_argument('--seq-pattern-exclude', metavar='REGEX',
             action=partial_action(transform.seq_exclude, 'filter_regex'),
             dest='transforms', help="""Filter the sequences by regular
             expression in sequence""")
@@ -202,9 +205,9 @@ def add_options(parser):
             from sequences IDs, matching </x-y>""")
 
     format_group = parser.add_argument_group('Format Options')
-    format_group.add_argument('--input-format', metavar='Format',
+    format_group.add_argument('--input-format', metavar='FORMAT',
             help="Input file format (default: determine from extension)")
-    format_group.add_argument('--output-format', metavar='Format',
+    format_group.add_argument('--output-format', metavar='FORMAT',
             help="Output file format (default: determine from extension)")
 
     parser.add_argument('--alphabet', choices=ALPHABETS,
