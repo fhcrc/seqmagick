@@ -24,7 +24,7 @@ Features include:
   - Trim to a range of residues
   - Change case
   - Sort by length, ID , mass or pI
-  - `more`_<http://fhcrc.github.com/seqmagick/#convert-and-mogrify>`_
+  - `more`_
 
 * Displaying `information <http://seqmagick.readthedocs.org/en/latest/info.html>`_ about
   sequence files
