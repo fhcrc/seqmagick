@@ -23,7 +23,6 @@ Features include:
   - Reverse & reverse complement
   - Trim to a range of residues
   - Change case
-<<<<<<< HEAD
   - Sort by length, ID , mass or pI
   - `more`_<http://fhcrc.github.com/seqmagick/#convert-and-mogrify>`_
 
