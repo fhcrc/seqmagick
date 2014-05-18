@@ -31,6 +31,9 @@ def molecular_weight (seq):
     MwDict['J'] = 112.5
     MwDict['O'] = 112.5
     MwDict['Z'] = 112.5
+    # gaps and stops have no mass
+    MwDict['-'] = 0.0
+    MwDict['*'] = 0.0
     MW = 0
     for i in seq:
         MW += MwDict[i]
