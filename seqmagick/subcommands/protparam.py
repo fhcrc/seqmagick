@@ -13,32 +13,31 @@ from seqmagick import transform
 from . import common
 
 
-def molecular_weight(seq):
-    """Calculate MW from a protein sequence.
-       
-       Forked version of the Bio.SeqUtils.ProtParam version
-       to handle 'X' amino acids, and not do weird things with
-       water masses.
-    """
-    # make local dictionary for speed
-    mwdict = {}
-    # remove a molecule of water from the amino acid weight.
-    for i in ProtParam.IUPACData.protein_weights:
-        mwdict[i] = ProtParam.IUPACData.protein_weights[i]
-    # assign unknown amino acids to an average mass per residue value
-    mwdict['X'] = 112.5
-    mwdict['B'] = 112.5
-    mwdict['U'] = 112.5
-    mwdict['J'] = 112.5
-    mwdict['O'] = 112.5
-    mwdict['Z'] = 112.5
-    # gaps and stops have no mass
-    mwdict['-'] = 0.0
-    mwdict['*'] = 0.0
-    mw = 0
-    for i in seq:
-        mw += mwdict[i]
-    return mw
+average_residue_mass = 112.5
+stop_symbol = '*'
+unknown_residue_char = 'X'
+
+
+def remove_stop_codon(seq, stop_symbol=stop_symbol):
+    if seq.endswith(stop_symbol):
+        return seq[0:-1]
+    return seq
+
+
+def is_valid_sequence(seq, seqid):
+    for i, aa in enumerate(seq):
+        if aa not in ProtParam.IUPACData.protein_weights.keys():
+            raise ValueError("Error: Unknown residue '%s' at position %d in %s" % (aa, i + 1, seqid))
+            #return False
+    return True
+
+
+def replace_unknown_residues(seq, char=unknown_residue_char):
+    newseq = str(seq)
+    for aa in seq:
+        if aa not in ProtParam.IUPACData.protein_weights.keys():
+            newseq = newseq.replace(aa, char)
+    return newseq
 
 
 def build_parser(parser):
@@ -54,6 +53,11 @@ def build_parser(parser):
                         choices=['length-asc', 'length-desc', 'name-asc', 'name-desc',
                                  'mass-asc', 'mass-desc', 'pi-asc', 'pi-desc'],
                         help='Sort output based on length, name, molecular weight or pI')
+    parser.add_argument('--allow-unknown-residues', action='store_true',
+                        default=False, help="Allow amino acids outside the standard "
+                                            "20 and assign them with an an average "
+                                            "mass of " + str(average_residue_mass) +
+                                            " Da [default: %(default)s]")
 
 
 def action(arguments):
@@ -64,7 +68,8 @@ def action(arguments):
                      fileformat.from_filename(arguments.sequence_file.name))
 
     with arguments.sequence_file:
-        sequences = SeqIO.parse(arguments.sequence_file, source_format)
+        sequences = SeqIO.parse(arguments.sequence_file,
+                                source_format)
 
         # sort based on name or length
         sorters = {'length': transform.sort_length,
@@ -82,9 +87,19 @@ def action(arguments):
 
         stats = []
         for s in sequences:
-            params = ProtParam.ProteinAnalysis(str(s.seq))
+            seq = str(s.seq)
+            seq = remove_stop_codon(seq)
 
-            stats.append((s, molecular_weight(s.seq),
+            if arguments.allow_unknown_residues:
+                seq = replace_unknown_residues(seq, char=unknown_residue_char)
+                ProtParam.IUPACData.protein_weights[unknown_residue_char] = average_residue_mass
+
+            if not is_valid_sequence(seq, s.id):
+                break
+
+            params = ProtParam.ProteinAnalysis(seq)
+
+            stats.append((s, params.molecular_weight(),
                           params.isoelectric_point()))
 
             if arguments.sort and sort_on == 'mass':
