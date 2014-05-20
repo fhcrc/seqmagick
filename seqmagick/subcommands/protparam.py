@@ -1,6 +1,6 @@
 """
-Calculate molecular weight, theoretical isoelectric point 
-and other physiochemical properties of protein sequences. 
+Calculates the molecular weight and theoretical isoelectric
+point (pI) for a set of protein sequences.
 """
 import argparse
 import sys
