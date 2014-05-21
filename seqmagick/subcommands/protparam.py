@@ -189,4 +189,3 @@ def action(arguments):
         with arguments.output_file:
             for l in out:
                 print >> arguments.output_file, "%s\t%.2f\t%.2f" % (l)
-                #print >> arguments.output_file, "%s\t%f\t%f" % (l)

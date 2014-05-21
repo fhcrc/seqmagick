@@ -3,14 +3,13 @@ Tests for primer trim
 """
 import unittest
 
-from Bio import Alphabet
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 
 from seqmagick.subcommands.protparam import ProtParamCalculator
 
-class ProtParamTestCase(unittest.TestCase):
 
+class ProtParamTestCase(unittest.TestCase):
     def setUp(self):
         self.sequences = [
             SeqRecord(Seq('MGHFTEEDKATITSLWGKVNVEDAGGETLGRLLVVYPWTQRFF'
@@ -29,7 +28,6 @@ class ProtParamTestCase(unittest.TestCase):
 
         self.masses = [('1', 16139.86), ('2', 15256.89), ('3', 15997.81)]
         self.pis = [('1', 6.644836), ('2', 8.716858), ('3', 6.744568)]
-
 
         self.bad_sequence = [
             SeqRecord(Seq('XXHFTEEDKATITS'), id='99'),
@@ -64,9 +62,6 @@ class ProtParamTestCase(unittest.TestCase):
             self.assertAlmostEqual(stats[i][1], expected[i][1], 2)
 
     def test_isoelectric_point_sorted_asc(self):
-        #self.instance.sort_on = 'pi'
-        #self.instance.sort_ascending = True
-        #stats = self.instance.calculate(self.sequences)
         self.instance = ProtParamCalculator(self.sequences, sort_on='pi',
                                             sort_ascending=True)
         stats = self.instance.stats
