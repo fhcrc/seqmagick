@@ -32,8 +32,9 @@ sequence length or alphabetically by name using the ``--sort`` option.
 To sort based on molecular weight, descending::
 
     $ seqmagick protparam --sort mass-desc haemoglobins.fasta
-    sp|P68871|HBB_HUMAN	15997.81	6.74
-    sp|P69905|HBA_HUMAN	15256.89	8.72
+    sp|P68871|HBB_HUMAN     15997.81    6.74
+    sp|P69905|HBA_HUMAN     15256.89    8.72
+    sp|P69891|HBG1_HUMAN    16139.86    6.64
 
 .. note::
   ``protparam`` expects ungapped sequences with uppercase letters.
@@ -57,7 +58,7 @@ Command-line Arguments
 
 .. program-output:: ../seqmagick.py protparam -h
 
-.. _`haemoglobins.fasta`: http://www.uniprot.org/uniprot/?query=id:P68871+OR+id:P69905&format=fasta
+.. _`haemoglobins.fasta`: http://www.uniprot.org/uniprot/?query=id:P69891+OR+id:P69905+OR+id:P68871&format=fasta
 
 .. _`BioPython ProtParam module`: http://biopython.org/wiki/ProtParam
 
