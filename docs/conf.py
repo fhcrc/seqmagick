@@ -41,7 +41,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'seqmagick'
-copyright = u'2011-2012, The Matsen Group'
+copyright = u'2011-2014, The Matsen Group'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
