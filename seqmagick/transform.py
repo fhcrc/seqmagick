@@ -5,6 +5,7 @@ import collections
 import contextlib
 import copy
 import cPickle as pickle
+import gzip
 import itertools
 import logging
 import re
@@ -729,7 +730,7 @@ def sort_length(source_file, source_file_type, direction=1):
 
     # Adapted from the Biopython tutorial example.
 
-    #Get the lengths and ids, and sort on length
+    # Get the lengths and ids, and sort on length
     len_and_ids = sorted((len(rec), rec.id)
                          for rec in SeqIO.parse(source_file, source_file_type))
 
@@ -737,30 +738,49 @@ def sort_length(source_file, source_file_type, direction=1):
         ids = reversed([seq_id for (length, seq_id) in len_and_ids])
     else:
         ids = [seq_id for (length, seq_id) in len_and_ids]
-    del len_and_ids #free this memory
-    record_index = SeqIO.index(source_file.name, source_file_type)
-    records = (record_index[seq_id] for seq_id in ids)
+    del len_and_ids  # free this memory
 
-    return records
+    # SeqIO.index does not handle gzip instances
+    if isinstance(source_file, gzip.GzipFile):
+        tmpfile = tempfile.NamedTemporaryFile()
+        source_file.seek(0)
+        tmpfile.write(source_file.read())
+        tmpfile.seek(0)
+        source_file = tmpfile
+
+    record_index = SeqIO.index(source_file.name, source_file_type)
+
+    for seq_id in ids:
+        yield record_index[seq_id]
 
 
 def sort_name(source_file, source_file_type, direction=1):
     """
     Sort sequences by name. 1 is ascending (default) and 0 is descending.
     """
+
     direction_text = 'ascending' if direction == 1 else 'descending'
 
     logging.info("Indexing sequences by name: %s", direction_text)
 
     # Adapted from the Biopython tutorial example.
 
-    #Sort on id
+    # Sort on id
     ids = sorted((rec.id) for rec in SeqIO.parse(source_file,
                                                  source_file_type))
 
     if direction == 0:
         ids = reversed(ids)
-    record_index = SeqIO.index(source_file.name, source_file_type)
-    records = (record_index[id] for id in ids)
 
-    return records
+    # SeqIO.index does not handle gzip instances
+    if isinstance(source_file, gzip.GzipFile):
+        tmpfile = tempfile.NamedTemporaryFile()
+        source_file.seek(0)
+        tmpfile.write(source_file.read())
+        tmpfile.seek(0)
+        source_file = tmpfile
+
+    record_index = SeqIO.index(source_file.name, source_file_type)
+
+    for id in ids:
+        yield record_index[id]
