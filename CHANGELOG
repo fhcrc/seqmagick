@@ -15,6 +15,7 @@ Changelog
 * Fix scoring for mixed-case sequences in ``primer-trim``.
 * Fix bug in ``primer-trim`` - failed when sequence had multiple 5' gaps compared to the primer.
 * Clarify documentation and fix bug in convert/mogrify ``--pattern-replace`` [GH-39]
+* Support for gzip files in ``seqmagick convert --sort``
 
 0.5.0
 -----
