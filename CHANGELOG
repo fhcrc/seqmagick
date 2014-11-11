@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.6.0 (in development)
+0.6.0
 ----------------------
 
 * Map ``.nex`` extension to NEXUS-format (--alphabet must be specified if writing)
