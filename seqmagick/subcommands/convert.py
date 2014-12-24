@@ -291,8 +291,7 @@ def transform_file(source_file, destination_file, arguments):
 
     # Only the fasta format is supported, as SeqIO.write does not have a 'wrap'
     # parameter.
-    if (arguments.line_wrap is not None and destination_file_type == 'fasta'
-            and source_file_type == 'fasta'):
+    if (arguments.line_wrap is not None and destination_file_type == 'fasta'):
         logging.info("Attempting to write fasta with %d line breaks.",
                 arguments.line_wrap)
 
