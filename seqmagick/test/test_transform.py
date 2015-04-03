@@ -24,9 +24,11 @@ def seqrecord(sequence_id, sequence_text, alphabet=Alphabet.generic_dna,
     """
     Quick shortcut to make a SeqRecord
     """
-    return SeqRecord(Seq(sequence_text, alphabet),
-                     id=sequence_id,
-                     description=description or sequence_id)
+    record = SeqRecord(Seq(sequence_text, alphabet),
+                       id=sequence_id)
+    if description:
+        record.description = description
+    return record
 
 class PatternReplaceTestCase(unittest.TestCase):
 
@@ -42,21 +44,45 @@ class PatternReplaceTestCase(unittest.TestCase):
     def tearDown(self):
         super(PatternReplaceTestCase, self).tearDown()
 
-    def test_pattern_replace_anchored_nomatch(self):
+    def test_pattern_replace_anchored_match_id_only(self):
         sequences = [seqrecord('hello', 'A', description='hello friend')]
         transformed = next(transform.name_replace(sequences, '^hello$', 'bye'))
+
+        self.assertEqual(str(sequences[0].seq), str(transformed.seq))
+        self.assertEqual('bye', transformed.id)
+        self.assertEqual('bye friend', transformed.description)
+
+    def test_pattern_replace_anchored_match_description_only(self):
+        sequences = [seqrecord('hello', 'A', description='hello friend')]
+        transformed = next(transform.name_replace(sequences, '^friend$', 'buddy'))
+
+        self.assertEqual(str(sequences[0].seq), str(transformed.seq))
+        self.assertEqual('hello', transformed.id)
+        self.assertEqual('hello buddy', transformed.description)
+
+    def test_pattern_replace_anchored_match_both(self):
+        sequences = [seqrecord('hello', 'A', description='hello hello friend')]
+        transformed = next(transform.name_replace(sequences, r'^hello\b', 'bye'))
+
+        self.assertEqual(str(sequences[0].seq), str(transformed.seq))
+        self.assertEqual('bye', transformed.id)
+        self.assertEqual('bye bye friend', transformed.description)
+
+    def test_pattern_replace_anchored_match_neither(self):
+        sequences = [seqrecord('hello', 'A', description='hello friend')]
+        transformed = next(transform.name_replace(sequences, r'^hello friend', 'bye'))
 
         self.assertEqual(str(sequences[0].seq), str(transformed.seq))
         self.assertEqual('hello', transformed.id)
         self.assertEqual('hello friend', transformed.description)
 
-    def test_pattern_replace_anchored_match(self):
-        sequences = [seqrecord('hello', 'A', description='hello friend')]
-        transformed = next(transform.name_replace(sequences, '^hello', 'bye'))
+    def test_pattern_replace_anchored_match_id_no_description(self):
+        sequences = [seqrecord('hello', 'A')]
+        transformed = next(transform.name_replace(sequences, '^hello$', 'bye'))
 
         self.assertEqual(str(sequences[0].seq), str(transformed.seq))
         self.assertEqual('bye', transformed.id)
-        self.assertEqual('bye friend', transformed.description)
+        self.assertEqual('<unknown description>', transformed.description)
 
     def test_pattern_replace_none(self):
         result = transform.name_replace(self.sequences, 'ZZZ', 'MATCH')
