@@ -1,8 +1,15 @@
 Changelog
 =========
 
-0.6.0
+0.6.1 (in development)
 ----------------------
+
+* Allow string wrapping when input isn't FASTA. [GH-45]
+* Fix ``--pattern-include``, ``--pattern-exclude``, and ``--pattern-replace``
+  for sequences without descriptions (e.g., from NEXUS files). [GH-47]
+
+0.6.0
+-----
 
 * Map ``.nex`` extension to NEXUS-format (--alphabet must be specified if writing)
 * Use reservoir sampling in ``--sample`` selector (lower memory use)
