@@ -421,7 +421,7 @@ def name_include(records, filter_regex):
                  ' in results.')
     regex = re.compile(filter_regex)
     for record in records:
-        if regex.search(record.description):
+        if regex.search(record.id) or regex.search(record.description):
             yield record
 
 
@@ -434,7 +434,7 @@ def name_exclude(records, filter_regex):
                  'excluding IDs matching ' + filter_regex + ' in results.')
     regex = re.compile(filter_regex)
     for record in records:
-        if not regex.search(record.description):
+        if not regex.search(record.id) and not regex.search(record.description):
             yield record
 
 
@@ -442,13 +442,22 @@ def name_replace(records, search_regex, replace_pattern):
     """
     Given a set of sequences, replace all occurrences of search_regex
     with replace_pattern. Ignore case.
+
+    Substitution is always performed on the sequence ID. If the first "word" of
+    the description matches the ID, assume that the description is FASTA-like
+    and perform substitution only on the "rest" of the description, then add
+    the (possibly modified) ID on front. If the first word does not match the
+    ID, perform substitution on the entire description.
     """
     regex = re.compile(search_regex)
     for record in records:
-        if not record.description.startswith(record.id):
-            record.description = record.id + ' ' + record.description
-        record.description = regex.sub(replace_pattern, record.description)
-        record.id = record.description.split(None, 1)[0]
+        maybe_id = record.description.split(None, 1)[0]
+        if maybe_id == record.id:
+            record.description = regex.sub(replace_pattern, record.description)
+            record.id = record.description.split(None, 1)[0]
+        else:
+            record.id = regex.sub(replace_pattern, record.id)
+            record.description = regex.sub(replace_pattern, record.description)
         yield record
 
 

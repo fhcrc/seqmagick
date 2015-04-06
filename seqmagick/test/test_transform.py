@@ -24,9 +24,11 @@ def seqrecord(sequence_id, sequence_text, alphabet=Alphabet.generic_dna,
     """
     Quick shortcut to make a SeqRecord
     """
-    return SeqRecord(Seq(sequence_text, alphabet),
-                     id=sequence_id,
-                     description=description or sequence_id)
+    record = SeqRecord(Seq(sequence_text, alphabet),
+                       id=sequence_id)
+    if description:
+        record.description = description
+    return record
 
 class PatternReplaceTestCase(unittest.TestCase):
 
@@ -42,21 +44,80 @@ class PatternReplaceTestCase(unittest.TestCase):
     def tearDown(self):
         super(PatternReplaceTestCase, self).tearDown()
 
+    # from http://stackoverflow.com/questions/13923072/shortening-fasta-header-perl
+    def test_pattern_replace_anchored_transform_id(self):
+        sequences = [seqrecord('gi|351517969|ref|NW_003613580.1|', 'CAGTC',
+                               description='gi|351517969|ref|NW_003613580.1| Cricetulus griseus unplaced genomic scaffold'),
+                    seqrecord('gi|351517969|ref|NW_003613580.1|', 'CAGTC',
+                               description='gi|351517969|ref|NW_003613580.1|'),
+                    seqrecord('gi|351517969|ref|NW_003613580.1|', 'CAGTC')]
+
+        # capture the identifier after three groups of pipe-separated characters
+        transformed = list(transform.name_replace(sequences, r'^(?:[^|]+\|){3}([^|]+)\|', r'\1'))
+
+        self.assertEqual(str(sequences[0].seq), str(transformed[0].seq))
+        self.assertEqual('NW_003613580.1', transformed[0].id)
+        self.assertEqual('NW_003613580.1 Cricetulus griseus unplaced genomic scaffold', transformed[0].description)
+
+        self.assertEqual(str(sequences[1].seq), str(transformed[1].seq))
+        self.assertEqual('NW_003613580.1', transformed[1].id)
+        self.assertEqual('NW_003613580.1', transformed[1].description)
+
+        self.assertEqual(str(sequences[2].seq), str(transformed[2].seq))
+        self.assertEqual('NW_003613580.1', transformed[2].id)
+        self.assertEqual('<unknown description>', transformed[2].description)
+
+    # from http://stackoverflow.com/questions/15155728/modifying-fasta-headers-with-unix-command-line-tools
+    def test_pattern_replace_anchored_id_from_description(self):
+        sequences = [seqrecord('hg19_ct_UserTrack_3545_691', 'GATGG',
+                               description='hg19_ct_UserTrack_3545_691 range=chr1:8121498-8121502 5\'pad=0 3\'pad=0 strand=+ repeatMasking=none')]
+
+        transformed = next(transform.name_replace(sequences, r'^\S+ range=(\S+)', r'\1'))
+
+        self.assertEqual(str(sequences[0].seq), str(transformed.seq))
+        self.assertEqual('chr1:8121498-8121502', transformed.id)
+        self.assertEqual('chr1:8121498-8121502 5\'pad=0 3\'pad=0 strand=+ repeatMasking=none', transformed.description)
+
+    # from http://stackoverflow.com/questions/23280240/how-to-rename-fasta-file-headers-using-sed
+    def test_pattern_replace_anchored_add_to_description(self):
+        sequences = [seqrecord('Bra000001', 'CTTAT', description='Bra000001')]
+
+        transformed = next(transform.name_replace(sequences, r'^(Bra\d+)$', r'\1 Brassica rapa'))
+
+        self.assertEqual(str(sequences[0].seq), str(transformed.seq))
+        self.assertEqual('Bra000001', transformed.id)
+        self.assertEqual('Bra000001 Brassica rapa', transformed.description)
+
+    def test_pattern_replace_anchored_remove_from_description(self):
+        sequences = [seqrecord('Bra000001', 'CTTAT', description='Bra000001 Brassica rapa')]
+
+        transformed = next(transform.name_replace(sequences, r' .*$', ''))
+
+        self.assertEqual(str(sequences[0].seq), str(transformed.seq))
+        self.assertEqual('Bra000001', transformed.id)
+        self.assertEqual('Bra000001', transformed.description)
+
     def test_pattern_replace_anchored_nomatch(self):
         sequences = [seqrecord('hello', 'A', description='hello friend')]
-        transformed = next(transform.name_replace(sequences, '^hello$', 'bye'))
+        transformed = next(transform.name_replace(sequences, r'^hello$', 'bye'))
 
         self.assertEqual(str(sequences[0].seq), str(transformed.seq))
         self.assertEqual('hello', transformed.id)
         self.assertEqual('hello friend', transformed.description)
 
     def test_pattern_replace_anchored_match(self):
-        sequences = [seqrecord('hello', 'A', description='hello friend')]
-        transformed = next(transform.name_replace(sequences, '^hello', 'bye'))
+        sequences = [seqrecord('hello', 'A', description='hello friend'),
+                     seqrecord('hello', 'A')]
 
-        self.assertEqual(str(sequences[0].seq), str(transformed.seq))
-        self.assertEqual('bye', transformed.id)
-        self.assertEqual('bye friend', transformed.description)
+        transformed = list(transform.name_replace(sequences, r'^hello\b', 'bye'))
+
+        self.assertEqual(str(sequences[0].seq), str(transformed[0].seq))
+        self.assertEqual('bye', transformed[0].id)
+        self.assertEqual('bye friend', transformed[0].description)
+
+        self.assertEqual(str(sequences[1].seq), str(transformed[1].seq))
+        self.assertEqual('bye', transformed[1].id)
+        self.assertEqual('<unknown description>', transformed[1].description)
 
     def test_pattern_replace_none(self):
         result = transform.name_replace(self.sequences, 'ZZZ', 'MATCH')

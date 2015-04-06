@@ -159,11 +159,11 @@ def add_options(parser):
     seq_select.add_argument('--pattern-include', metavar='REGEX',
             action=partial_action(transform.name_include, 'filter_regex'),
             dest='transforms', help="""Filter the sequences by regular
-            expression in name""")
+            expression in ID or description""")
     seq_select.add_argument('--pattern-exclude', metavar='REGEX',
             action=partial_action(transform.name_exclude, 'filter_regex'),
             dest='transforms', help="""Filter the sequences by regular
-            expression in name""")
+            expression in ID or description""")
     seq_select.add_argument('--prune-empty',
             action=partial_action(transform.prune_empty), dest='transforms',
             help="Prune sequences containing only gaps ('-')")
@@ -199,7 +199,7 @@ def add_options(parser):
             action=partial_action(transform.name_replace, ('search_regex',
                 'replace_pattern')),
             dest='transforms', help="""Replace regex pattern "search_pattern"
-            with "replace_pattern" in sequence identifier""")
+            with "replace_pattern" in sequence ID and description""")
     id_mods.add_argument('--strip-range', dest='transforms',
             action=partial_action(transform.strip_range), help="""Strip ranges
             from sequences IDs, matching </x-y>""")
