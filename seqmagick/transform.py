@@ -451,13 +451,12 @@ def name_replace(records, search_regex, replace_pattern):
     """
     regex = re.compile(search_regex)
     for record in records:
-        original_id = record.id
-        maybe_id, rest = record.description.split(None, 1)
-        record.id = regex.sub(replace_pattern, record.id)
-        if maybe_id == original_id:
-            rest = regex.sub(replace_pattern, rest)
-            record.description = record.id + ' ' + rest
+        maybe_id = record.description.split(None, 1)[0]
+        if maybe_id == record.id:
+            record.description = regex.sub(replace_pattern, record.description)
+            record.id = record.description.split(None, 1)[0]
         else:
+            record.id = regex.sub(replace_pattern, record.id)
             record.description = regex.sub(replace_pattern, record.description)
         yield record
 
