@@ -1,0 +1,22 @@
+usage: seqmagick backtrans-align [-h] [-o destination_file]
+                                 [-t {standard-ambiguous,vertebrate-mito,standard}]
+                                 [-a {fail,warn,none}]
+                                 protein_align nucl_align
+
+Given a protein alignment and unaligned nucleotides, align the nucleotides
+using the protein alignment. Protein and nucleotide sequence files must
+contain the same number of sequences, in the same order, with the same IDs.
+
+positional arguments:
+  protein_align         Protein Alignment
+  nucl_align            FASTA Alignment
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -o destination_file, --out-file destination_file
+                        Output destination. Default: STDOUT
+  -t {standard-ambiguous,vertebrate-mito,standard}, --translation-table {standard-ambiguous,vertebrate-mito,standard}
+                        Translation table to use. [Default: standard-
+                        ambiguous]
+  -a {fail,warn,none}, --fail-action {fail,warn,none}
+                        Action to take on an ambiguous codon [default: fail]

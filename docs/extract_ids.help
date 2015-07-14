@@ -1,0 +1,18 @@
+usage: seqmagick extract-ids [-h] [-o OUTPUT_FILE]
+                             [--input-format INPUT_FORMAT] [-d]
+                             sequence_file
+
+Extract the sequence IDs from a file
+
+positional arguments:
+  sequence_file         Sequence file
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -o OUTPUT_FILE, --output-file OUTPUT_FILE
+                        Destination trimmed file
+  --input-format INPUT_FORMAT
+                        Input format for sequence file
+  -d, --include-description
+                        Include the sequence description in output [default:
+                        False]

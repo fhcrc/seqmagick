@@ -71,6 +71,6 @@ You can even define your own functions in python and use them via
 Command-line Arguments
 **********************
 
-.. program-output:: ../seqmagick.py convert -h
+.. literalinclude:: convert.help
 
 .. _`BioPython SeqIO wiki page`: http://www.biopython.org/wiki/SeqIO#File_Formats

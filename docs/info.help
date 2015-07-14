@@ -1,0 +1,22 @@
+usage: seqmagick info [-h] [--input-format INPUT_FORMAT]
+                      [--out-file destination_file] [--format {tab,csv,align}]
+                      [--threads THREADS]
+                      sequence_files [sequence_files ...]
+
+Info action
+
+positional arguments:
+  sequence_files
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --input-format INPUT_FORMAT
+                        Input format. Overrides extension for all input files
+  --out-file destination_file
+                        Output destination. Default: STDOUT
+  --format {tab,csv,align}
+                        Specify output format as tab-delimited, CSV or aligned
+                        in a borderless table. Default is tab-delimited if the
+                        output is directed to a file, aligned if output to the
+                        console.
+  --threads THREADS     Number of threads (CPUs). [1]
