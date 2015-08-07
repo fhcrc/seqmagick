@@ -50,7 +50,7 @@ Let's say I just want a few of my sequences::
 Or I want to remove any gaps, reverse complement, select the last 5 sequences,
 and remove any duplicates from an alignment in place::
 
-    seqmagick mogrify --tail 5 --reverse-complement --ungap --deduplicate-sequences examples/test.fasta examples/test.fasta
+    seqmagick mogrify --tail 5 --reverse-complement --ungap --deduplicate-sequences examples/test.fasta
 
 You can even define your own functions in python and use them via
 ``--apply-function``.
