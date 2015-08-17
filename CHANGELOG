@@ -1,12 +1,13 @@
 Changelog
 =========
 
-0.6.1 (in development)
+0.6.1
 ----------------------
 
 * Allow string wrapping when input isn't FASTA. [GH-45]
 * Fix ``--pattern-include``, ``--pattern-exclude``, and ``--pattern-replace``
   for sequences without descriptions (e.g., from NEXUS files). [GH-47]
+* Fix mogrify example. [GH-52]
 
 0.6.0
 -----
