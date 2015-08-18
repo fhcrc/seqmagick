@@ -86,8 +86,6 @@ class AmbiguousBaseFilterTestCase(unittest.TestCase):
                 'other')
 
 class MaxAmbiguousFilterTestCase(unittest.TestCase):
-    """
-    """
     def setUp(self):
         self.records = [SeqRecord(Seq('ACGT')),
                 SeqRecord(Seq('NNNN')),
@@ -111,6 +109,33 @@ class MaxAmbiguousFilterTestCase(unittest.TestCase):
         instance = quality_filter.MaxAmbiguousFilter(1)
         filtered = list(instance.filter_records(self.records))
         self.assertEqual([self.records[i] for i in (0, 2)], filtered)
+
+
+class PctAmbiguousFilterTestCase(unittest.TestCase):
+    def setUp(self):
+        self.records = [SeqRecord(Seq('ACGT')),
+                        SeqRecord(Seq('NNNN')),
+                        SeqRecord(Seq('NACT')),
+                        SeqRecord(Seq('ACNTN')),
+                        SeqRecord(Seq('GGNTTNACT')),
+                        ]
+
+    def test_none(self):
+        instance = quality_filter.PctAmbiguousFilter(0)
+        filtered = list(instance.filter_records(self.records))
+        self.assertEqual(len(filtered), 1)
+        self.assertEqual(str(self.records[0].seq), str(filtered[0].seq))
+
+    def test_10(self):
+        instance = quality_filter.PctAmbiguousFilter(100)
+        filtered = list(instance.filter_records(self.records))
+        self.assertEqual(filtered, self.records)
+
+    def test_1(self):
+        instance = quality_filter.PctAmbiguousFilter(0.23)
+        filtered = list(instance.filter_records(self.records))
+        print filtered
+        self.assertEqual([self.records[i] for i in (0, 4)], filtered)
 
 
 class MinLengthFilterTestCase(unittest.TestCase):
