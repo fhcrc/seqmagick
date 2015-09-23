@@ -32,6 +32,8 @@ setup(name='seqmagick',
               'seqmagick = seqmagick.scripts.cli:main'
       ]},
       package_data={'seqmagick.test.integration': ['data/*']},
+      setup_requires=['nose>=1.0'],
+      test_suite='nose.collector',
       install_requires=requires,
       classifiers=[
         'License :: OSI Approved :: GNU General Public License (GPL)',
