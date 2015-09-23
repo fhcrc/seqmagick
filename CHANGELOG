@@ -1,6 +1,11 @@
 Changelog
 =========
 
+0.6.1-dev
+---------------------
+
+* New ``quality-filter --pct-ambiguous`` switch [GH-53]
+
 0.6.1
 ----------------------
 

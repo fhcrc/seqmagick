@@ -54,7 +54,7 @@ def build_parser(parser):
     """
     Generate a subparser
     """
-    parser.add_argument('input_fastq', type=FileType('r'),
+    parser.add_argument('sequence_file', type=FileType('r'),
             help="""Input fastq file. A fasta-format file may also be provided
             if --input-qual is also specified.""")
     parser.add_argument('--input-qual', type=FileType('r'),
@@ -104,6 +104,9 @@ def build_parser(parser):
     parser.add_argument('--max-ambiguous', default=None, help="""Maximum number
             of ambiguous bases in a sequence. Sequences exceeding this count
             will be removed.""", type=int)
+    parser.add_argument('--pct-ambiguous', help="""Maximun percent of
+            ambiguous bases in a sequence.  Sequences exceeding this percent
+            will be removed.""", type=float)
 
     barcode_group = parser.add_argument_group('Barcode/Primer')
     primer_group = barcode_group.add_mutually_exclusive_group()
@@ -437,7 +440,7 @@ class MaxAmbiguousFilter(BaseFilter):
         super(MaxAmbiguousFilter, self).__init__()
         assert max_ambiguous is not None
         self.max_ambiguous = max_ambiguous
-        self.name = self.name + '[{0}]'.format(max_ambiguous)
+        self.name = self.name + ' [{0}]'.format(max_ambiguous)
 
     def filter_record(self, record):
         n_count = record.seq.upper().count('N')
@@ -446,6 +449,31 @@ class MaxAmbiguousFilter(BaseFilter):
         else:
             assert n_count <= self.max_ambiguous
             return record
+
+
+class PctAmbiguousFilter(BaseFilter):
+    """
+    Filters records exceeding some minimum percent of ambiguous bases
+    """
+    name = "Percent Ambiguous Bases"
+
+    def __init__(self, pct_ambiguous):
+        super(PctAmbiguousFilter, self).__init__()
+        assert pct_ambiguous is not None
+        self.pct_ambiguous = pct_ambiguous
+        self.name = self.name + ' [{0}]'.format(pct_ambiguous)
+
+    def filter_record(self, record):
+        n_count = record.seq.upper().count('N')
+        if n_count == 0:
+            return record
+        pct_ambig = n_count / float(len(record.seq))
+        if pct_ambig > self.pct_ambiguous:
+            raise FailedFilter(pct_ambig)
+        else:
+            assert pct_ambig <= self.pct_ambiguous
+            return record
+
 
 class MinLengthFilter(BaseFilter):
     """
@@ -558,17 +586,15 @@ def action(arguments):
     if trie is None or triefind is None:
         raise ValueError('Missing Bio.trie and/or Bio.triefind modules. Cannot continue')
 
-    # Always filter with a quality score
-    qfilter = QualityScoreFilter(arguments.min_mean_quality)
-    filters = [qfilter]
-
+    filters = []
+    input_type = fileformat.from_handle(arguments.sequence_file)
     output_type = fileformat.from_handle(arguments.output_file)
-    with arguments.input_fastq as fp:
+    with arguments.sequence_file as fp:
         if arguments.input_qual:
             sequences = QualityIO.PairedFastaQualIterator(fp,
                     arguments.input_qual)
         else:
-            sequences = SeqIO.parse(fp, 'fastq')
+            sequences = SeqIO.parse(fp, input_type)
 
         listener = RecordEventListener()
         if arguments.details_out:
@@ -580,6 +606,9 @@ def action(arguments):
         sequences = listener.iterable_hook('read', sequences)
 
         # Add filters
+        if arguments.min_mean_quality and input_type == 'fastq':
+            qfilter = QualityScoreFilter(arguments.min_mean_quality)
+            filters.append(qfilter)
         if arguments.max_length:
             max_length_filter = MaxLengthFilter(arguments.max_length)
             filters.append(max_length_filter)
@@ -589,6 +618,9 @@ def action(arguments):
         if arguments.max_ambiguous is not None:
             max_ambig_filter = MaxAmbiguousFilter(arguments.max_ambiguous)
             filters.append(max_ambig_filter)
+        if arguments.pct_ambiguous is not None:
+            pct_ambig_filter = PctAmbiguousFilter(arguments.pct_ambiguous)
+            filters.append(pct_ambig_filter)
         if arguments.ambiguous_action:
             ambiguous_filter = AmbiguousBaseFilter(
                     arguments.ambiguous_action)
