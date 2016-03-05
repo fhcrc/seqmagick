@@ -567,7 +567,7 @@ def parse_barcode_file(fp, primer=None, header=False):
         else:
             pr = record[2]
         for sequence in all_unambiguous(barcode + pr):
-            if tr.has_key(sequence):
+            if sequence in tr:
                 raise ValueError("Duplicate sample: {0}, {1} both have {2}",
                         specimen, tr[sequence], sequence)
             logging.info('%s->%s', sequence, specimen)

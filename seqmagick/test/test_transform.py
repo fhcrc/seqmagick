@@ -2,7 +2,7 @@
 Tests for seqmagick.transform
 """
 
-from cStringIO import StringIO
+from io import StringIO
 import functools
 import logging
 import unittest
@@ -231,7 +231,7 @@ class HeadTestCase(unittest.TestCase):
 
     def setUp(self):
         self.sequences = [seqrecord('sequence{0}'.format(i), 'A'*(i+1))
-                          for i in xrange(100)]
+                          for i in range(100)]
 
     def test_zero(self):
         result = list(transform.head(self.sequences, '0'))
@@ -252,7 +252,7 @@ class HeadTestCase(unittest.TestCase):
         """
         Try specifying some values.
         """
-        for h in xrange(len(self.sequences) + 1):
+        for h in range(len(self.sequences) + 1):
             result = list(transform.head(self.sequences, str(h)))
             self.assertEqual(h, len(result))
             self.assertEqual([s.id for s in self.sequences[:h]],
@@ -274,7 +274,7 @@ class HeadTestCase(unittest.TestCase):
         """
         Try specifying some minus values.
         """
-        for h in xrange(1, len(self.sequences) + 1):
+        for h in range(1, len(self.sequences) + 1):
             result = list(transform.head(self.sequences, str(-h)))
             self.assertEqual(h, len(self.sequences) - len(result))
             self.assertEqual([s.id for s in self.sequences[:-h]],
@@ -319,7 +319,7 @@ class TailTestCase(unittest.TestCase):
         """
         Try specifying some plus values.
         """
-        for h in xrange(1, len(self.records) + 1):
+        for h in range(1, len(self.records) + 1):
             result = list(transform.tail(self.records, '+{}'.format(h)))
             self.assertEqual(len(self.records) + 1 - h, len(result))
             self.assertEqual([s.id for s in self.records[h-1:]],
@@ -357,9 +357,9 @@ class IsolateRegionTestCase(unittest.TestCase):
 
     def test_invalid(self):
         self.assertRaises(ValueError, transform.isolate_region(
-                self.sequences, 5, 5).next)
+                self.sequences, 5, 5).__next__)
         self.assertRaises(ValueError, transform.isolate_region(
-                self.sequences, 10, 5).next)
+                self.sequences, 10, 5).__next__)
 
 class MinUngapLengthTestCase(unittest.TestCase):
 

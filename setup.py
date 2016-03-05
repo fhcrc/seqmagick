@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#! /usr/bin/env python3
 
 # Use setuptools, falling back on provide
 try:
@@ -12,8 +12,8 @@ import sys
 
 from seqmagick import __version__ as version
 
-if sys.version_info < (2, 7):
-    print 'ERROR: seqmagick requires at least Python 2.7 to run.'
+if sys.version_info[0] < 3:
+    print('ERROR: seqmagick requires at least Python 3 to run.')
     sys.exit(1)
 
 requires = ['biopython>=1.58']

@@ -1,4 +1,4 @@
-from cStringIO import StringIO
+from io import StringIO
 import os
 import os.path
 import logging
@@ -25,15 +25,15 @@ class CommandLineTestMixIn(object):
 
     def setUp(self):
         self.input_file = tempfile.NamedTemporaryFile(suffix=self.in_suffix)
-        with open(self.input_path) as fp:
+        with open(self.input_path, mode='rb') as fp:
             shutil.copyfileobj(fp, self.input_file)
         self.input_file.flush()
         with tempfile.NamedTemporaryFile(suffix=self.out_suffix) as tf:
             self.output_file = tf.name
 
     def test_run(self):
-        command = self.command.format(input=self.input_file.name,
-                output=self.output_file)
+        command = self.command.format(
+            input=self.input_file.name, output=self.output_file)
         cli.main(shlex.split(command))
 
         with FileType('r')(self.output_file) as fp:

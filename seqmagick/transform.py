@@ -4,7 +4,7 @@ Functions to transform / filter sequences
 import collections
 import contextlib
 import copy
-import cPickle as pickle
+import pickle as pickle
 import gzip
 import itertools
 import logging
@@ -19,6 +19,7 @@ from Bio.Data import CodonTable
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 from Bio.SeqUtils.CheckSum import seguid
+from functools import reduce
 
 # Characters to be treated as gaps
 GAP_CHARS = "-."
@@ -83,7 +84,7 @@ def deduplicate_sequences(records, out_file):
 
     if out_file is not None:
         with out_file:
-            for sequences in checksum_sequences.itervalues():
+            for sequences in checksum_sequences.values():
                 out_file.write('%s\n' % (' '.join(sequences),))
 
 
@@ -187,7 +188,7 @@ def drop_columns(records, slices):
         # Generate a set of indices to remove
         drop = set(i for slice in slices
                    for i in range(*slice.indices(len(record))))
-        keep = [i not in drop for i in xrange(len(record))]
+        keep = [i not in drop for i in range(len(record))]
         record.seq = Seq(''.join(itertools.compress(record.seq, keep)), record.seq.alphabet)
         yield record
 
@@ -205,7 +206,7 @@ def multi_cut_sequences(records, slices):
             yield reduce(lambda x, y: x + y, pieces)
 
 def _update_slices(record, slices):
-    n = itertools.count().next
+    n = itertools.count().__next__
     # Generate a map from indexes in the specified sequence to those in the
     # alignment
     ungap_map = dict((n(), i) for i, base in enumerate(str(record.seq))
@@ -256,7 +257,7 @@ def multi_mask_sequences(records, slices):
     Replace characters sliced by slices with gap characters.
     """
     for record in records:
-        record_indices = range(len(record))
+        record_indices = list(range(len(record)))
         keep_indices = reduce(lambda i, s: i - frozenset(record_indices[s]),
                               slices, frozenset(record_indices))
         seq = ''.join(b if i in keep_indices else '-'
@@ -311,7 +312,7 @@ def _reverse_annotations(old_record, new_record):
     lists / tuples / strings.
     """
     # Copy the annotations over
-    for k, v in old_record.annotations.items():
+    for k, v in list(old_record.annotations.items()):
         # Trim if appropriate
         if isinstance(v, (tuple, list)) and len(v) == len(old_record):
             assert len(v) == len(old_record)
@@ -320,7 +321,7 @@ def _reverse_annotations(old_record, new_record):
 
     # Letter annotations must be lists / tuples / strings of the same
     # length as the sequence
-    for k, v in old_record.letter_annotations.items():
+    for k, v in list(old_record.letter_annotations.items()):
         assert len(v) == len(old_record)
         new_record.letter_annotations[k] = v[::-1]
 

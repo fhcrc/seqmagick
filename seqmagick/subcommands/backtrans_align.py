@@ -131,7 +131,7 @@ Trans. Codons: {5}""".format(len(codons), len(ungapped_prot), nucl_seq.id, prot_
         """
         Convert protein sequences to nucleotide alignment
         """
-        zipped = itertools.izip_longest(prot_alignment, nucl_sequences)
+        zipped = itertools.zip_longest(prot_alignment, nucl_sequences)
         for p, n in zipped:
             if p is None:
                 raise ValueError("Exhausted protein sequences")

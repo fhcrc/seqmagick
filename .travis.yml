@@ -1,6 +1,6 @@
 language: python
 python:
-  - "2.7"
+  - "3"
   - "pypy"
 
 # Install numpy, then BioPython
@@ -13,4 +13,4 @@ script: nosetests
 
 notifications:
   email:
-    - cmccoy@fhcrc.org
+    - crosenth@uw.edu

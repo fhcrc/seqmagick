@@ -13,17 +13,17 @@ class BatchTestCase(unittest.TestCase):
         self.assertRaises(StopIteration, next, b)
 
     def test_singletons(self):
-        i = range(3)
+        i = list(range(3))
         b = backtrans_align.batch(i, 1)
         self.assertEquals([[0], [1], [2]], list(b))
 
     def test_doubles(self):
-        i = range(6)
+        i = list(range(6))
         b = backtrans_align.batch(i, 2)
         self.assertEquals([[0, 1], [2, 3], [4, 5]], list(b))
 
     def test_partial(self):
-        i = range(5)
+        i = list(range(5))
         b = backtrans_align.batch(i, 2)
         self.assertEquals([[0, 1], [2, 3], [4]], list(b))
 
