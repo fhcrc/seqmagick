@@ -30,7 +30,7 @@ EXTENSION_TO_TYPE = {'.aln': 'clustal',
                      '.sth': 'stockholm',
                      '.sto': 'stockholm',}
 
-COMPRESS_EXT = {'.bz2': bz2.BZ2File, '.gz': gzip.open, '.bz': bz2.BZ2File}
+COMPRESS_EXT = {'.bz2': bz2.BZ2File, '.gz': gzip.GzipFile, '.bz': bz2.BZ2File}
 
 
 class UnknownExtensionError(ValueError):

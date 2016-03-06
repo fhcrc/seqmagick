@@ -6,6 +6,7 @@ import bz2
 import contextlib
 import copy
 import functools
+import io
 import os
 import os.path
 import signal
@@ -223,11 +224,11 @@ class FileType(object):
     def _get_handle(self, file_path):
         ext = os.path.splitext(file_path)[1].lower()
         file_obj = self.ext_map.get(ext, open)(file_path, mode=self.mode)
-        print(file_obj.read())
 
         # python 3 BZFile bug: http://bugs.python.org/issue24258
         if isinstance(file_obj, bz2.BZ2File):
             file_obj.name = file_path
+            file_obj = io.TextIOWrapper(file_obj)
 
         return file_obj
 
