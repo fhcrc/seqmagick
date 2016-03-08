@@ -9,7 +9,6 @@ import itertools
 import logging
 import pickle
 import re
-import string
 import tempfile
 import random
 
@@ -59,7 +58,7 @@ def dashes_cleanup(records, prune_chars='.:?~'):
     -.
     """
     logging.info("Applying _dashes_cleanup: converting any . or : to -.")
-    translation_table = string.maketrans(prune_chars, '-' * len(prune_chars))
+    translation_table = str.maketrans(prune_chars, '-' * len(prune_chars))
     for record in records:
         record.seq = Seq(str(record.seq).translate(translation_table),
                          record.seq.alphabet)
