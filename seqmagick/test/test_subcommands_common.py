@@ -100,7 +100,7 @@ class AtomicWriteTestCase(unittest.TestCase):
     new_content = "New Content"
 
     def setUp(self):
-        with tempfile.NamedTemporaryFile(delete=False) as tf:
+        with tempfile.NamedTemporaryFile(mode='wt', delete=False) as tf:
             tf.write(self.initial_content)
             self.input_file = tf.name
 
@@ -116,7 +116,7 @@ class AtomicWriteTestCase(unittest.TestCase):
             self.assertFalse(os.path.exists(tf.name))
 
     def test_write(self):
-        with common.atomic_write(self.input_file) as fp:
+        with common.atomic_write(self.input_file, mode='wt') as fp:
             self.assertNotEqual(self.input_file, fp.name)
             fp.write(self.new_content)
 
@@ -138,14 +138,14 @@ class ApplyUmaskTestCase(unittest.TestCase):
         os.umask(self.orig_umask)
 
     def test_provided_umask(self):
-        self.assertEqual('0770', oct(common.apply_umask(0o777, 0o07)))
-        self.assertEqual('0660', oct(common.apply_umask(0o666, 0o07)))
-        self.assertEqual('0644', oct(common.apply_umask(0o666, 0o22)))
+        self.assertEqual('0o770', oct(common.apply_umask(0o777, 0o07)))
+        self.assertEqual('0o660', oct(common.apply_umask(0o666, 0o07)))
+        self.assertEqual('0o644', oct(common.apply_umask(0o666, 0o22)))
 
     def test_user_umask(self):
         os.umask(0o07)
-        self.assertEqual('0770', oct(common.apply_umask(0o777)))
-        self.assertEqual('0660', oct(common.apply_umask(0o666)))
+        self.assertEqual('0o770', oct(common.apply_umask(0o777)))
+        self.assertEqual('0o660', oct(common.apply_umask(0o666)))
 
 class FileTypeTestCase(unittest.TestCase):
 
@@ -156,7 +156,7 @@ class FileTypeTestCase(unittest.TestCase):
         self.assertIs(sys.stdout, common.FileType('w')('-'))
 
     def test_read(self):
-        with tempfile.NamedTemporaryFile() as tf:
+        with tempfile.NamedTemporaryFile(mode='wt') as tf:
             tf.write('TEST')
             tf.flush()
             with common.FileType('r')(tf.name) as fp:
@@ -169,4 +169,4 @@ class FileTypeTestCase(unittest.TestCase):
                 fp.write('TEST')
                 fp.flush()
                 self.assertEqual(tf.name, fp.name)
-                self.assertEqual('TEST', tf.read())
+                self.assertEqual('TEST', tf.read().decode('utf-8'))
