@@ -6,6 +6,7 @@ import bz2
 import contextlib
 import copy
 import functools
+import gzip
 import io
 import os
 import os.path
@@ -228,6 +229,9 @@ class FileType(object):
         # python 3 BZFile bug: http://bugs.python.org/issue24258
         if isinstance(file_obj, bz2.BZ2File):
             file_obj.name = file_path
+
+        if isinstance(file_obj, bz2.BZ2File) or \
+           isinstance(file_obj, gzip.GzipFile):
             file_obj = io.TextIOWrapper(file_obj)
 
         return file_obj
