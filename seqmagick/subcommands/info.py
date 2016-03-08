@@ -108,7 +108,7 @@ def summarize_sequence_file(source_file, file_type=None):
     sequence_count = 0
 
     # Get an iterator and analyze the data.
-    with common.FileType('rb')(source_file) as fp:
+    with common.FileType('r')(source_file) as fp:
         if not file_type:
             file_type = fileformat.from_handle(fp)
         for record in SeqIO.parse(fp, file_type):

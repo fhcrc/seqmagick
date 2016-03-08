@@ -12,8 +12,8 @@ class InfoMixin(object):
     threads = 1
 
     def setUp(self):
-        self.infile = tempfile.NamedTemporaryFile()
-        self.tempfile = tempfile.NamedTemporaryFile()
+        self.infile = tempfile.NamedTemporaryFile(mode='rt')
+        self.tempfile = tempfile.NamedTemporaryFile(mode='rt')
 
     def tearDown(self):
         self.infile.close()
