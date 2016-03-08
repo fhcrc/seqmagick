@@ -3,11 +3,11 @@ Functions to transform / filter sequences
 """
 import collections
 import contextlib
-import copy
-import pickle as pickle
 import gzip
+import importlib
 import itertools
 import logging
+import pickle
 import re
 import string
 import tempfile
@@ -668,20 +668,24 @@ def translate(records, translate):
         rna2protein
         rna2proteinstop
     """
+    importlib.reload(CodonTable)  # reset the forward_table set before
     logging.info('Applying translation generator: '
                  'operation to perform is ' + translate + '.')
 
     to_stop = translate.endswith('stop')
 
-    source_type = translate[:3]
-    alphabet = {'dna': IUPAC.ambiguous_dna, 'rna': IUPAC.ambiguous_rna}[source_type]
-
     # Get a translation table
-    table = {'dna': CodonTable.ambiguous_dna_by_name["Standard"],
-             'rna': CodonTable.ambiguous_rna_by_name["Standard"]}[source_type]
+    source_type = translate[:3]
+    if source_type == 'dna':
+        alphabet = IUPAC.ambiguous_dna
+        table = CodonTable.ambiguous_dna_by_name["Standard"]
+    elif source_type == 'rna':
+        alphabet = IUPAC.ambiguous_rna
+        table = CodonTable.ambiguous_rna_by_name["Standard"]
+    else:
+        raise ValueError('unknown source type {}'.format(source_type))
 
     # Handle ambiguities by replacing ambiguous codons with 'X'
-    table = copy.deepcopy(table)
     table.forward_table = CodonWarningTable(table.forward_table)
 
     for record in records:
