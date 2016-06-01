@@ -17,7 +17,7 @@ class CommandLineTestMixIn(object):
                 suffix=os.path.basename(self.input_path),
                 delete=False) as tf:
             self.input_file = tf.name
-            with open(self.input_path) as fp:
+            with open(self.input_path, mode='rb') as fp:
                 shutil.copyfileobj(fp, tf)
 
     def test_run(self):
