@@ -24,12 +24,12 @@ test3 sequence 3
     def test_ids(self):
         args = ['extract-ids', self.seq_file, '-o', self.tempfile.name]
         cli.main(args)
-        self.assertEquals(self.expected, self.tempfile.read())
+        self.assertEquals(self.expected, self.tempfile.read().decode('utf-8'))
 
     def test_descriptions(self):
         args = ['extract-ids', self.seq_file, '-o', self.tempfile.name, '-d']
         cli.main(args)
-        self.assertEquals(self.expected_desc, self.tempfile.read())
+        self.assertEquals(self.expected_desc, self.tempfile.read().decode('utf-8'))
 
 
 class SimpleExtractIdsTestCase(ExtractIdsMixin, unittest.TestCase):
