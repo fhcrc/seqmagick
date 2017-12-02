@@ -27,7 +27,7 @@ class QualityFilterTestCase(unittest.TestCase):
         self.sequence.letter_annotations['phred_quality'] = [25, 25, 25, 25]
         instance = quality_filter.QualityScoreFilter()
         result = instance.filter_record(self.sequence)
-        self.assertEqual(self.sequence, result)
+        self.assertEqual(self.sequence.seq, result.seq)
 
 
 class WindowQualityFilterTestCase(unittest.TestCase):
@@ -75,7 +75,7 @@ class AmbiguousBaseFilterTestCase(unittest.TestCase):
         self.assertEqual(1, len(actual))
         self.assertEqual(1, instance.passed)
         self.assertEqual(4, instance.failed)
-        self.assertEqual(self.records[0], actual[0])
+        self.assertEqual(self.records[0].seq, actual[0].seq)
 
     def test_truncate(self):
         instance = quality_filter.AmbiguousBaseFilter('truncate')

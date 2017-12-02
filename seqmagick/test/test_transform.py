@@ -198,31 +198,33 @@ class SeqPatternTestCase(unittest.TestCase):
         super(SeqPatternTestCase, self).setUp()
 
         self.sequences = [
-            seqrecord('sequence_1', 'AC-G--'),
-            seqrecord('sequence_2', '-C-GT-'),
-            seqrecord('sequence_3', '-T-AG-'),
+            seqrecord('s1', 'AC-G--'),
+            seqrecord('s2', '-C-GT-'),
+            seqrecord('s3', '-T-AG-'),
         ]
 
-        self.tests = [('^$', []),
-                      ('.*', self.sequences),
-                      ('^AC', [self.sequences[0]]),
-                      ('^ac', []),
-                      ('^ac(?i)', [self.sequences[0]])]
+        self.tests = [('^$', set()),
+                      ('.*', {'s1', 's2', 's3'}),
+                      ('^AC', {'s1'}),
+                      ('^ac', set()),
+                      ('^ac(?i)', {'s1'})]
 
     def test_include(self):
         result = transform.seq_include(self.sequences, '^$')
 
         for regex, expected in self.tests:
-            result = list(transform.seq_include(self.sequences, regex))
+            result = {seq.id for seq in transform.seq_include(self.sequences, regex)}
             self.assertEqual(expected, result)
 
     def test_exclude(self):
         result = transform.seq_include(self.sequences, '^$')
 
         for regex, expected_include in self.tests:
-            expected = [i for i in self.sequences if i not in expected_include]
-            result = list(transform.seq_exclude(self.sequences, regex))
+            result = {seq.id for seq in transform.seq_exclude(self.sequences, regex)}
+            expected = {seq.id for seq in self.sequences
+                        if seq.id not in expected_include}
             self.assertEqual(expected, result)
+
 
 class HeadTestCase(unittest.TestCase):
     """

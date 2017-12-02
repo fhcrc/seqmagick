@@ -380,7 +380,7 @@ class BaseFilter(object):
                 filtered = self.filter_record(record)
                 assert (filtered)
                 # Quick tracking whether the sequence was modified
-                if filtered == record:
+                if filtered.seq == record.seq:
                     self.passed_unchanged += 1
                 else:
                     self.passed_changed += 1
