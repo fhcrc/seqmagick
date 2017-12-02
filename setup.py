@@ -1,14 +1,7 @@
 #!/usr/bin/env python
 
-# Use setuptools, falling back on provide
-try:
-    from setuptools import setup, find_packages
-except ImportError:
-    import distribute_setup
-    distribute_setup.use_setuptools()
-    from setuptools import setup, find_packages
-
 import sys
+from setuptools import setup, find_packages
 
 from seqmagick import __version__ as version
 
