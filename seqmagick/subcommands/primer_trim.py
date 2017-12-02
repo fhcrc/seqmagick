@@ -149,17 +149,14 @@ class PrimerAligner(object):
     Get positions of pairwise alignments of a primer to a sequence.
     """
 
-    def __init__(self,
-                 primer,
-                 match=5,
-                 difference=-4,
-                 gap_open=-10,
-                 gap_extend=-0.5):
+    def __init__(self, primer, match=5, difference=-4, gap_open=-10,
+                 gap_extend=-0.5, penalize_end_gaps=False):
         self.primer = primer
         self.match = match
         self.difference = difference
         self.gap_open = gap_open
         self.gap_extend = gap_extend
+        self.penalize_end_gaps = penalize_end_gaps
 
     def align(self, sequence):
         """
@@ -174,7 +171,8 @@ class PrimerAligner(object):
         seq_aln, primer_aln, score, start, end = pairwise2.align.globalms(
             str(sequence).upper(), str(self.primer).upper(),
             self.match, self.difference, self.gap_open,
-            self.gap_extend, one_alignment_only=True)[0]
+            self.gap_extend, one_alignment_only=True,
+            penalize_end_gaps=self.penalize_end_gaps)[0]
 
         # Get an ungapped mapping on the sequence
         index_map = gap_index_map(seq_aln)
