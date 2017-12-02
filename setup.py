@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#!/usr/bin/env python
 
 # Use setuptools, falling back on provide
 try:
@@ -16,12 +16,10 @@ if sys.version_info < (2, 7):
     print 'ERROR: seqmagick requires at least Python 2.7 to run.'
     sys.exit(1)
 
-requires = ['biopython>=1.58']
-
 setup(name='seqmagick',
       version=version,
       description='Tools for converting and modifying sequence files '
-                  'from the command-line',
+      'from the command-line',
       url='http://github.com/fhcrc/seqmagick',
       download_url='http://pypi.python.org/pypi/seqmagick',
       author='Matsen Group',
@@ -30,16 +28,15 @@ setup(name='seqmagick',
       entry_points={
           'console_scripts': [
               'seqmagick = seqmagick.scripts.cli:main'
-      ]},
+          ]},
       package_data={'seqmagick.test.integration': ['data/*']},
       setup_requires=['nose>=1.0'],
       test_suite='nose.collector',
-      install_requires=requires,
+      install_requires=['biopython>=1.70'],
       classifiers=[
-        'License :: OSI Approved :: GNU General Public License (GPL)',
-        'Development Status :: 3 - Alpha',
-        'Programming Language :: Python :: 2.7',
-        'Topic :: Scientific/Engineering :: Bio-Informatics',
+          'License :: OSI Approved :: GNU General Public License (GPL)',
+          'Development Status :: 3 - Alpha',
+          'Programming Language :: Python :: 2.7',
+          'Topic :: Scientific/Engineering :: Bio-Informatics',
       ],
-      license="GPL V3",
-      )
+      license="GPL V3")
