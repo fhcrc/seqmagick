@@ -35,4 +35,4 @@ def action(arguments):
             ids = (sequence.id for sequence in sequences)
         with arguments.output_file:
             for i in ids:
-                print >> arguments.output_file, i
+                print(i, file=arguments.output_file)

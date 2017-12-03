@@ -24,7 +24,7 @@ class CommandLineTestMixIn(object):
         command = self.command.format(input=self.input_file)
         try:
             cli.main(shlex.split(command))
-        except SystemExit, e:
+        except SystemExit as e:
             self.fail(e)
 
         with FileType('r')(self.input_file) as fp:

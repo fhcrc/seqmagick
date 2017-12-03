@@ -81,12 +81,12 @@ class AlignedSeqInfoWriter(SeqInfoWriter):
     def write_header(self, header):
         fmt = ('{0:' + str(self.max_name_length + 1) + 's}{1:10s}'
                 '{2:>10s}{3:>10s}{4:>10s}{5:>10s}')
-        print >> self.output, fmt.format(*header)
+        print(fmt.format(*header), file=self.output)
 
     def write_row(self, row):
         fmt = ('{name:' + str(self.max_name_length + 1) + 's}{alignment:10s}'
                 '{min_len:10d}{max_len:10d}{avg_len:10.2f}{num_seqs:10d}')
-        print >> self.output, fmt.format(**row._asdict())
+        print(fmt.format(**row._asdict()), file=self.output)
 
 _WRITERS = {'csv': CsvSeqInfoWriter, 'tab': TsvSeqInfoWriter, 'align':
         AlignedSeqInfoWriter}
@@ -103,7 +103,7 @@ def summarize_sequence_file(source_file, file_type=None):
     """
     is_alignment = True
     avg_length = None
-    min_length = sys.maxint
+    min_length = sys.maxsize
     max_length = 0
     sequence_count = 0
 

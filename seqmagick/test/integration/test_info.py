@@ -25,7 +25,7 @@ class InfoMixin(object):
                 '--threads', str(self.threads)]
 
         cli.main(args)
-        self.assertEquals(self.expected.format(self.seq_file), self.tempfile.read())
+        self.assertEqual(self.expected.format(self.seq_file), self.tempfile.read())
 
 class SimpleInfoTestCase(InfoMixin, unittest.TestCase):
     seq_file = data_path('input2.fasta')

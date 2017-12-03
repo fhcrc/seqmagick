@@ -22,7 +22,7 @@ class PartialAppendTestCase(unittest.TestCase):
         a(None, self.namespace, 2)
 
         f = self.namespace.functions[0]
-        self.assertEqual([0, 1], f(range(10)))
+        self.assertEqual([0, 1], f(list(range(10))))
 
     def test_no_arg(self):
         def head(records):
@@ -33,7 +33,7 @@ class PartialAppendTestCase(unittest.TestCase):
 
         a(None, self.namespace, None)
         f = self.namespace.functions[0]
-        self.assertEqual([0, 1], f(range(10)))
+        self.assertEqual([0, 1], f(list(range(10))))
 
     def test_multi_arg(self):
         def fake_slice(records, i, j):
@@ -44,7 +44,7 @@ class PartialAppendTestCase(unittest.TestCase):
 
         a(None, self.namespace, [0, 2])
         f = self.namespace.functions[0]
-        self.assertEqual([0, 1], f(range(10)))
+        self.assertEqual([0, 1], f(list(range(10))))
 
 class PositiveValueTestCase(unittest.TestCase):
 
@@ -138,14 +138,14 @@ class ApplyUmaskTestCase(unittest.TestCase):
         os.umask(self.orig_umask)
 
     def test_provided_umask(self):
-        self.assertEqual('0770', oct(common.apply_umask(0777, 007)))
-        self.assertEqual('0660', oct(common.apply_umask(0666, 007)))
-        self.assertEqual('0644', oct(common.apply_umask(0666, 022)))
+        self.assertEqual('0770', oct(common.apply_umask(0o777, 0o07)))
+        self.assertEqual('0660', oct(common.apply_umask(0o666, 0o07)))
+        self.assertEqual('0644', oct(common.apply_umask(0o666, 0o22)))
 
     def test_user_umask(self):
-        os.umask(007)
-        self.assertEqual('0770', oct(common.apply_umask(0777)))
-        self.assertEqual('0660', oct(common.apply_umask(0666)))
+        os.umask(0o07)
+        self.assertEqual('0770', oct(common.apply_umask(0o777)))
+        self.assertEqual('0660', oct(common.apply_umask(0o666)))
 
 class FileTypeTestCase(unittest.TestCase):
 

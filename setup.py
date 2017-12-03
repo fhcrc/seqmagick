@@ -6,7 +6,7 @@ from setuptools import setup, find_packages
 from seqmagick import __version__ as version
 
 if sys.version_info < (2, 7):
-    print 'ERROR: seqmagick requires at least Python 2.7 to run.'
+    print('ERROR: seqmagick requires at least Python 2.7 to run.')
     sys.exit(1)
 
 setup(name='seqmagick',

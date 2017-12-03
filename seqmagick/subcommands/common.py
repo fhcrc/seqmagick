@@ -17,11 +17,11 @@ def get_umask():
     """
     Gets the current umask
     """
-    current_umask = os.umask(0777)
+    current_umask = os.umask(0o777)
     os.umask(current_umask)
     return current_umask
 
-def apply_umask(permission=0666, umask=None):
+def apply_umask(permission=0o666, umask=None):
     """
     Masks the provided permission with a umask.
 
@@ -96,7 +96,7 @@ def cut_range(string):
         msg = "{0} is not a valid, 1-indexed range.".format(string)
         raise argparse.ArgumentTypeError(msg)
 
-    if start == 0 or (stop or sys.maxint) < (start or 0):
+    if start == 0 or (stop or sys.maxsize) < (start or 0):
         msg = "{0} is not a valid, 1-indexed range.".format(string)
         raise argparse.ArgumentTypeError(msg)
 
@@ -130,7 +130,7 @@ def partial_append_action(fn, argument_keys=None):
     The optional argument_keys argument should either be None (no additional
     arguments to fn) or an iterable of function keys to partially apply.
     """
-    if isinstance(argument_keys, basestring):
+    if isinstance(argument_keys, str):
         argument_keys = [argument_keys]
     argument_keys = argument_keys or []
 
@@ -170,7 +170,7 @@ def partial_append_action(fn, argument_keys=None):
                 raise ValueError("Unexpected number of values")
 
             # Generate keyword arguments for the input function
-            kwargs = dict(zip(argument_keys, values))
+            kwargs = dict(list(zip(argument_keys, values)))
             f = functools.partial(fn, **kwargs)
             items.append(f)
             setattr(namespace, self.dest, items)
@@ -195,7 +195,7 @@ def positive_value(target_type):
 def _exit_on_signal(sig, status=None, message=None):
     def exit(sig, frame):
         if message:
-            print >> sys.stderr, message
+            print(message, file=sys.stderr)
         raise SystemExit(status)
     signal.signal(sig, exit)
 

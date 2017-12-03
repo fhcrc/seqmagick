@@ -1,4 +1,4 @@
-from cStringIO import StringIO
+from io import StringIO
 import sys
 import unittest
 
@@ -142,7 +142,7 @@ class PctAmbiguousFilterTestCase(unittest.TestCase):
     def test_1(self):
         instance = quality_filter.PctAmbiguousFilter(0.23)
         filtered = list(instance.filter_records(self.records))
-        print filtered
+        print(filtered)
         self.assertEqual([self.records[i] for i in (0, 4)], filtered)
 
 
@@ -256,7 +256,7 @@ p1d1bc213,TACGAGAC,CAYGGCTA"""
 
     def test_primer_provided(self):
         res = quality_filter.parse_barcode_file(self.fp, primer='CATTGCCTATG')
-        self.assertEqual(9, len(res.keys()))
+        self.assertEqual(9, len(list(res.keys())))
         self.assertEqual('p1d1bc210', res['TACAGTCGCATTGCCTATG'])
         self.assertEqual(None, triefind.match('TACAGTCGCATTGCCTAT', res))
         self.assertEqual('TACAGTCGCATTGCCTATG',
@@ -264,7 +264,7 @@ p1d1bc213,TACGAGAC,CAYGGCTA"""
 
     def test_primer_in_file(self):
         res = quality_filter.parse_barcode_file(self.fp, primer=None)
-        self.assertEqual(13, len(res.keys()))
+        self.assertEqual(13, len(list(res.keys())))
 
         # Test ambiguities
         self.assertEqual('p1d1bc212', res['TACGTCTCCATGGCTA'])

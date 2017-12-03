@@ -52,7 +52,7 @@ def build_parser(parser):
             IUPAC ambiguous bases in the primer matching unambiguous bases in
             the alignment are not penalized""")
     parser.add_argument(
-        '--prune-action', default='trim', choices=_ACTIONS.keys(),
+        '--prune-action', default='trim', choices=list(_ACTIONS.keys()),
         help="""Action to take. Options are trim (trim to the region
             defined by the two primers, decreasing the width of the alignment),
             or isolate (convert all characters outside the primer-defined area
@@ -68,13 +68,13 @@ def ungap_index_map(sequence, gap_chars='-'):
     >>> ungap_index_map('AC-TG-')
     {0: 0, 1: 1, 2: 3, 3: 4}
     """
-    counter = itertools.count(0).next
+    counter = itertools.count(0).__next__
     ungap_indexes = [
         counter() if c not in gap_chars else None for c in iter(sequence)
     ]
     return dict(
         (ungapped, gapped)
-        for ungapped, gapped in zip(ungap_indexes, xrange(len(sequence)))
+        for ungapped, gapped in zip(ungap_indexes, range(len(sequence)))
         if ungapped is not None)
 
 
@@ -87,7 +87,7 @@ def gap_index_map(sequence, gap_chars='-'):
     {0: 0, 1: 1, 3: 2, 4: 3}
     """
     return dict(
-        (v, k) for k, v in ungap_index_map(sequence, gap_chars).items())
+        (v, k) for k, v in list(ungap_index_map(sequence, gap_chars).items()))
 
 
 def _iupac_ambiguous_equal(ambig_base, unambig_base):
@@ -193,12 +193,12 @@ class PrimerAligner(object):
         if trimmed.endswith('-'):
             tail = len(trimmed) - len(trimmed.rstrip('-'))
             end = index_map[end - tail] + 1
-            ham_dist = sys.maxint
+            ham_dist = sys.maxsize
         else:
             end = index_map[end]
         if trimmed.startswith('-'):
             start = 0
-            ham_dist = sys.maxint
+            ham_dist = sys.maxsize
         else:
             start = index_map[start]
 

@@ -325,7 +325,7 @@ def module_function(string):
 
     # Import the module
     module_vars = {}
-    execfile(module_path, module_vars)
+    exec(compile(open(module_path).read(), module_path, 'exec'), module_vars)
 
     try:
         function = module_vars[function_name]
