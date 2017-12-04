@@ -368,7 +368,7 @@ def ungap_sequences(records, gap_chars=GAP_CHARS):
         yield ungap_all(record, gap_chars)
 
 def ungap_all(record, gap_chars=GAP_CHARS):
-    record = SeqRecord(Seq(str(record.seq).translate(None, gap_chars)),
+    record = SeqRecord(Seq(str(record.seq).translate(gap_chars)),
             id=record.id, description=record.description)
     return record
 
