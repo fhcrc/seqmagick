@@ -681,7 +681,9 @@ def translate(records, translate):
              'rna': CodonTable.ambiguous_rna_by_name["Standard"]}[source_type]
 
     # Handle ambiguities by replacing ambiguous codons with 'X'
-    table = copy.deepcopy(table)
+    # TODO: this copy operation causes infinite recursion with python3.6 -
+    # not sure why it was here to begin with.
+    # table = copy.deepcopy(table)
     table.forward_table = CodonWarningTable(table.forward_table)
 
     for record in records:
