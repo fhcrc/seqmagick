@@ -9,23 +9,26 @@ from seqmagick import fileformat
 
 from . import common
 
+
 def build_parser(parser):
-    parser.add_argument('sequence_file', help="Sequence file",
-            type=common.FileType('r'))
-    parser.add_argument('-o', '--output-file', help="Destination trimmed file",
-            type=common.FileType('w'), default=sys.stdout)
-    parser.add_argument('--input-format', help="""Input format for sequence
-            file""")
-    parser.add_argument('-d', '--include-description', action='store_true',
-            default=False, help="""Include the sequence description in output
-            [default: %(default)s]""")
+    parser.add_argument(
+        'sequence_file', type=common.FileType('rt'), help="Sequence file")
+    parser.add_argument(
+        '-o', '--output-file', type=common.FileType('wt'), default=sys.stdout,
+        help="Destination file")
+    parser.add_argument(
+        '--input-format', help="Input format for sequence file")
+    parser.add_argument(
+        '-d', '--include-description', action='store_true', default=False,
+        help='Include the sequence description in output [default: %(default)s]')
+
 
 def action(arguments):
     common.exit_on_sigpipe()
 
     # Determine file format for input and output
     source_format = (arguments.input_format or
-            fileformat.from_handle(arguments.sequence_file))
+                     fileformat.from_handle(arguments.sequence_file))
 
     with arguments.sequence_file:
         sequences = SeqIO.parse(arguments.sequence_file, source_format)
