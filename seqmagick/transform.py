@@ -3,7 +3,6 @@ Functions to transform / filter sequences
 """
 import collections
 import contextlib
-import copy
 import pickle as pickle
 import gzip
 import itertools
@@ -23,6 +22,7 @@ from functools import reduce
 
 # Characters to be treated as gaps
 GAP_CHARS = "-."
+GAP_TABLE = {ord(c): None for c in GAP_CHARS}
 
 # Size of temporary file buffer: default to 256MB
 DEFAULT_BUFFER_SIZE = 268435456  # 256 * 2**20
@@ -358,19 +358,23 @@ def reverse_complement_sequences(records):
         yield rev_record
 
 
-def ungap_sequences(records, gap_chars=GAP_CHARS):
+def ungap_sequences(records, gap_chars=GAP_TABLE):
     """
     Remove gaps from sequences, given an alignment.
     """
-    logging.info('Applying _ungap_sequences generator: '
-                 'removing gaps from the alignment.')
+    logging.info('Applying _ungap_sequences generator: removing all gap characters')
     for record in records:
         yield ungap_all(record, gap_chars)
 
-def ungap_all(record, gap_chars=GAP_CHARS):
-    record = SeqRecord(Seq(str(record.seq).translate(gap_chars)),
-            id=record.id, description=record.description)
+
+def ungap_all(record, gap_chars=GAP_TABLE):
+
+    record = SeqRecord(
+        Seq(str(record.seq).translate(gap_chars)),
+        id=record.id, description=record.description
+    )
     return record
+
 
 def _update_id(record, new_id):
     """
@@ -380,8 +384,7 @@ def _update_id(record, new_id):
     record.id = new_id
 
     # At least for FASTA, record ID starts the description
-    record.description = re.sub('^' + re.escape(old_id), new_id,
-            record.description)
+    record.description = re.sub('^' + re.escape(old_id), new_id, record.description)
     return record
 
 
