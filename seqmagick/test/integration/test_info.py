@@ -1,3 +1,4 @@
+import sys
 import unittest
 import tempfile
 
@@ -37,5 +38,7 @@ class MultithreadedInfoTestCase(InfoMixin, unittest.TestCase):
 class SimpleGzipInfoTestCase(InfoMixin, unittest.TestCase):
     seq_file = data_path('input2.fasta.gz')
 
+
+@unittest.skipIf(sys.version_info.major == 3, 'bzip2 not supported in python3')
 class SimpleBzip2InfoTestCase(InfoMixin, unittest.TestCase):
     seq_file = data_path('input2.fasta.bz2')

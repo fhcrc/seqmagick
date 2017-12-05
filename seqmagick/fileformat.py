@@ -1,7 +1,8 @@
 """
 Mappings from file extensions to biopython types
 """
-import bz2
+
+# import bz2
 import gzip
 import os.path
 import sys
@@ -30,7 +31,11 @@ EXTENSION_TO_TYPE = {'.aln': 'clustal',
                      '.sth': 'stockholm',
                      '.sto': 'stockholm',}
 
-COMPRESS_EXT = {'.bz2': bz2.BZ2File, '.gz': gzip.open, '.bz': bz2.BZ2File}
+COMPRESS_EXT = {
+    '.gz': gzip.open,
+    # '.bz2': bz2.BZ2File,
+    # '.bz': bz2.BZ2File,
+}
 
 
 class UnknownExtensionError(ValueError):
@@ -48,8 +53,9 @@ def from_extension(extension):
     try:
         return EXTENSION_TO_TYPE[extension.lower()]
     except KeyError:
-        raise UnknownExtensionError("seqmagick does not know how to handle " +
-                "files with extensions like this: " + extension)
+        raise UnknownExtensionError(
+            "seqmagick does not know how to handle " +
+            "files with extensions like this: " + extension)
 
 
 def from_filename(file_name):
@@ -61,6 +67,7 @@ def from_filename(file_name):
         # Compressed file
         extension = os.path.splitext(base)[1]
     return from_extension(extension)
+
 
 def from_handle(fh, stream_default='fasta'):
     """

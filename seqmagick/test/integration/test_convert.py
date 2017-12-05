@@ -16,8 +16,10 @@ from seqmagick.scripts import cli
 d = os.path.dirname(__file__)
 data_dir = os.path.join(d, "data")
 
+
 def p(*args):
     return os.path.join(data_dir, *args)
+
 
 class CommandLineTestMixIn(object):
     in_suffix = ''
@@ -25,15 +27,18 @@ class CommandLineTestMixIn(object):
 
     def setUp(self):
         self.input_file = tempfile.NamedTemporaryFile(suffix=self.in_suffix)
-        with open(self.input_path) as fp:
-            shutil.copyfileobj(fp, self.input_file)
-        self.input_file.flush()
+        shutil.copy(self.input_path, self.input_file.name)
+
+        # with open(self.input_path) as fp:
+        #     shutil.copyfileobj(fp, self.input_file)
+        # self.input_file.flush()
+
         with tempfile.NamedTemporaryFile(suffix=self.out_suffix) as tf:
             self.output_file = tf.name
 
     def test_run(self):
-        command = self.command.format(input=self.input_file.name,
-                output=self.output_file)
+        command = self.command.format(
+            input=self.input_file.name, output=self.output_file)
         cli.main(shlex.split(command))
 
         with FileType('r')(self.output_file) as fp:
@@ -47,6 +52,7 @@ class CommandLineTestMixIn(object):
         if os.path.isfile(self.output_file):
             os.remove(self.output_file)
 
+
 class BasicConvertTestCase(CommandLineTestMixIn, unittest.TestCase):
     in_suffix = '.fasta'
     out_suffix = '.phy'
@@ -54,6 +60,8 @@ class BasicConvertTestCase(CommandLineTestMixIn, unittest.TestCase):
     expected_path = p('output2.phy')
     command = 'convert {input} {output}'
 
+
+@unittest.skipIf(sys.version_info.major == 3, 'bzip2 not supported in python3')
 class BzipInputConvertTestCase(CommandLineTestMixIn, unittest.TestCase):
     in_suffix = '.fasta.bz2'
     out_suffix = '.phy'
@@ -61,12 +69,15 @@ class BzipInputConvertTestCase(CommandLineTestMixIn, unittest.TestCase):
     expected_path = p('output2.phy')
     command = 'convert {input} {output}'
 
+
+@unittest.skipIf(sys.version_info.major == 3, 'bzip2 not supported in python3')
 class BzipOutputConvertTestCase(CommandLineTestMixIn, unittest.TestCase):
     in_suffix = '.fasta'
     out_suffix = '.phy.bz2'
     input_path = p('input2.fasta')
     expected_path = p('output2.phy')
     command = 'convert {input} {output}'
+
 
 class GzipInputConvertTestCase(CommandLineTestMixIn, unittest.TestCase):
     in_suffix = '.fasta.gz'
@@ -75,6 +86,7 @@ class GzipInputConvertTestCase(CommandLineTestMixIn, unittest.TestCase):
     expected_path = p('output2.phy')
     command = 'convert {input} {output}'
 
+
 class GzipOutputConvertTestCase(CommandLineTestMixIn, unittest.TestCase):
     in_suffix = '.fasta'
     out_suffix = '.phy.gz'
@@ -82,11 +94,13 @@ class GzipOutputConvertTestCase(CommandLineTestMixIn, unittest.TestCase):
     expected_path = p('output2.phy')
     command = 'convert {input} {output}'
 
+
 class ConvertToNexusTestCase(CommandLineTestMixIn, unittest.TestCase):
     in_suffix = '.fasta'
     input_path = p('input2.fasta')
     expected_path = p('output2.nex')
     command = 'convert {input} {output} --output-format nexus --alphabet dna-ambiguous'
+
 
 class ConvertUngapCutTestCase(CommandLineTestMixIn, unittest.TestCase):
     in_suffix = '.fasta'
@@ -94,6 +108,7 @@ class ConvertUngapCutTestCase(CommandLineTestMixIn, unittest.TestCase):
     input_path = p('input2.fasta')
     expected_path = p('output2_ungap_cut.fasta')
     command = 'convert --ungap --cut 1:3 --tail 2 {input} {output}'
+
 
 class ConvertToStdOutTestCase(unittest.TestCase):
 

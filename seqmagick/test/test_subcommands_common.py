@@ -7,6 +7,14 @@ import tempfile
 
 from seqmagick.subcommands import common
 
+d = os.path.dirname(__file__)
+data_dir = os.path.join(d, "integration", "data")
+
+
+def p(*args):
+    return os.path.join(data_dir, *args)
+
+
 class PartialAppendTestCase(unittest.TestCase):
 
     def setUp(self):
@@ -147,7 +155,14 @@ class ApplyUmaskTestCase(unittest.TestCase):
         self.assertEqual('0770', oct(common.apply_umask(0o777)))
         self.assertEqual('0660', oct(common.apply_umask(0o666)))
 
+
 class FileTypeTestCase(unittest.TestCase):
+
+    def setUp(self):
+        # used in methods test_read_*()
+        self.testfile = 'input2.fasta'
+        with open(p(self.testfile)) as f:
+            self.expected = f.read()
 
     def test_stdin(self):
         self.assertIs(sys.stdin, common.FileType('r')('-'))
@@ -156,7 +171,7 @@ class FileTypeTestCase(unittest.TestCase):
         self.assertIs(sys.stdout, common.FileType('w')('-'))
 
     def test_read(self):
-        with tempfile.NamedTemporaryFile() as tf:
+        with tempfile.NamedTemporaryFile('w+t') as tf:
             tf.write('TEST')
             tf.flush()
             with common.FileType('r')(tf.name) as fp:
@@ -164,9 +179,22 @@ class FileTypeTestCase(unittest.TestCase):
                 self.assertEqual('TEST', fp.read())
 
     def test_write(self):
-        with tempfile.NamedTemporaryFile() as tf:
+        with tempfile.NamedTemporaryFile('w+t') as tf:
             with common.FileType('w')(tf.name) as fp:
                 fp.write('TEST')
                 fp.flush()
                 self.assertEqual(tf.name, fp.name)
                 self.assertEqual('TEST', tf.read())
+
+    def test_read_text(self):
+        with common.FileType('rt')(p(self.testfile)) as fp:
+            self.assertEqual(fp.read(), self.expected)
+
+    def test_read_gz(self):
+        with common.FileType('rt')(p(self.testfile + '.gz')) as fp:
+            self.assertEqual(fp.read(), self.expected)
+
+    @unittest.skipIf(sys.version_info.major == 3, 'bzip2 not supported in python3')
+    def test_read_bz2(self):
+        with common.FileType('rt')(p(self.testfile + '.bz2')) as fp:
+            self.assertEqual(fp.read(), self.expected)
