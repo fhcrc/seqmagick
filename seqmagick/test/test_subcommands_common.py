@@ -136,6 +136,7 @@ class AtomicWriteTestCase(unittest.TestCase):
     def tearDown(self):
         os.remove(self.input_file)
 
+
 class ApplyUmaskTestCase(unittest.TestCase):
 
     def setUp(self):
@@ -146,14 +147,14 @@ class ApplyUmaskTestCase(unittest.TestCase):
         os.umask(self.orig_umask)
 
     def test_provided_umask(self):
-        self.assertEqual('0770', oct(common.apply_umask(0o777, 0o07)))
-        self.assertEqual('0660', oct(common.apply_umask(0o666, 0o07)))
-        self.assertEqual('0644', oct(common.apply_umask(0o666, 0o22)))
+        self.assertEqual('0o770', oct(common.apply_umask(0o777, 0o07)))
+        self.assertEqual('0o660', oct(common.apply_umask(0o666, 0o07)))
+        self.assertEqual('0o644', oct(common.apply_umask(0o666, 0o22)))
 
     def test_user_umask(self):
         os.umask(0o07)
-        self.assertEqual('0770', oct(common.apply_umask(0o777)))
-        self.assertEqual('0660', oct(common.apply_umask(0o666)))
+        self.assertEqual('0o770', oct(common.apply_umask(0o777)))
+        self.assertEqual('0o660', oct(common.apply_umask(0o666)))
 
 
 class FileTypeTestCase(unittest.TestCase):
