@@ -20,7 +20,7 @@ def build_parser(parser):
     parser.add_argument('--input-format', help="""Input format. Overrides
             extension for all input files""")
     parser.add_argument('--out-file', dest='destination_file',
-            type=common.FileType('w'), default=sys.stdout,
+            type=common.FileType('wt'), default=sys.stdout,
             metavar='destination_file',
             help='Output destination. Default: STDOUT')
     parser.add_argument('--format', dest='output_format',
@@ -108,7 +108,7 @@ def summarize_sequence_file(source_file, file_type=None):
     sequence_count = 0
 
     # Get an iterator and analyze the data.
-    with common.FileType('rb')(source_file) as fp:
+    with common.FileType('rt')(source_file) as fp:
         if not file_type:
             file_type = fileformat.from_handle(fp)
         for record in SeqIO.parse(fp, file_type):
