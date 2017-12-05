@@ -108,7 +108,7 @@ class AtomicWriteTestCase(unittest.TestCase):
     new_content = "New Content"
 
     def setUp(self):
-        with tempfile.NamedTemporaryFile(delete=False) as tf:
+        with tempfile.NamedTemporaryFile('wt', delete=False) as tf:
             tf.write(self.initial_content)
             self.input_file = tf.name
 

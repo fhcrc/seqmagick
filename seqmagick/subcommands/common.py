@@ -32,7 +32,7 @@ def apply_umask(permission=0o666, umask=None):
     return permission & (~umask)
 
 @contextlib.contextmanager
-def atomic_write(path, permissions=None, file_factory=None, **kwargs):
+def atomic_write(path, mode='wt', permissions=None, file_factory=None, **kwargs):
     """
     Open a file for atomic writing.
 
@@ -53,8 +53,8 @@ def atomic_write(path, permissions=None, file_factory=None, **kwargs):
     else:
         base_dir = os.path.dirname(path)
         kwargs['suffix'] = os.path.basename(path)
-        tf = tempfile.NamedTemporaryFile(dir=base_dir, delete=False,
-                                         **kwargs)
+        tf = tempfile.NamedTemporaryFile(
+            dir=base_dir, mode=mode, delete=False, **kwargs)
 
         # If a file_factory is given, close, and re-open a handle using the
         # file_factory
