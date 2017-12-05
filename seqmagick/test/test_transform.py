@@ -381,7 +381,10 @@ class MinUngapLengthTestCase(unittest.TestCase):
 
     def test_partial(self):
         result = transform.min_ungap_length_discard(self.sequences, 4)
-        self.assertEqual([self.sequences[1], self.sequences[3]], list(result))
+        self.assertEqual(
+            [self.sequences[1].seq, self.sequences[3].seq],
+            [seq.seq for seq in result])
+
 
 class IncludeExcludeMixIn(object):
 

@@ -4,6 +4,7 @@ Convert between sequence formats
 import argparse
 import functools
 import logging
+import random
 
 from Bio import Alphabet, SeqIO
 from Bio.Alphabet import IUPAC
@@ -170,6 +171,8 @@ def add_options(parser):
     seq_select.add_argument('--sample', metavar='N', dest='transforms', type=int,
             action=partial_action(transform.sample, 'k'),
             help = """ Select a random sampling of sequences """)
+    seq_select.add_argument('--sample-seed', metavar='N', type=int,
+            help = """Set random seed for sampling of sequences""")
     seq_select.add_argument('--seq-pattern-include', metavar='REGEX',
             action=partial_action(transform.seq_include, 'filter_regex'),
             dest='transforms', help="""Filter the sequences by regular
@@ -256,6 +259,10 @@ def transform_file(source_file, destination_file, arguments):
 
     # Apply all the transform functions in transforms
     if arguments.transforms:
+
+        # TODO: might be nice to somehow pass this directly into sample action
+        if arguments.sample_seed is not None:
+            random.seed(arguments.sample_seed)
 
         # Special case handling for --cut and --relative-to
         if arguments.cut_relative:

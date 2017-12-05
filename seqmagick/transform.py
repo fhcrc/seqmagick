@@ -58,8 +58,9 @@ def dashes_cleanup(records, prune_chars='.:?~'):
     Take an alignment and convert any undesirable characters such as ? or ~ to
     -.
     """
-    logging.info("Applying _dashes_cleanup: converting any . or : to -.")
-    translation_table = string.maketrans(prune_chars, '-' * len(prune_chars))
+    logging.info(
+        "Applying _dashes_cleanup: converting any of '{}' to '-'.".format(prune_chars))
+    translation_table = {ord(c): '-' for c in prune_chars}
     for record in records:
         record.seq = Seq(str(record.seq).translate(translation_table),
                          record.seq.alphabet)
@@ -484,11 +485,17 @@ def seq_exclude(records, filter_regex):
         if not regex.search(str(record.seq)):
             yield record
 
-def sample(records, k):
+
+def sample(records, k, random_seed=None):
+    """Choose a length-``k`` subset of ``records``, retaining the input
+    order.  If k > len(records), all are returned. If an integer
+    ``random_seed`` is provided, sets ``random.seed()``
+
     """
-    Choose a length-``k`` subset of ``records`` using reservoir sampling.  if k < len(records),
-    all are returned.
-    """
+
+    if random_seed is not None:
+        random.seed(random_seed)
+
     result = []
     for i, record in enumerate(records):
         if len(result) < k:
@@ -498,6 +505,7 @@ def sample(records, k):
             if r < k:
                 result[r] = record
     return result
+
 
 def head(records, head):
     """

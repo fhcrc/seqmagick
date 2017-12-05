@@ -98,7 +98,7 @@ class AlignmentMapper(object):
         codons = [''.join(i) for i in codons]
         codon_iter = iter(codons)
 
-        ungapped_prot = str(prot_seq.seq).translate('-')
+        ungapped_prot = str(prot_seq.seq).replace('-', '')
 
         if len(ungapped_prot) != len(codons):
             table = self.translation_table.forward_table
