@@ -11,11 +11,13 @@ from seqmagick.test.integration import data_path
 
 from . import test_convert
 
+
 class CommandLineTestMixIn(object):
     def setUp(self):
         with tempfile.NamedTemporaryFile(
-                suffix=os.path.basename(self.input_path),
+                'wt', suffix=os.path.basename(self.input_path),
                 delete=False) as tf:
+
             self.input_file = tf.name
             with open(self.input_path) as fp:
                 shutil.copyfileobj(fp, tf)
