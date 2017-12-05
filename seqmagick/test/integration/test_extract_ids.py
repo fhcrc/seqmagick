@@ -18,7 +18,7 @@ test3 sequence 3
 """
 
     def setUp(self):
-        self.tempfile = tempfile.NamedTemporaryFile()
+        self.tempfile = tempfile.NamedTemporaryFile('r+t')
 
     def tearDown(self):
         self.tempfile.close()
