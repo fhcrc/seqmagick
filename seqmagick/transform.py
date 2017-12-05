@@ -651,7 +651,7 @@ class CodonWarningTable(object):
             return '-'
         elif '-' in codon:
             if codon not in self.seen:
-                logging.warn("Unknown Codon: %s", codon)
+                logging.warning("Unknown Codon: %s", codon)
                 self.seen.add(codon)
             return self.missing_char
         else:

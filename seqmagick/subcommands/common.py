@@ -199,11 +199,13 @@ def _exit_on_signal(sig, status=None, message=None):
         raise SystemExit(status)
     signal.signal(sig, exit)
 
+
 def exit_on_sigint(status=1, message="Canceled."):
     """
     Set program to exit on SIGINT, with provided status and message.
     """
     _exit_on_signal(signal.SIGINT, status, message)
+
 
 def exit_on_sigpipe(status=None):
     """
@@ -211,11 +213,12 @@ def exit_on_sigpipe(status=None):
     """
     _exit_on_signal(signal.SIGPIPE, status)
 
+
 class FileType(object):
     """
     Near clone of argparse.FileType, supporting gzip and bzip
     """
-    def __init__(self, mode='r'):
+    def __init__(self, mode='rt'):
         self.mode = mode
         self.ext_map = fileformat.COMPRESS_EXT.copy()
 
