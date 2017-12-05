@@ -28,11 +28,6 @@ class CommandLineTestMixIn(object):
     def setUp(self):
         self.input_file = tempfile.NamedTemporaryFile(suffix=self.in_suffix)
         shutil.copy(self.input_path, self.input_file.name)
-
-        # with open(self.input_path) as fp:
-        #     shutil.copyfileobj(fp, self.input_file)
-        # self.input_file.flush()
-
         with tempfile.NamedTemporaryFile(suffix=self.out_suffix) as tf:
             self.output_file = tf.name
 
@@ -41,9 +36,9 @@ class CommandLineTestMixIn(object):
             input=self.input_file.name, output=self.output_file)
         cli.main(shlex.split(command))
 
-        with FileType('r')(self.output_file) as fp:
+        with FileType('rt')(self.output_file) as fp:
             actual = fp.read()
-        with FileType('r')(self.expected_path) as fp:
+        with FileType('rt')(self.expected_path) as fp:
             expected = fp.read()
         self.assertEqual(expected, actual)
 
