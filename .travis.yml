@@ -1,7 +1,9 @@
 language: python
 python:
-  - "2.7"
-  - "pypy"
+  # - "2.7"
+  # - "pypy"
+  - "3.5"
+  - "3.6"
 
 # Install numpy, then BioPython
 # BioPython doesn't always play well with pip install.
@@ -14,3 +16,4 @@ script: nosetests
 notifications:
   email:
     - cmccoy@fhcrc.org
+    - noah.hoffman@gmail.com
