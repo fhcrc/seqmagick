@@ -195,7 +195,7 @@ class FileTypeTestCase(unittest.TestCase):
         with common.FileType('rt')(p(self.testfile + '.gz')) as fp:
             self.assertEqual(fp.read(), self.expected)
 
-    @unittest.skipIf(sys.version_info.major == 3, 'bzip2 not supported in python3')
+    @unittest.skipIf(sys.version_info.major == 3, 'bzip2 not supported')
     def test_read_bz2(self):
         with common.FileType('rt')(p(self.testfile + '.bz2')) as fp:
             self.assertEqual(fp.read(), self.expected)

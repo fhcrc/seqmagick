@@ -38,7 +38,7 @@ class SimpleExtractIdsTestCase(ExtractIdsMixin, unittest.TestCase):
     seq_file = data_path('input2.fasta')
 
 
-@unittest.skipIf(sys.version_info.major == 3, 'bzip2 not supported in python3')
+@unittest.skipIf(sys.version_info.major == 3, 'bzip2 not supported')
 class Bz2ExtractIdsTestCase(ExtractIdsMixin, unittest.TestCase):
     seq_file = data_path('input2.fasta.bz2')
 

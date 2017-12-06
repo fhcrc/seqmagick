@@ -35,6 +35,14 @@ class PopulateTransformsMixIn(object):
             self.fail("Couldn't parse arguments")
         functions = [f.func for f in parsed_arguments.transforms]
         self.assertEqual(self.functions, functions)
+        self.close_all_files(parsed_arguments)
+
+    def close_all_files(self, parsed_arguments):
+        for attr in dir(parsed_arguments):
+            arg = getattr(parsed_arguments, attr)
+            if hasattr(arg, 'close'):
+                arg.close()
+
 
 class OrderRespectedTestCase(PopulateTransformsMixIn, unittest.TestCase):
     """
@@ -113,9 +121,11 @@ class IdModificationTransformsTestCase(PopulateTransformsMixIn, unittest.TestCas
             transform.name_replace,
             transform.strip_range]
 
+
 class ArgumentTypeTestCase(PopulateTransformsMixIn, unittest.TestCase):
     arguments = ['--cut', '1:5']
     functions = [transform.multi_cut_sequences]
+
     def test_argument_type(self):
         arguments = [self.infile, self.outfile]
         arguments.extend(self.arguments)
@@ -126,3 +136,4 @@ class ArgumentTypeTestCase(PopulateTransformsMixIn, unittest.TestCase):
         keywords = [f.keywords for f in parsed_arguments.transforms]
         self.assertEqual([{'slices': [slice(0, 5)]}], keywords)
 
+        self.close_all_files(parsed_arguments)

@@ -43,6 +43,6 @@ class SimpleGzipInfoTestCase(InfoMixin, unittest.TestCase):
     seq_file = data_path('input2.fasta.gz')
 
 
-@unittest.skipIf(sys.version_info.major == 3, 'bzip2 not supported in python3')
+@unittest.skipIf(sys.version_info.major == 3, 'bzip2 not supported')
 class SimpleBzip2InfoTestCase(InfoMixin, unittest.TestCase):
     seq_file = data_path('input2.fasta.bz2')

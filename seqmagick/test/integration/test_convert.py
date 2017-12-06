@@ -56,7 +56,7 @@ class BasicConvertTestCase(CommandLineTestMixIn, unittest.TestCase):
     command = 'convert {input} {output}'
 
 
-@unittest.skipIf(sys.version_info.major == 3, 'bzip2 not supported in python3')
+@unittest.skipIf(sys.version_info.major == 3, 'bzip2 not supported')
 class BzipInputConvertTestCase(CommandLineTestMixIn, unittest.TestCase):
     in_suffix = '.fasta.bz2'
     out_suffix = '.phy'
@@ -65,7 +65,7 @@ class BzipInputConvertTestCase(CommandLineTestMixIn, unittest.TestCase):
     command = 'convert {input} {output}'
 
 
-@unittest.skipIf(sys.version_info.major == 3, 'bzip2 not supported in python3')
+@unittest.skipIf(sys.version_info.major == 3, 'bzip2 not supported')
 class BzipOutputConvertTestCase(CommandLineTestMixIn, unittest.TestCase):
     in_suffix = '.fasta'
     out_suffix = '.phy.bz2'
@@ -168,13 +168,13 @@ class TestSample(CommandLineTestMixIn, unittest.TestCase):
     out_suffix = '.fasta'
     input_path = p('input5.fasta')
     expected_path = p('output5.fasta')
-    command = 'convert --sample 2 {input} {output}'
+    command = 'convert --sample 2 --sample-seed 0 {input} {output}'
 
     def setUp(self):
         super(TestSample, self).setUp()
         self.orig_level = logging.getLogger(None).level
         logging.getLogger(None).setLevel(logging.FATAL)
-        random.seed(0)
+        random.seed(1)
 
     def tearDown(self):
         super(TestSample, self).tearDown()

@@ -207,7 +207,7 @@ class SeqPatternTestCase(unittest.TestCase):
                       ('.*', {'s1', 's2', 's3'}),
                       ('^AC', {'s1'}),
                       ('^ac', set()),
-                      ('^ac(?i)', {'s1'})]
+                      ('(?i)^ac', {'s1'})]
 
     def test_include(self):
         result = transform.seq_include(self.sequences, '^$')
@@ -481,11 +481,11 @@ class CodonWarningTableTestCase(unittest.TestCase):
     def setUp(self):
         self.warnings = []
         self.warning_dict = transform.CodonWarningTable({'UUU': 'F'})
-        self.old_warn = transform.logging.warn
-        transform.logging.warn = self.warn
+        self.old_warn = transform.logging.warning
+        transform.logging.warning = self.warn
 
     def tearDown(self):
-        transform.logging.warn = self.old_warn
+        transform.logging.warning = self.old_warn
 
     def test_nowarn(self):
         actual = self.warning_dict['UUU']

@@ -478,7 +478,7 @@ def seq_include(records, filter_regex):
 
 def seq_exclude(records, filter_regex):
     """
-    Filter any sequences who's seq matches the filter. Ignore case.
+    Filter any sequences whose seq matches the filter. Ignore case.
     """
     regex = re.compile(filter_regex)
     for record in records:
