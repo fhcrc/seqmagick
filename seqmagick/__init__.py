@@ -1,5 +1,7 @@
-"""
-seqmagick
-"""
+from os import path
 
-__version__ = '0.7.0'
+try:
+    with open(path.join(path.dirname(__file__), 'data', 'ver')) as f:
+        __version__ = f.read().strip().replace('-', '+', 1).replace('-', '.')
+except Exception as e:
+    __version__ = ''
