@@ -2,6 +2,9 @@
 seqmagick
 =========
 
+.. image:: https://travis-ci.org/fhcrc/seqmagick.svg?branch=master
+    :target: https://travis-ci.org/fhcrc/seqmagick
+
 We often have to convert sequence files between formats and do little
 manipulations on them, and it's not worth writing scripts for that.
 ``seqmagick`` is a kickass little utility to expose the file format conversion
