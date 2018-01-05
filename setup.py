@@ -16,7 +16,7 @@ if sys.version_info < (2, 7):
     print 'ERROR: seqmagick requires at least Python 2.7 to run.'
     sys.exit(1)
 
-requires = ['biopython>=1.58']
+requires = ['biopython>=1.58,<=1.66']
 
 setup(name='seqmagick',
       version=version,
