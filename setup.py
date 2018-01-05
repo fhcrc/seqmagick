@@ -15,10 +15,6 @@ subprocess.call(
 # must import __version__ after call to 'git describe' above
 from seqmagick import __version__
 
-if sys.version_info < (3, 4):
-    print('ERROR: seqmagick requires at least Python 3.4 to run.')
-    sys.exit(1)
-
 setup(name='seqmagick',
       version=__version__,
       description='Tools for converting and modifying sequence files '
@@ -26,7 +22,7 @@ setup(name='seqmagick',
       url='http://github.com/fhcrc/seqmagick',
       download_url='http://pypi.python.org/pypi/seqmagick',
       author='Matsen Group',
-      author_email='http://matsen.fhcrc.org/',
+      # author_email='http://matsen.fhcrc.org/',
       packages=find_packages(),
       entry_points={
           'console_scripts': [

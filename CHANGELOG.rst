@@ -5,11 +5,17 @@ Changes for seqmagick
 -----
 
 * Supports Python 3.4+
-* Drops support for python2
+* Drops support for python 2.7
+* requires biopython >= 1.70
 * Drops support for bz2 compression [see GH-66]
 * New option ``convert --sample-seed`` to make ``--sample`` deterministic.
+
+0.6.2
+-----
+
 * New ``quality-filter --pct-ambiguous`` switch [GH-53]
-* requires biopython>=1.70
+* setup.py enforces biopython>=1.58,<=1.66 (1.67 is not compatible) [GH-59]
+* This is the last release that will support Python 2!
 
 0.6.1
 -----
