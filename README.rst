@@ -16,7 +16,26 @@ there is one that takes arguments::
     seqmagick info *.{fasta,sto}       # describe all FASTA and Stockholm
                                        # files in the current directory
 
-Features include:
+Requirements
+============
+
+* Python >= 3.4
+* biopython >= 1.70
+
+Installation
+============
+
+Use pip::
+
+   pip install seqmagick
+
+Note that as of version 0.7.0, this package requires Python 3.4+. If
+you want to use the most recent version compatible with Python 2.7::
+
+  pip install seqmagick==1.6.2
+
+Features
+========
 
 * Modifying sequences: Remove gaps, reverse complement, reverse, change case,
 
@@ -45,6 +64,7 @@ Features include:
 Want to learn more? Head to the `Documentation`_.
 
 ``seqmagick`` is free software under the GPL v3.
+
 
 .. _`Documentation`: http://seqmagick.readthedocs.org/en/latest/
 
