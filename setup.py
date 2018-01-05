@@ -7,7 +7,7 @@ from setuptools import setup, find_packages
 
 subprocess.call(
     ('mkdir -p seqmagick/data && '
-     'git describe --tags --dirty > seqmagick/data/ver.tmp'
+     'git describe --tags --dirty > seqmagick/data/ver.tmp '
      '&& mv seqmagick/data/ver.tmp seqmagick/data/ver '
      '|| rm -f seqmagick/data/ver.tmp'),
     shell=True, stderr=open(os.devnull, "w"))

@@ -1,8 +1,8 @@
-Changelog
-=========
+Changes for seqmagick
+=====================
 
-0.7.0-rc1
----------
+0.7.0
+-----
 
 * Supports Python 3.4+
 * Drops support for python2
