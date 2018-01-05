@@ -25,7 +25,7 @@ setup(name='seqmagick',
       url='http://github.com/fhcrc/seqmagick',
       download_url='http://pypi.python.org/pypi/seqmagick',
       author='Matsen Group',
-      author_email='http://matsen.fhcrc.org/',
+      # author_email='http://matsen.fhcrc.org/',
       packages=find_packages(),
       entry_points={
           'console_scripts': [
