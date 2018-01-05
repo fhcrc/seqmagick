@@ -1,13 +1,15 @@
 Changelog
 =========
 
-0.6.1-dev
----------------------
+0.6.2
+-----
 
 * New ``quality-filter --pct-ambiguous`` switch [GH-53]
+* setup.py enforces biopython>=1.58,<=1.66 (1.67 is not compatible) [GH-59]
+* This is the last release that will support Python 2!
 
 0.6.1
-----------------------
+-----
 
 * Allow string wrapping when input isn't FASTA. [GH-45]
 * Fix ``--pattern-include``, ``--pattern-exclude``, and ``--pattern-replace``
