@@ -19,5 +19,4 @@ script:
 
 notifications:
   email:
-    - cmccoy@fhcrc.org
     - noah.hoffman@gmail.com
