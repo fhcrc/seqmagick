@@ -1,0 +1,8 @@
+biopython>=1.70
+
+# for development
+wheel
+sphinx
+nose
+twine
+ghp-import
