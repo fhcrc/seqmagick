@@ -33,7 +33,7 @@ setup(name='seqmagick',
           'seqmagick.test.integration': ['data/*']
       },
       setup_requires=['nose>=1.0'],
-      python_requires=['>=3.4'],
+      python_requires='>=3.4',
       test_suite='nose.collector',
       install_requires=['biopython>=1.70'],
       classifiers=[
