@@ -6,3 +6,4 @@ dist/
 MANIFEST
 doctrees/
 seqmagick.egg-info/
+docs/*.help
