@@ -1,35 +1,32 @@
 
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>primer-trim &mdash; seqmagick 0.5.0 documentation</title>
-    
+    <title>primer-trim &#8212; seqmagick 0.7.0 documentation</title>
     <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '',
-        VERSION:     '0.5.0',
+        URL_ROOT:    './',
+        VERSION:     '0.7.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="seqmagick 0.5.0 documentation" href="index.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
     <link rel="prev" title="quality-filter" href="quality_filter.html" /> 
   </head>
   <body>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -38,33 +35,32 @@
         <li class="right" >
           <a href="quality_filter.html" title="quality-filter"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">seqmagick 0.5.0 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">seqmagick 0.7.0 documentation</a> &#187;</li> 
       </ul>
     </div>
-      <div class="sphinxsidebar">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="index.html">
               <img class="logo" src="_static/seqmagick_logo_small.png" alt="Logo"/>
             </a></p>
   <h4>Previous topic</h4>
   <p class="topless"><a href="quality_filter.html"
-                        title="previous chapter"><tt class="docutils literal docutils literal"><span class="pre">quality-filter</span></tt></a></p>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="_sources/primer_trim.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
-<div id="searchbox" style="display: none">
+                        title="previous chapter"><code class="docutils literal"><span class="pre">quality-filter</span></code></a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/primer_trim.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -73,53 +69,53 @@
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="primer-trim">
-<h1><tt class="docutils literal"><span class="pre">primer-trim</span></tt><a class="headerlink" href="#primer-trim" title="Permalink to this headline">¶</a></h1>
-<p><tt class="docutils literal"><span class="pre">primer-trim</span></tt> trims an alignment to a region defined by a set of forward and
+<h1><code class="docutils literal"><span class="pre">primer-trim</span></code><a class="headerlink" href="#primer-trim" title="Permalink to this headline">¶</a></h1>
+<p><code class="docutils literal"><span class="pre">primer-trim</span></code> trims an alignment to a region defined by a set of forward and
 reverse primers. Usage is as follows:</p>
-<div class="highlight-text"><div class="highlight"><pre>usage: seqmagick primer-trim [-h] [--reverse-is-revcomp]
-                             [--source-format SOURCE_FORMAT]
-                             [--output-format OUTPUT_FORMAT]
-                             [--include-primers]
-                             [--max-hamming-distance MAX_HAMMING_DISTANCE]
-                             [--prune-action {trim,isolate}]
-                             source_file output_file forward_primer
-                             reverse_primer
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">seqmagick</span> <span class="n">primer</span><span class="o">-</span><span class="n">trim</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">reverse</span><span class="o">-</span><span class="ow">is</span><span class="o">-</span><span class="n">revcomp</span><span class="p">]</span>
+                             <span class="p">[</span><span class="o">--</span><span class="n">source</span><span class="o">-</span><span class="nb">format</span> <span class="n">SOURCE_FORMAT</span><span class="p">]</span>
+                             <span class="p">[</span><span class="o">--</span><span class="n">output</span><span class="o">-</span><span class="nb">format</span> <span class="n">OUTPUT_FORMAT</span><span class="p">]</span>
+                             <span class="p">[</span><span class="o">--</span><span class="n">include</span><span class="o">-</span><span class="n">primers</span><span class="p">]</span>
+                             <span class="p">[</span><span class="o">--</span><span class="nb">max</span><span class="o">-</span><span class="n">hamming</span><span class="o">-</span><span class="n">distance</span> <span class="n">MAX_HAMMING_DISTANCE</span><span class="p">]</span>
+                             <span class="p">[</span><span class="o">--</span><span class="n">prune</span><span class="o">-</span><span class="n">action</span> <span class="p">{</span><span class="n">trim</span><span class="p">,</span><span class="n">isolate</span><span class="p">}]</span>
+                             <span class="n">source_file</span> <span class="n">output_file</span> <span class="n">forward_primer</span>
+                             <span class="n">reverse_primer</span>
 
-Find a primer sequence in a gapped alignment, trim to amplicon
+<span class="n">Find</span> <span class="n">a</span> <span class="n">primer</span> <span class="n">sequence</span> <span class="ow">in</span> <span class="n">a</span> <span class="n">gapped</span> <span class="n">alignment</span><span class="p">,</span> <span class="n">trim</span> <span class="n">to</span> <span class="n">amplicon</span>
 
-positional arguments:
-  source_file           Source alignment file
-  output_file           Destination trimmed file
-  forward_primer        The forward primer used
-  reverse_primer        The reverse primer used. By default the reverse primer
-                        is assumed to be a subsequence of the top strand (that
-                        is, the reverse complement of an actual downstream PCR
-                        primer). Use --reverse-is-revcomp if this is not the
-                        case.
+<span class="n">positional</span> <span class="n">arguments</span><span class="p">:</span>
+  <span class="n">source_file</span>           <span class="n">Source</span> <span class="n">alignment</span> <span class="n">file</span>
+  <span class="n">output_file</span>           <span class="n">Destination</span> <span class="n">trimmed</span> <span class="n">file</span>
+  <span class="n">forward_primer</span>        <span class="n">The</span> <span class="n">forward</span> <span class="n">primer</span> <span class="n">used</span>
+  <span class="n">reverse_primer</span>        <span class="n">The</span> <span class="n">reverse</span> <span class="n">primer</span> <span class="n">used</span><span class="o">.</span> <span class="n">By</span> <span class="n">default</span> <span class="n">the</span> <span class="n">reverse</span> <span class="n">primer</span>
+                        <span class="ow">is</span> <span class="n">assumed</span> <span class="n">to</span> <span class="n">be</span> <span class="n">a</span> <span class="n">subsequence</span> <span class="n">of</span> <span class="n">the</span> <span class="n">top</span> <span class="n">strand</span> <span class="p">(</span><span class="n">that</span>
+                        <span class="ow">is</span><span class="p">,</span> <span class="n">the</span> <span class="n">reverse</span> <span class="n">complement</span> <span class="n">of</span> <span class="n">an</span> <span class="n">actual</span> <span class="n">downstream</span> <span class="n">PCR</span>
+                        <span class="n">primer</span><span class="p">)</span><span class="o">.</span> <span class="n">Use</span> <span class="o">--</span><span class="n">reverse</span><span class="o">-</span><span class="ow">is</span><span class="o">-</span><span class="n">revcomp</span> <span class="k">if</span> <span class="n">this</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">the</span>
+                        <span class="n">case</span><span class="o">.</span>
 
-optional arguments:
-  -h, --help            show this help message and exit
-  --reverse-is-revcomp  Reverse primer is written as the reverse complement of
-                        the top strand (default: False)
-  --source-format SOURCE_FORMAT
-                        Alignment format (default: detect from extension
-  --output-format OUTPUT_FORMAT
-                        Alignment format (default: detect from extension
-  --include-primers     Include the primers in the output (default: False)
-  --max-hamming-distance MAX_HAMMING_DISTANCE
-                        Maximum Hamming distance between primer and alignment
-                        site (default: 1). IUPAC ambiguous bases in the primer
-                        matching unambiguous bases in the alignment are not
-                        penalized
-  --prune-action {trim,isolate}
-                        Action to take. Options are trim (trim to the region
-                        defined by the two primers, decreasing the width of
-                        the alignment), or isolate (convert all characters
-                        outside the primer-defined area to gaps). default:
-                        trim
+<span class="n">optional</span> <span class="n">arguments</span><span class="p">:</span>
+  <span class="o">-</span><span class="n">h</span><span class="p">,</span> <span class="o">--</span><span class="n">help</span>            <span class="n">show</span> <span class="n">this</span> <span class="n">help</span> <span class="n">message</span> <span class="ow">and</span> <span class="n">exit</span>
+  <span class="o">--</span><span class="n">reverse</span><span class="o">-</span><span class="ow">is</span><span class="o">-</span><span class="n">revcomp</span>  <span class="n">Reverse</span> <span class="n">primer</span> <span class="ow">is</span> <span class="n">written</span> <span class="k">as</span> <span class="n">the</span> <span class="n">reverse</span> <span class="n">complement</span> <span class="n">of</span>
+                        <span class="n">the</span> <span class="n">top</span> <span class="n">strand</span> <span class="p">(</span><span class="n">default</span><span class="p">:</span> <span class="kc">False</span><span class="p">)</span>
+  <span class="o">--</span><span class="n">source</span><span class="o">-</span><span class="nb">format</span> <span class="n">SOURCE_FORMAT</span>
+                        <span class="n">Alignment</span> <span class="nb">format</span> <span class="p">(</span><span class="n">default</span><span class="p">:</span> <span class="n">detect</span> <span class="kn">from</span> <span class="nn">extension</span>
+  <span class="o">--</span><span class="n">output</span><span class="o">-</span><span class="nb">format</span> <span class="n">OUTPUT_FORMAT</span>
+                        <span class="n">Alignment</span> <span class="nb">format</span> <span class="p">(</span><span class="n">default</span><span class="p">:</span> <span class="n">detect</span> <span class="kn">from</span> <span class="nn">extension</span>
+  <span class="o">--</span><span class="n">include</span><span class="o">-</span><span class="n">primers</span>     <span class="n">Include</span> <span class="n">the</span> <span class="n">primers</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">output</span> <span class="p">(</span><span class="n">default</span><span class="p">:</span> <span class="kc">False</span><span class="p">)</span>
+  <span class="o">--</span><span class="nb">max</span><span class="o">-</span><span class="n">hamming</span><span class="o">-</span><span class="n">distance</span> <span class="n">MAX_HAMMING_DISTANCE</span>
+                        <span class="n">Maximum</span> <span class="n">Hamming</span> <span class="n">distance</span> <span class="n">between</span> <span class="n">primer</span> <span class="ow">and</span> <span class="n">alignment</span>
+                        <span class="n">site</span> <span class="p">(</span><span class="n">default</span><span class="p">:</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span> <span class="n">IUPAC</span> <span class="n">ambiguous</span> <span class="n">bases</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">primer</span>
+                        <span class="n">matching</span> <span class="n">unambiguous</span> <span class="n">bases</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">alignment</span> <span class="n">are</span> <span class="ow">not</span>
+                        <span class="n">penalized</span>
+  <span class="o">--</span><span class="n">prune</span><span class="o">-</span><span class="n">action</span> <span class="p">{</span><span class="n">trim</span><span class="p">,</span><span class="n">isolate</span><span class="p">}</span>
+                        <span class="n">Action</span> <span class="n">to</span> <span class="n">take</span><span class="o">.</span> <span class="n">Options</span> <span class="n">are</span> <span class="n">trim</span> <span class="p">(</span><span class="n">trim</span> <span class="n">to</span> <span class="n">the</span> <span class="n">region</span>
+                        <span class="n">defined</span> <span class="n">by</span> <span class="n">the</span> <span class="n">two</span> <span class="n">primers</span><span class="p">,</span> <span class="n">decreasing</span> <span class="n">the</span> <span class="n">width</span> <span class="n">of</span>
+                        <span class="n">the</span> <span class="n">alignment</span><span class="p">),</span> <span class="ow">or</span> <span class="n">isolate</span> <span class="p">(</span><span class="n">convert</span> <span class="nb">all</span> <span class="n">characters</span>
+                        <span class="n">outside</span> <span class="n">the</span> <span class="n">primer</span><span class="o">-</span><span class="n">defined</span> <span class="n">area</span> <span class="n">to</span> <span class="n">gaps</span><span class="p">)</span><span class="o">.</span> <span class="n">default</span><span class="p">:</span>
+                        <span class="n">trim</span>
 </pre></div>
 </div>
 </div>
@@ -130,7 +126,7 @@ optional arguments:
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -139,12 +135,12 @@ optional arguments:
         <li class="right" >
           <a href="quality_filter.html" title="quality-filter"
              >previous</a> |</li>
-        <li><a href="index.html">seqmagick 0.5.0 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">seqmagick 0.7.0 documentation</a> &#187;</li> 
       </ul>
     </div>
-    <div class="footer">
-        &copy; Copyright 2011-2012, The Matsen Group.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2011-2018, The Matsen Group.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.5.
     </div>
   </body>
 </html>

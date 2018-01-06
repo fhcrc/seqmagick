@@ -47,15 +47,22 @@ And more.
 Installation
 ============
 
-First, you'll need to install `BioPython`_. NumPy (which parts of BioPython
-depend on) is not required for ``seqmagick`` to function. Once done, install
-the latest release with::
+Install the latest release with::
 
     pip install seqmagick
 
-Or install the bleeding edge version::
+This should also install `BioPython`_. NumPy (which parts of BioPython
+depend on) is not required for ``seqmagick`` to function, but may be
+installed as a dependency of ``BioPython``.
 
-    pip install git+git://github.com/fhcrc/seqmagick.git@master#egg-info=seqmagick
+To install the bleeding edge version::
+
+    pip install git+https://github.com/fhcrc/seqmagick.git@master#egg-info=seqmagick
+
+Note that as of version 0.7.0, this package requires Python 3.4+. If
+you want to use the most recent version compatible with Python 2.7::
+
+  pip install seqmagick==1.6.2
 
 Use
 ===
@@ -87,6 +94,13 @@ extensions are:
 
 .. include:: extensions.rst
 
+.. note::
+
+    NEXUS-format output requires the ``--alphabet`` flag.
+
+Default Format
+--------------
+
 When reading from stdin or writing to stdout, ``seqmagick`` defaults to fasta
 format.  This behavior may be overridden with the ``--input-format`` and
 ``--output-format`` flags.
@@ -94,11 +108,14 @@ format.  This behavior may be overridden with the ``--input-format`` and
 If an extension is not listed, you can either rename the file to a supported
 extension, or specify it manually via ``--input-format`` or ``--output-format``.
 
-Additionally, most commands support gzip (files ending in ``.gz``) and bzip
-(files ending in ``.bz2`` or ``.bz``) compressed inputs and outputs. File types
-for these files are inferred using the extension of the file after stripping
-the file extension indicating that the file is compressed, so
-``input.fasta.gz`` would be inferred to be in FASTA format.
+Compressed file support
+-----------------------
+
+most commands support gzip (files ending in ``.gz``) and bzip (files ending in
+``.bz2`` or ``.bz``) compressed inputs and outputs. File types for these files
+are inferred using the extension of the file after stripping the file extension
+indicating that the file is compressed, so ``input.fasta.gz`` would be inferred
+to be in FASTA format.
 
 Acknowledgements
 ================

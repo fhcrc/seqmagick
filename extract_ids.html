@@ -1,36 +1,33 @@
 
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>extract-ids &mdash; seqmagick 0.5.0 documentation</title>
-    
+    <title>extract-ids &#8212; seqmagick 0.7.0 documentation</title>
     <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '',
-        VERSION:     '0.5.0',
+        URL_ROOT:    './',
+        VERSION:     '0.7.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="seqmagick 0.5.0 documentation" href="index.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="info" href="info.html" />
     <link rel="prev" title="backtrans-align" href="backtrans_align.html" /> 
   </head>
   <body>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -42,36 +39,35 @@
         <li class="right" >
           <a href="backtrans_align.html" title="backtrans-align"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">seqmagick 0.5.0 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">seqmagick 0.7.0 documentation</a> &#187;</li> 
       </ul>
     </div>
-      <div class="sphinxsidebar">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="index.html">
               <img class="logo" src="_static/seqmagick_logo_small.png" alt="Logo"/>
             </a></p>
   <h4>Previous topic</h4>
   <p class="topless"><a href="backtrans_align.html"
-                        title="previous chapter"><tt class="docutils literal docutils literal"><span class="pre">backtrans-align</span></tt></a></p>
+                        title="previous chapter"><code class="docutils literal"><span class="pre">backtrans-align</span></code></a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="info.html"
-                        title="next chapter"><tt class="docutils literal"><span class="pre">info</span></tt></a></p>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="_sources/extract_ids.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
-<div id="searchbox" style="display: none">
+                        title="next chapter"><code class="docutils literal"><span class="pre">info</span></code></a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/extract_ids.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -80,30 +76,30 @@
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="extract-ids">
-<h1><tt class="docutils literal"><span class="pre">extract-ids</span></tt><a class="headerlink" href="#extract-ids" title="Permalink to this headline">¶</a></h1>
-<p><tt class="docutils literal"><span class="pre">seqmagick</span> <span class="pre">extract-ids</span></tt> is extremely simple - all the IDs from a sequence file
+<h1><code class="docutils literal"><span class="pre">extract-ids</span></code><a class="headerlink" href="#extract-ids" title="Permalink to this headline">¶</a></h1>
+<p><code class="docutils literal"><span class="pre">seqmagick</span> <span class="pre">extract-ids</span></code> is extremely simple - all the IDs from a sequence file
 are printed to stdout (by default) or the file of your choosing:</p>
-<div class="highlight-text"><div class="highlight"><pre>usage: seqmagick extract-ids [-h] [-o OUTPUT_FILE]
-                             [--input-format INPUT_FORMAT] [-d]
-                             sequence_file
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">seqmagick</span> <span class="n">extract</span><span class="o">-</span><span class="n">ids</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">o</span> <span class="n">OUTPUT_FILE</span><span class="p">]</span>
+                             <span class="p">[</span><span class="o">--</span><span class="nb">input</span><span class="o">-</span><span class="nb">format</span> <span class="n">INPUT_FORMAT</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">d</span><span class="p">]</span>
+                             <span class="n">sequence_file</span>
 
-Extract the sequence IDs from a file
+<span class="n">Extract</span> <span class="n">the</span> <span class="n">sequence</span> <span class="n">IDs</span> <span class="kn">from</span> <span class="nn">a</span> <span class="n">file</span>
 
-positional arguments:
-  sequence_file         Sequence file
+<span class="n">positional</span> <span class="n">arguments</span><span class="p">:</span>
+  <span class="n">sequence_file</span>         <span class="n">Sequence</span> <span class="n">file</span>
 
-optional arguments:
-  -h, --help            show this help message and exit
-  -o OUTPUT_FILE, --output-file OUTPUT_FILE
-                        Destination trimmed file
-  --input-format INPUT_FORMAT
-                        Input format for sequence file
-  -d, --include-description
-                        Include the sequence description in output [default:
-                        False]
+<span class="n">optional</span> <span class="n">arguments</span><span class="p">:</span>
+  <span class="o">-</span><span class="n">h</span><span class="p">,</span> <span class="o">--</span><span class="n">help</span>            <span class="n">show</span> <span class="n">this</span> <span class="n">help</span> <span class="n">message</span> <span class="ow">and</span> <span class="n">exit</span>
+  <span class="o">-</span><span class="n">o</span> <span class="n">OUTPUT_FILE</span><span class="p">,</span> <span class="o">--</span><span class="n">output</span><span class="o">-</span><span class="n">file</span> <span class="n">OUTPUT_FILE</span>
+                        <span class="n">Destination</span> <span class="n">file</span>
+  <span class="o">--</span><span class="nb">input</span><span class="o">-</span><span class="nb">format</span> <span class="n">INPUT_FORMAT</span>
+                        <span class="n">Input</span> <span class="nb">format</span> <span class="k">for</span> <span class="n">sequence</span> <span class="n">file</span>
+  <span class="o">-</span><span class="n">d</span><span class="p">,</span> <span class="o">--</span><span class="n">include</span><span class="o">-</span><span class="n">description</span>
+                        <span class="n">Include</span> <span class="n">the</span> <span class="n">sequence</span> <span class="n">description</span> <span class="ow">in</span> <span class="n">output</span> <span class="p">[</span><span class="n">default</span><span class="p">:</span>
+                        <span class="kc">False</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
@@ -114,7 +110,7 @@ optional arguments:
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -126,12 +122,12 @@ optional arguments:
         <li class="right" >
           <a href="backtrans_align.html" title="backtrans-align"
              >previous</a> |</li>
-        <li><a href="index.html">seqmagick 0.5.0 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">seqmagick 0.7.0 documentation</a> &#187;</li> 
       </ul>
     </div>
-    <div class="footer">
-        &copy; Copyright 2011-2012, The Matsen Group.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2011-2018, The Matsen Group.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.5.
     </div>
   </body>
 </html>

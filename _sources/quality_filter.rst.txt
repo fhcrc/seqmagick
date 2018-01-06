@@ -5,4 +5,4 @@
 quality criteria.  The subcommand takes a FASTA and quality score file, and
 writes the results to an output file:
 
-.. program-output:: ../seqmagick.py quality-filter -h
+.. literalinclude:: quality_filter.help

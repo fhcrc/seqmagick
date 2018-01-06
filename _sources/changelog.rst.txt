@@ -1,5 +1,45 @@
-Changelog
-=========
+Changes for seqmagick
+=====================
+
+0.7.0
+-----
+
+* Supports Python 3.4+
+* Drops support for python 2.7
+* requires biopython >= 1.70
+* Drops support for bz2 compression [see GH-66]
+* New option ``convert --sample-seed`` to make ``--sample`` deterministic.
+
+0.6.2
+-----
+
+* New ``quality-filter --pct-ambiguous`` switch [GH-53]
+* setup.py enforces biopython>=1.58,<=1.66 (1.67 is not compatible) [GH-59]
+* This is the last release that will support Python 2!
+
+0.6.1
+-----
+
+* Allow string wrapping when input isn't FASTA. [GH-45]
+* Fix ``--pattern-include``, ``--pattern-exclude``, and ``--pattern-replace``
+  for sequences without descriptions (e.g., from NEXUS files). [GH-47]
+* Fix mogrify example. [GH-52]
+
+0.6.0
+-----
+
+* Map ``.nex`` extension to NEXUS-format (--alphabet must be specified if writing)
+* Use reservoir sampling in ``--sample`` selector (lower memory use)
+* Support specifying negative indices to ``--cut`` [GH-33]
+* Optionally allow invalid codons in ``backtrans-align`` [GH-34]
+* Map ``.fq`` extension to FASTQ format
+* Optional multithreaded I/O in ``info`` [GH-36]
+* Print sequence name on length mismatch in ``backtrans-align`` [GH-37]
+* Support for ``+`` and ``-`` in head and tail to mimick Linux head and tail commands.
+* Fix scoring for mixed-case sequences in ``primer-trim``.
+* Fix bug in ``primer-trim`` - failed when sequence had multiple 5' gaps compared to the primer.
+* Clarify documentation and fix bug in convert/mogrify ``--pattern-replace`` [GH-39]
+* Support for gzip files in ``seqmagick convert --sort``
 
 0.5.0
 -----

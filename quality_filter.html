@@ -1,36 +1,33 @@
 
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>quality-filter &mdash; seqmagick 0.5.0 documentation</title>
-    
+    <title>quality-filter &#8212; seqmagick 0.7.0 documentation</title>
     <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '',
-        VERSION:     '0.5.0',
+        URL_ROOT:    './',
+        VERSION:     '0.7.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="seqmagick 0.5.0 documentation" href="index.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="primer-trim" href="primer_trim.html" />
     <link rel="prev" title="info" href="info.html" /> 
   </head>
   <body>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -42,36 +39,35 @@
         <li class="right" >
           <a href="info.html" title="info"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">seqmagick 0.5.0 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">seqmagick 0.7.0 documentation</a> &#187;</li> 
       </ul>
     </div>
-      <div class="sphinxsidebar">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="index.html">
               <img class="logo" src="_static/seqmagick_logo_small.png" alt="Logo"/>
             </a></p>
   <h4>Previous topic</h4>
   <p class="topless"><a href="info.html"
-                        title="previous chapter"><tt class="docutils literal docutils literal docutils literal"><span class="pre">info</span></tt></a></p>
+                        title="previous chapter"><code class="docutils literal"><span class="pre">info</span></code></a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="primer_trim.html"
-                        title="next chapter"><tt class="docutils literal docutils literal"><span class="pre">primer-trim</span></tt></a></p>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="_sources/quality_filter.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
-<div id="searchbox" style="display: none">
+                        title="next chapter"><code class="docutils literal"><span class="pre">primer-trim</span></code></a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/quality_filter.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -80,14 +76,14 @@
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="quality-filter">
-<h1><tt class="docutils literal"><span class="pre">quality-filter</span></tt><a class="headerlink" href="#quality-filter" title="Permalink to this headline">¶</a></h1>
-<p><tt class="docutils literal"><span class="pre">quality-filter</span></tt> truncates and removes sequences that don&#8217;t match a set of
+<h1><code class="docutils literal"><span class="pre">quality-filter</span></code><a class="headerlink" href="#quality-filter" title="Permalink to this headline">¶</a></h1>
+<p><code class="docutils literal"><span class="pre">quality-filter</span></code> truncates and removes sequences that don’t match a set of
 quality criteria.  The subcommand takes a FASTA and quality score file, and
 writes the results to an output file:</p>
-<div class="highlight-text"><div class="highlight"><pre>usage: seqmagick quality-filter [-h] [--input-qual INPUT_QUAL]
+<div class="highlight-default"><div class="highlight"><pre><span></span>usage: seqmagick quality-filter [-h] [--input-qual INPUT_QUAL]
                                 [--report-out REPORT_OUT]
                                 [--details-out DETAILS_OUT]
                                 [--no-details-comment]
@@ -98,16 +94,17 @@ writes the results to an output file:</p>
                                 [--quality-window WINDOW_SIZE]
                                 [--ambiguous-action {truncate,drop}]
                                 [--max-ambiguous MAX_AMBIGUOUS]
-                                [--primer PRIMER] [--no-primer]
+                                [--pct-ambiguous PCT_AMBIGUOUS]
+                                [--primer PRIMER | --no-primer]
                                 [--barcode-file BARCODE_FILE]
                                 [--barcode-header] [--map-out SAMPLE_MAP]
                                 [--quoting {QUOTE_ALL,QUOTE_MINIMAL,QUOTE_NONE,QUOTE_NONNUMERIC}]
-                                input_fastq output_file
+                                sequence_file output_file
 
 Filter reads based on quality scores
 
 positional arguments:
-  input_fastq           Input fastq file. A fasta-format file may also be
+  sequence_file         Input fastq file. A fasta-format file may also be
                         provided if --input-qual is also specified.
   output_file           Output file. Format determined from extension.
 
@@ -128,6 +125,9 @@ optional arguments:
   --max-ambiguous MAX_AMBIGUOUS
                         Maximum number of ambiguous bases in a sequence.
                         Sequences exceeding this count will be removed.
+  --pct-ambiguous PCT_AMBIGUOUS
+                        Maximun percent of ambiguous bases in a sequence.
+                        Sequences exceeding this percent will be removed.
 
 Output:
   --report-out REPORT_OUT
@@ -176,7 +176,7 @@ Barcode/Primer:
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -188,12 +188,12 @@ Barcode/Primer:
         <li class="right" >
           <a href="info.html" title="info"
              >previous</a> |</li>
-        <li><a href="index.html">seqmagick 0.5.0 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">seqmagick 0.7.0 documentation</a> &#187;</li> 
       </ul>
     </div>
-    <div class="footer">
-        &copy; Copyright 2011-2012, The Matsen Group.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2011-2018, The Matsen Group.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.5.
     </div>
   </body>
 </html>
