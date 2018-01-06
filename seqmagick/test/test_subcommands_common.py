@@ -7,6 +7,14 @@ import tempfile
 
 from seqmagick.subcommands import common
 
+d = os.path.dirname(__file__)
+data_dir = os.path.join(d, "integration", "data")
+
+
+def p(*args):
+    return os.path.join(data_dir, *args)
+
+
 class PartialAppendTestCase(unittest.TestCase):
 
     def setUp(self):
@@ -22,7 +30,7 @@ class PartialAppendTestCase(unittest.TestCase):
         a(None, self.namespace, 2)
 
         f = self.namespace.functions[0]
-        self.assertEqual([0, 1], f(range(10)))
+        self.assertEqual([0, 1], f(list(range(10))))
 
     def test_no_arg(self):
         def head(records):
@@ -33,7 +41,7 @@ class PartialAppendTestCase(unittest.TestCase):
 
         a(None, self.namespace, None)
         f = self.namespace.functions[0]
-        self.assertEqual([0, 1], f(range(10)))
+        self.assertEqual([0, 1], f(list(range(10))))
 
     def test_multi_arg(self):
         def fake_slice(records, i, j):
@@ -44,7 +52,7 @@ class PartialAppendTestCase(unittest.TestCase):
 
         a(None, self.namespace, [0, 2])
         f = self.namespace.functions[0]
-        self.assertEqual([0, 1], f(range(10)))
+        self.assertEqual([0, 1], f(list(range(10))))
 
 class PositiveValueTestCase(unittest.TestCase):
 
@@ -100,7 +108,7 @@ class AtomicWriteTestCase(unittest.TestCase):
     new_content = "New Content"
 
     def setUp(self):
-        with tempfile.NamedTemporaryFile(delete=False) as tf:
+        with tempfile.NamedTemporaryFile('wt', delete=False) as tf:
             tf.write(self.initial_content)
             self.input_file = tf.name
 
@@ -128,6 +136,7 @@ class AtomicWriteTestCase(unittest.TestCase):
     def tearDown(self):
         os.remove(self.input_file)
 
+
 class ApplyUmaskTestCase(unittest.TestCase):
 
     def setUp(self):
@@ -138,16 +147,23 @@ class ApplyUmaskTestCase(unittest.TestCase):
         os.umask(self.orig_umask)
 
     def test_provided_umask(self):
-        self.assertEqual('0770', oct(common.apply_umask(0777, 007)))
-        self.assertEqual('0660', oct(common.apply_umask(0666, 007)))
-        self.assertEqual('0644', oct(common.apply_umask(0666, 022)))
+        self.assertEqual('0o770', oct(common.apply_umask(0o777, 0o07)))
+        self.assertEqual('0o660', oct(common.apply_umask(0o666, 0o07)))
+        self.assertEqual('0o644', oct(common.apply_umask(0o666, 0o22)))
 
     def test_user_umask(self):
-        os.umask(007)
-        self.assertEqual('0770', oct(common.apply_umask(0777)))
-        self.assertEqual('0660', oct(common.apply_umask(0666)))
+        os.umask(0o07)
+        self.assertEqual('0o770', oct(common.apply_umask(0o777)))
+        self.assertEqual('0o660', oct(common.apply_umask(0o666)))
+
 
 class FileTypeTestCase(unittest.TestCase):
+
+    def setUp(self):
+        # used in methods test_read_*()
+        self.testfile = 'input2.fasta'
+        with open(p(self.testfile)) as f:
+            self.expected = f.read()
 
     def test_stdin(self):
         self.assertIs(sys.stdin, common.FileType('r')('-'))
@@ -156,7 +172,7 @@ class FileTypeTestCase(unittest.TestCase):
         self.assertIs(sys.stdout, common.FileType('w')('-'))
 
     def test_read(self):
-        with tempfile.NamedTemporaryFile() as tf:
+        with tempfile.NamedTemporaryFile('w+t') as tf:
             tf.write('TEST')
             tf.flush()
             with common.FileType('r')(tf.name) as fp:
@@ -164,9 +180,22 @@ class FileTypeTestCase(unittest.TestCase):
                 self.assertEqual('TEST', fp.read())
 
     def test_write(self):
-        with tempfile.NamedTemporaryFile() as tf:
+        with tempfile.NamedTemporaryFile('w+t') as tf:
             with common.FileType('w')(tf.name) as fp:
                 fp.write('TEST')
                 fp.flush()
                 self.assertEqual(tf.name, fp.name)
                 self.assertEqual('TEST', tf.read())
+
+    def test_read_text(self):
+        with common.FileType('rt')(p(self.testfile)) as fp:
+            self.assertEqual(fp.read(), self.expected)
+
+    def test_read_gz(self):
+        with common.FileType('rt')(p(self.testfile + '.gz')) as fp:
+            self.assertEqual(fp.read(), self.expected)
+
+    @unittest.skipIf(sys.version_info.major == 3, 'bzip2 not supported')
+    def test_read_bz2(self):
+        with common.FileType('rt')(p(self.testfile + '.bz2')) as fp:
+            self.assertEqual(fp.read(), self.expected)

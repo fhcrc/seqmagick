@@ -2,7 +2,7 @@
 Tests for seqmagick.transform
 """
 
-from cStringIO import StringIO
+from io import StringIO
 import functools
 import logging
 import unittest
@@ -198,31 +198,33 @@ class SeqPatternTestCase(unittest.TestCase):
         super(SeqPatternTestCase, self).setUp()
 
         self.sequences = [
-            seqrecord('sequence_1', 'AC-G--'),
-            seqrecord('sequence_2', '-C-GT-'),
-            seqrecord('sequence_3', '-T-AG-'),
+            seqrecord('s1', 'AC-G--'),
+            seqrecord('s2', '-C-GT-'),
+            seqrecord('s3', '-T-AG-'),
         ]
 
-        self.tests = [('^$', []),
-                      ('.*', self.sequences),
-                      ('^AC', [self.sequences[0]]),
-                      ('^ac', []),
-                      ('^ac(?i)', [self.sequences[0]])]
+        self.tests = [('^$', set()),
+                      ('.*', {'s1', 's2', 's3'}),
+                      ('^AC', {'s1'}),
+                      ('^ac', set()),
+                      ('(?i)^ac', {'s1'})]
 
     def test_include(self):
         result = transform.seq_include(self.sequences, '^$')
 
         for regex, expected in self.tests:
-            result = list(transform.seq_include(self.sequences, regex))
+            result = {seq.id for seq in transform.seq_include(self.sequences, regex)}
             self.assertEqual(expected, result)
 
     def test_exclude(self):
         result = transform.seq_include(self.sequences, '^$')
 
         for regex, expected_include in self.tests:
-            expected = [i for i in self.sequences if i not in expected_include]
-            result = list(transform.seq_exclude(self.sequences, regex))
+            result = {seq.id for seq in transform.seq_exclude(self.sequences, regex)}
+            expected = {seq.id for seq in self.sequences
+                        if seq.id not in expected_include}
             self.assertEqual(expected, result)
+
 
 class HeadTestCase(unittest.TestCase):
     """
@@ -231,7 +233,7 @@ class HeadTestCase(unittest.TestCase):
 
     def setUp(self):
         self.sequences = [seqrecord('sequence{0}'.format(i), 'A'*(i+1))
-                          for i in xrange(100)]
+                          for i in range(100)]
 
     def test_zero(self):
         result = list(transform.head(self.sequences, '0'))
@@ -252,7 +254,7 @@ class HeadTestCase(unittest.TestCase):
         """
         Try specifying some values.
         """
-        for h in xrange(len(self.sequences) + 1):
+        for h in range(len(self.sequences) + 1):
             result = list(transform.head(self.sequences, str(h)))
             self.assertEqual(h, len(result))
             self.assertEqual([s.id for s in self.sequences[:h]],
@@ -274,7 +276,7 @@ class HeadTestCase(unittest.TestCase):
         """
         Try specifying some minus values.
         """
-        for h in xrange(1, len(self.sequences) + 1):
+        for h in range(1, len(self.sequences) + 1):
             result = list(transform.head(self.sequences, str(-h)))
             self.assertEqual(h, len(self.sequences) - len(result))
             self.assertEqual([s.id for s in self.sequences[:-h]],
@@ -319,7 +321,7 @@ class TailTestCase(unittest.TestCase):
         """
         Try specifying some plus values.
         """
-        for h in xrange(1, len(self.records) + 1):
+        for h in range(1, len(self.records) + 1):
             result = list(transform.tail(self.records, '+{}'.format(h)))
             self.assertEqual(len(self.records) + 1 - h, len(result))
             self.assertEqual([s.id for s in self.records[h-1:]],
@@ -357,9 +359,9 @@ class IsolateRegionTestCase(unittest.TestCase):
 
     def test_invalid(self):
         self.assertRaises(ValueError, transform.isolate_region(
-                self.sequences, 5, 5).next)
+                self.sequences, 5, 5).__next__)
         self.assertRaises(ValueError, transform.isolate_region(
-                self.sequences, 10, 5).next)
+                self.sequences, 10, 5).__next__)
 
 class MinUngapLengthTestCase(unittest.TestCase):
 
@@ -379,7 +381,10 @@ class MinUngapLengthTestCase(unittest.TestCase):
 
     def test_partial(self):
         result = transform.min_ungap_length_discard(self.sequences, 4)
-        self.assertEqual([self.sequences[1], self.sequences[3]], list(result))
+        self.assertEqual(
+            [self.sequences[1].seq, self.sequences[3].seq],
+            [seq.seq for seq in result])
+
 
 class IncludeExcludeMixIn(object):
 
@@ -476,11 +481,11 @@ class CodonWarningTableTestCase(unittest.TestCase):
     def setUp(self):
         self.warnings = []
         self.warning_dict = transform.CodonWarningTable({'UUU': 'F'})
-        self.old_warn = transform.logging.warn
-        transform.logging.warn = self.warn
+        self.old_warn = transform.logging.warning
+        transform.logging.warning = self.warn
 
     def tearDown(self):
-        transform.logging.warn = self.old_warn
+        transform.logging.warning = self.old_warn
 
     def test_nowarn(self):
         actual = self.warning_dict['UUU']

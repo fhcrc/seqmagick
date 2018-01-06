@@ -1,16 +1,22 @@
 language: python
 python:
-  - "2.7"
-  - "pypy"
+  # - "2.7"
+  # - "pypy"
+  - "3.4"
+  - "3.5"
+  - "3.6"
 
 # Install numpy, then BioPython
 # BioPython doesn't always play well with pip install.
 install:
   - "if [[ $TRAVIS_PYTHON_VERSION != 'pypy' ]]; then pip install -q numpy; fi"
-  - "pip install -q biopython"
+  - "pip install -q biopython nose"
   - "pip install ."
-script: nosetests
+
+script:
+  - seqmagick --version
+  - nosetests
 
 notifications:
   email:
-    - cmccoy@fhcrc.org
+    - noah.hoffman@gmail.com

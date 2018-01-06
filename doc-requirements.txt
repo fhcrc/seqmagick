@@ -1,2 +1,2 @@
-biopython>=1.58
+biopython>=1.70
 sphinx>=1.1

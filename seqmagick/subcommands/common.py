@@ -17,11 +17,11 @@ def get_umask():
     """
     Gets the current umask
     """
-    current_umask = os.umask(0777)
+    current_umask = os.umask(0o777)
     os.umask(current_umask)
     return current_umask
 
-def apply_umask(permission=0666, umask=None):
+def apply_umask(permission=0o666, umask=None):
     """
     Masks the provided permission with a umask.
 
@@ -32,7 +32,7 @@ def apply_umask(permission=0666, umask=None):
     return permission & (~umask)
 
 @contextlib.contextmanager
-def atomic_write(path, permissions=None, file_factory=None, **kwargs):
+def atomic_write(path, mode='wt', permissions=None, file_factory=None, **kwargs):
     """
     Open a file for atomic writing.
 
@@ -53,8 +53,8 @@ def atomic_write(path, permissions=None, file_factory=None, **kwargs):
     else:
         base_dir = os.path.dirname(path)
         kwargs['suffix'] = os.path.basename(path)
-        tf = tempfile.NamedTemporaryFile(dir=base_dir, delete=False,
-                                         **kwargs)
+        tf = tempfile.NamedTemporaryFile(
+            dir=base_dir, mode=mode, delete=False, **kwargs)
 
         # If a file_factory is given, close, and re-open a handle using the
         # file_factory
@@ -96,7 +96,7 @@ def cut_range(string):
         msg = "{0} is not a valid, 1-indexed range.".format(string)
         raise argparse.ArgumentTypeError(msg)
 
-    if start == 0 or (stop or sys.maxint) < (start or 0):
+    if start == 0 or (stop or sys.maxsize) < (start or 0):
         msg = "{0} is not a valid, 1-indexed range.".format(string)
         raise argparse.ArgumentTypeError(msg)
 
@@ -130,7 +130,7 @@ def partial_append_action(fn, argument_keys=None):
     The optional argument_keys argument should either be None (no additional
     arguments to fn) or an iterable of function keys to partially apply.
     """
-    if isinstance(argument_keys, basestring):
+    if isinstance(argument_keys, str):
         argument_keys = [argument_keys]
     argument_keys = argument_keys or []
 
@@ -170,7 +170,7 @@ def partial_append_action(fn, argument_keys=None):
                 raise ValueError("Unexpected number of values")
 
             # Generate keyword arguments for the input function
-            kwargs = dict(zip(argument_keys, values))
+            kwargs = dict(list(zip(argument_keys, values)))
             f = functools.partial(fn, **kwargs)
             items.append(f)
             setattr(namespace, self.dest, items)
@@ -195,9 +195,10 @@ def positive_value(target_type):
 def _exit_on_signal(sig, status=None, message=None):
     def exit(sig, frame):
         if message:
-            print >> sys.stderr, message
+            print(message, file=sys.stderr)
         raise SystemExit(status)
     signal.signal(sig, exit)
+
 
 def exit_on_sigint(status=1, message="Canceled."):
     """
@@ -205,17 +206,19 @@ def exit_on_sigint(status=1, message="Canceled."):
     """
     _exit_on_signal(signal.SIGINT, status, message)
 
+
 def exit_on_sigpipe(status=None):
     """
     Set program to exit on SIGPIPE
     """
     _exit_on_signal(signal.SIGPIPE, status)
 
+
 class FileType(object):
     """
     Near clone of argparse.FileType, supporting gzip and bzip
     """
-    def __init__(self, mode='r'):
+    def __init__(self, mode='rt'):
         self.mode = mode
         self.ext_map = fileformat.COMPRESS_EXT.copy()
 

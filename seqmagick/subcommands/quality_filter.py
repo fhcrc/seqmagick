@@ -27,18 +27,19 @@ DEFAULT_MEAN_SCORE = 25.0
 # Tools for working with ambiguous bases
 # Map from Ambiguous Base to regex
 _AMBIGUOUS_MAP = {
-       'R': 'GA',
-       'Y': 'TC',
-       'K': 'GT',
-       'M': 'AC',
-       'S': 'GC',
-       'W': 'AT',
-       'B': 'GTC',
-       'D': 'GAT',
-       'H': 'ACT',
-       'V': 'GCA',
-       'N': 'AGCT',
+    'R': 'GA',
+    'Y': 'TC',
+    'K': 'GT',
+    'M': 'AC',
+    'S': 'GC',
+    'W': 'AT',
+    'B': 'GTC',
+    'D': 'GAT',
+    'H': 'ACT',
+    'V': 'GCA',
+    'N': 'AGCT',
 }
+
 
 def all_unambiguous(sequence_str):
     """
@@ -46,89 +47,152 @@ def all_unambiguous(sequence_str):
     """
     result = [[]]
     for c in sequence_str:
-        result = [i + [a] for i in result
-                  for a in _AMBIGUOUS_MAP.get(c, c)]
+        result = [i + [a] for i in result for a in _AMBIGUOUS_MAP.get(c, c)]
     return [''.join(i) for i in result]
+
 
 def build_parser(parser):
     """
     Generate a subparser
     """
-    parser.add_argument('sequence_file', type=FileType('r'),
-            help="""Input fastq file. A fasta-format file may also be provided
+    parser.add_argument(
+        'sequence_file',
+        type=FileType('r'),
+        help="""Input fastq file. A fasta-format file may also be provided
             if --input-qual is also specified.""")
-    parser.add_argument('--input-qual', type=FileType('r'),
-            help="""The quality scores associated with the input file. Only
+    parser.add_argument(
+        '--input-qual',
+        type=FileType('r'),
+        help="""The quality scores associated with the input file. Only
             used if input file is fasta.""")
-    parser.add_argument('output_file', type=FileType('w'),
-            help="""Output file. Format determined from extension.""")
+    parser.add_argument(
+        'output_file',
+        type=FileType('w'),
+        help="""Output file. Format determined from extension.""")
 
     output_group = parser.add_argument_group("Output")
-    output_group.add_argument('--report-out', type=FileType('w'),
-            default=sys.stdout, help="""Output file for report [default:
+    output_group.add_argument(
+        '--report-out',
+        type=FileType('w'),
+        default=sys.stdout,
+        help="""Output file for report [default:
             stdout]""")
-    output_group.add_argument('--details-out', type=FileType('w'),
-             help="""Output file to report fate of each sequence""")
-    output_group.add_argument('--no-details-comment', action='store_false',
-            default=True, dest='details_comment', help="""Do not write comment
+    output_group.add_argument(
+        '--details-out',
+        type=FileType('w'),
+        help="""Output file to report fate of each sequence""")
+    output_group.add_argument(
+        '--no-details-comment',
+        action='store_false',
+        default=True,
+        dest='details_comment',
+        help="""Do not write comment
             lines with version and call to start --details-out""")
 
-    parser.add_argument('--min-mean-quality', metavar='QUALITY', type=float,
-            default=DEFAULT_MEAN_SCORE, help="""Minimum mean quality score for
+    parser.add_argument(
+        '--min-mean-quality',
+        metavar='QUALITY',
+        type=float,
+        default=DEFAULT_MEAN_SCORE,
+        help="""Minimum mean quality score for
             each read [default: %(default)s]""")
-    parser.add_argument('--min-length', metavar='LENGTH', type=int,
-            default=200, help="""Minimum length to keep sequence [default:
+    parser.add_argument(
+        '--min-length',
+        metavar='LENGTH',
+        type=int,
+        default=200,
+        help="""Minimum length to keep sequence [default:
             %(default)s]""")
-    parser.add_argument('--max-length', metavar='LENGTH', type=int,
-            default=1000, help="""Maximum length to keep before truncating
+    parser.add_argument(
+        '--max-length',
+        metavar='LENGTH',
+        type=int,
+        default=1000,
+        help="""Maximum length to keep before truncating
             [default: %(default)s]. This operation occurs before
             --max-ambiguous""")
 
-
     window_group = parser.add_argument_group('Quality window options')
-    window_group.add_argument('--quality-window-mean-qual', type=float,
-            help="""Minimum quality score within the window defined by
+    window_group.add_argument(
+        '--quality-window-mean-qual',
+        type=float,
+        help="""Minimum quality score within the window defined by
             --quality-window. [default: same as --min-mean-quality]""")
-    window_group.add_argument('--quality-window-prop', help="""Proportion of
+    window_group.add_argument(
+        '--quality-window-prop',
+        help="""Proportion of
             reads within quality window to that must pass filter. Floats are [default:
-            %(default).1f]""", default=1.0, type=typed_range(float, 0.0, 1.0))
-    window_group.add_argument('--quality-window', type=int, metavar='WINDOW_SIZE',
-            default=0, help="""Window size for truncating sequences.  When set
+            %(default).1f]""",
+        default=1.0,
+        type=typed_range(float, 0.0, 1.0))
+    window_group.add_argument(
+        '--quality-window',
+        type=int,
+        metavar='WINDOW_SIZE',
+        default=0,
+        help="""Window size for truncating sequences.  When set
             to a non-zero value, sequences are truncated where the mean mean
             quality within the window drops below --min-mean-quality.
             [default: %(default)s]""")
 
-    parser.add_argument('--ambiguous-action', choices=('truncate', 'drop'),
-            help="""Action to take on ambiguous base in sequence (N's).
+    parser.add_argument(
+        '--ambiguous-action',
+        choices=('truncate', 'drop'),
+        help="""Action to take on ambiguous base in sequence (N's).
             [default: no action]""")
-    parser.add_argument('--max-ambiguous', default=None, help="""Maximum number
+    parser.add_argument(
+        '--max-ambiguous',
+        default=None,
+        help="""Maximum number
             of ambiguous bases in a sequence. Sequences exceeding this count
-            will be removed.""", type=int)
-    parser.add_argument('--pct-ambiguous', help="""Maximun percent of
+            will be removed.""",
+        type=int)
+    parser.add_argument(
+        '--pct-ambiguous',
+        help="""Maximun percent of
             ambiguous bases in a sequence.  Sequences exceeding this percent
-            will be removed.""", type=float)
+            will be removed.""",
+        type=float)
 
     barcode_group = parser.add_argument_group('Barcode/Primer')
     primer_group = barcode_group.add_mutually_exclusive_group()
-    primer_group.add_argument('--primer', help="""IUPAC ambiguous primer to
+    primer_group.add_argument(
+        '--primer', help="""IUPAC ambiguous primer to
             require""")
-    primer_group.add_argument('--no-primer', help="""Do not use a primer.""",
-            action='store_const', const='', dest='primer')
-    barcode_group.add_argument('--barcode-file', help="""CSV file containing
+    primer_group.add_argument(
+        '--no-primer',
+        help="""Do not use a primer.""",
+        action='store_const',
+        const='',
+        dest='primer')
+    barcode_group.add_argument(
+        '--barcode-file',
+        help="""CSV file containing
             sample_id,barcode[,primer] in the rows. A single primer for all
             sequences may be specified with `--primer`, or `--no-primer` may be
             used to indicate barcodes should be used without a primer
-            check.""", type=FileType('r'))
-    barcode_group.add_argument('--barcode-header', action='store_true',
-            default=False, help="""Barcodes have a header row [default:
+            check.""",
+        type=FileType('r'))
+    barcode_group.add_argument(
+        '--barcode-header',
+        action='store_true',
+        default=False,
+        help="""Barcodes have a header row [default:
             %(default)s]""")
-    barcode_group.add_argument('--map-out', help="""Path to write
-            sequence_id,sample_id pairs""", type=FileType('w'),
-            metavar='SAMPLE_MAP')
-    barcode_group.add_argument('--quoting', help="""A string naming an
+    barcode_group.add_argument(
+        '--map-out',
+        help="""Path to write
+            sequence_id,sample_id pairs""",
+        type=FileType('w'),
+        metavar='SAMPLE_MAP')
+    barcode_group.add_argument(
+        '--quoting',
+        help="""A string naming an
             attribute of the csv module defining the quoting behavior for
-            `SAMPLE_MAP`.  [default: %(default)s]""", default='QUOTE_MINIMAL',
-            choices=[s for s in dir(csv) if s.startswith('QUOTE_')])
+            `SAMPLE_MAP`.  [default: %(default)s]""",
+        default='QUOTE_MINIMAL',
+        choices=[s for s in dir(csv) if s.startswith('QUOTE_')])
+
 
 def mean(sequence):
     """
@@ -144,7 +208,7 @@ def moving_average(iterable, n):
     moving_average([40, 30, 50, 46, 39, 44]) --> 40.0 42.0 45.0 43.0
     """
     it = iter(iterable)
-    d = collections.deque(itertools.islice(it, n-1))
+    d = collections.deque(itertools.islice(it, n - 1))
     d.appendleft(0)
     s = sum(d)
     for elem in it:
@@ -152,12 +216,15 @@ def moving_average(iterable, n):
         d.append(elem)
         yield s / float(n)
 
+
 class FailedFilter(Exception):
     """
     A read failed filtering
     """
+
     def __init__(self, value=None):
         self.value = value
+
 
 class RecordEventListener(object):
     """
@@ -166,6 +233,7 @@ class RecordEventListener(object):
     Event handlers take a single positional argument, the record, and optional
     additional keyword arguments.
     """
+
     def __init__(self):
         self.listeners = collections.defaultdict(set)
 
@@ -195,6 +263,7 @@ class RecordEventListener(object):
             self(name, record)
             yield record
 
+
 class RecordReportHandler(object):
     """
     Generates a report to a CSV file detailing every record processed.
@@ -203,14 +272,19 @@ class RecordReportHandler(object):
     """
     HEADERS = ('sequence_name', 'in_length', 'in_mean_qual', 'sample',
                'out_length', 'out_mean_qual', 'fail_filter', 'fail_value')
+
     def __init__(self, fp, args, write_comments=True):
         if write_comments:
-            fp.write('# Generated by `seqmagick quality-filter` version {0}\n'.format(__version__))
+            fp.write('# Generated by `seqmagick quality-filter` version {0}\n'.
+                     format(__version__))
             fp.write('# Arguments: {0}\n'.format(' '.join(args)))
             fp.write('# Working directory: {0}\n'.format(os.getcwd()))
 
-        self.writer = csv.DictWriter(fp, self.HEADERS, lineterminator='\n',
-                quoting=csv.QUOTE_NONNUMERIC)
+        self.writer = csv.DictWriter(
+            fp,
+            self.HEADERS,
+            lineterminator='\n',
+            quoting=csv.QUOTE_NONNUMERIC)
         self.writer.writeheader()
         self.current_record = None
 
@@ -231,19 +305,23 @@ class RecordReportHandler(object):
         self.current_record = None
 
     def _record_failed(self, record, filter_name, value=None):
-        self.current_record.update({'fail_filter': filter_name,
-                                    'fail_value': value})
+        self.current_record.update({
+            'fail_filter': filter_name,
+            'fail_value': value
+        })
 
         self._write()
         self.failed += 1
         self._report()
 
     def _read_record(self, record):
-        self.current_record = {'sequence_name': record.id,
-                               'in_length': len(record)}
+        self.current_record = {
+            'sequence_name': record.id,
+            'in_length': len(record)
+        }
         if 'phred_quality' in record.letter_annotations:
-            self.current_record['in_mean_qual'] = \
-                    mean(record.letter_annotations['phred_quality'])
+            self.current_record['in_mean_qual'] = mean(
+                record.letter_annotations['phred_quality'])
         self.read += 1
 
     def _found_barcode(self, record, sample, barcode=None):
@@ -254,8 +332,8 @@ class RecordReportHandler(object):
     def _wrote_record(self, record):
         self.current_record['out_length'] = len(record)
         if 'phred_quality' in record.letter_annotations:
-            self.current_record['out_mean_qual'] = \
-                    mean(record.letter_annotations['phred_quality'])
+            self.current_record['out_mean_qual'] = mean(
+                record.letter_annotations['phred_quality'])
         self._write()
         self._report()
 
@@ -267,11 +345,10 @@ class RecordReportHandler(object):
             return
 
         self.last_report = t
-        sys.stderr.write('{0:10.1f}s Processed {1:10d} records; {2:10d} passed ({3:6.2f}%)\r'.format(
-            t - self.start,
-            self.read,
-            self.read - self.failed,
-            float(self.read - self.failed) / self.read * 100.0))
+        sys.stderr.write(
+            '{0:10.1f}s Processed {1:10d} records; {2:10d} passed ({3:6.2f}%)\r'.
+            format(t - self.start, self.read, self.read - self.failed,
+                   float(self.read - self.failed) / self.read * 100.0))
 
 
 class BaseFilter(object):
@@ -301,9 +378,9 @@ class BaseFilter(object):
         for record in records:
             try:
                 filtered = self.filter_record(record)
-                assert(filtered)
+                assert (filtered)
                 # Quick tracking whether the sequence was modified
-                if filtered == record:
+                if filtered.seq == record.seq:
                     self.passed_unchanged += 1
                 else:
                     self.passed_changed += 1
@@ -312,7 +389,11 @@ class BaseFilter(object):
                 self.failed += 1
                 v = e.value
                 if self.listener:
-                    self.listener('failed_filter', record, filter_name=self.name, value=v)
+                    self.listener(
+                        'failed_filter',
+                        record,
+                        filter_name=self.name,
+                        value=v)
 
     @property
     def passed(self):
@@ -330,6 +411,7 @@ class BaseFilter(object):
 
     def report_dict(self):
         return dict((f, getattr(self, f)) for f in self.report_fields)
+
 
 class QualityScoreFilter(BaseFilter):
     """
@@ -354,11 +436,13 @@ class QualityScoreFilter(BaseFilter):
         else:
             raise FailedFilter(mean_score)
 
+
 class WindowQualityScoreFilter(BaseFilter):
     """
     Filter records, truncating records when the mean score drops below a
     certain value.
     """
+
     def __init__(self, window_size, min_mean_score=DEFAULT_MEAN_SCORE):
         super(WindowQualityScoreFilter, self).__init__()
         self.min_mean_score = min_mean_score
@@ -366,7 +450,7 @@ class WindowQualityScoreFilter(BaseFilter):
         self.window_size = window_size
         self.name = ("Windowed Quality Score " +
                      "[min_mean-quality: {0}; window_size: {1}]").format(
-                             min_mean_score, window_size)
+                         min_mean_score, window_size)
 
     def filter_record(self, record):
         """
@@ -386,8 +470,8 @@ class WindowQualityScoreFilter(BaseFilter):
         # sequence, then extend the window to include regions with acceptable
         # mean quality scores.
         clip_right = 0
-        for i, a in enumerate(moving_average(quality_scores,
-            self.window_size)):
+        for i, a in enumerate(
+                moving_average(quality_scores, self.window_size)):
 
             if a >= self.min_mean_score:
                 clip_right = i + self.window_size
@@ -399,6 +483,7 @@ class WindowQualityScoreFilter(BaseFilter):
         else:
             # First window failed - record fails
             raise FailedFilter()
+
 
 class AmbiguousBaseFilter(BaseFilter):
     """
@@ -429,6 +514,7 @@ class AmbiguousBaseFilter(BaseFilter):
             raise FailedFilter()
         else:
             assert False
+
 
 class MaxAmbiguousFilter(BaseFilter):
     """
@@ -479,6 +565,7 @@ class MinLengthFilter(BaseFilter):
     """
     Remove records which don't meet minimum length
     """
+
     def __init__(self, min_length):
         super(MinLengthFilter, self).__init__()
         assert min_length > 0
@@ -489,17 +576,19 @@ class MinLengthFilter(BaseFilter):
         """
         Filter record, dropping any that don't meet minimum length
         """
-        l = len(record)
-        if l >= self.min_length:
+
+        if len(record) >= self.min_length:
             return record
         else:
-            raise FailedFilter(l)
+            raise FailedFilter(len(record))
+
 
 class MaxLengthFilter(BaseFilter):
     """
     Truncate long sequences
     """
     name = "Maximum Length"
+
     def __init__(self, max_length):
         super(MaxLengthFilter, self).__init__()
         self.max_length = max_length
@@ -514,6 +603,7 @@ class MaxLengthFilter(BaseFilter):
         else:
             return record
 
+
 class PrimerBarcodeFilter(BaseFilter):
     """
     Filter that checks that the sequence starts with a known barcode/primer
@@ -526,7 +616,11 @@ class PrimerBarcodeFilter(BaseFilter):
     """
     name = "Primer/Barcode"
 
-    def __init__(self, trie, output_file=None, trim=True, quoting=csv.QUOTE_MINIMAL):
+    def __init__(self,
+                 trie,
+                 output_file=None,
+                 trim=True,
+                 quoting=csv.QUOTE_MINIMAL):
         super(PrimerBarcodeFilter, self).__init__()
         self.trim = True
         self.trie = trie
@@ -535,12 +629,14 @@ class PrimerBarcodeFilter(BaseFilter):
         m = triefind.match(str(record.seq), self.trie)
         if m:
             if self.listener:
-                self.listener('found_barcode', record, barcode=m, sample=self.trie[m])
+                self.listener(
+                    'found_barcode', record, barcode=m, sample=self.trie[m])
             if self.trim:
                 record = record[len(m):]
             return record
         else:
             raise FailedFilter()
+
 
 def parse_barcode_file(fp, primer=None, header=False):
     """
@@ -567,13 +663,14 @@ def parse_barcode_file(fp, primer=None, header=False):
         else:
             pr = record[2]
         for sequence in all_unambiguous(barcode + pr):
-            if tr.has_key(sequence):
+            if sequence in tr:
                 raise ValueError("Duplicate sample: {0}, {1} both have {2}",
-                        specimen, tr[sequence], sequence)
+                                 specimen, tr[sequence], sequence)
             logging.info('%s->%s', sequence, specimen)
             tr[sequence] = specimen
 
     return tr
+
 
 def action(arguments):
     """
@@ -581,25 +678,26 @@ def action(arguments):
     """
     if arguments.quality_window_mean_qual and not arguments.quality_window:
         raise ValueError("--quality-window-mean-qual specified without "
-                "--quality-window")
+                         "--quality-window")
 
     if trie is None or triefind is None:
-        raise ValueError('Missing Bio.trie and/or Bio.triefind modules. Cannot continue')
+        raise ValueError(
+            'Missing Bio.trie and/or Bio.triefind modules. Cannot continue')
 
     filters = []
     input_type = fileformat.from_handle(arguments.sequence_file)
     output_type = fileformat.from_handle(arguments.output_file)
     with arguments.sequence_file as fp:
         if arguments.input_qual:
-            sequences = QualityIO.PairedFastaQualIterator(fp,
-                    arguments.input_qual)
+            sequences = QualityIO.PairedFastaQualIterator(
+                fp, arguments.input_qual)
         else:
             sequences = SeqIO.parse(fp, input_type)
 
         listener = RecordEventListener()
         if arguments.details_out:
             rh = RecordReportHandler(arguments.details_out, arguments.argv,
-                    arguments.details_comment)
+                                     arguments.details_comment)
             rh.register_with(listener)
 
         # Track read sequences
@@ -622,29 +720,32 @@ def action(arguments):
             pct_ambig_filter = PctAmbiguousFilter(arguments.pct_ambiguous)
             filters.append(pct_ambig_filter)
         if arguments.ambiguous_action:
-            ambiguous_filter = AmbiguousBaseFilter(
-                    arguments.ambiguous_action)
+            ambiguous_filter = AmbiguousBaseFilter(arguments.ambiguous_action)
             filters.append(ambiguous_filter)
         if arguments.quality_window:
-            min_qual = arguments.quality_window_mean_qual or \
-                    arguments.min_mean_quality
+            min_qual = (arguments.quality_window_mean_qual or
+                        arguments.min_mean_quality)
             window_filter = WindowQualityScoreFilter(arguments.quality_window,
-                    min_qual)
+                                                     min_qual)
             filters.insert(0, window_filter)
 
         if arguments.barcode_file:
             with arguments.barcode_file:
                 tr = parse_barcode_file(arguments.barcode_file,
-                        arguments.primer, arguments.barcode_header)
+                                        arguments.primer,
+                                        arguments.barcode_header)
             f = PrimerBarcodeFilter(tr)
             filters.append(f)
 
             if arguments.map_out:
-                barcode_writer = csv.writer(arguments.map_out,
-                        quoting=getattr(csv, arguments.quoting),
-                        lineterminator='\n')
+                barcode_writer = csv.writer(
+                    arguments.map_out,
+                    quoting=getattr(csv, arguments.quoting),
+                    lineterminator='\n')
+
                 def barcode_handler(record, sample, barcode=None):
                     barcode_writer.writerow((record.id, sample))
+
                 listener.register_handler('found_barcode', barcode_handler)
         for f in filters:
             f.listener = listener
@@ -660,7 +761,7 @@ def action(arguments):
 
     # Write report
     with arguments.report_out as fp:
-        writer = csv.DictWriter(fp, BaseFilter.report_fields,
-                lineterminator='\n', delimiter='\t')
+        writer = csv.DictWriter(
+            fp, BaseFilter.report_fields, lineterminator='\n', delimiter='\t')
         writer.writeheader()
         writer.writerows(rpt_rows)

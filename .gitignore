@@ -1,3 +1,4 @@
+seqmagick/data/ver
 *.pyc
 .tox
 build/
@@ -5,3 +6,4 @@ dist/
 MANIFEST
 doctrees/
 seqmagick.egg-info/
+docs/*.help

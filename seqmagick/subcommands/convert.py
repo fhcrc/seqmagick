@@ -4,6 +4,7 @@ Convert between sequence formats
 import argparse
 import functools
 import logging
+import random
 
 from Bio import Alphabet, SeqIO
 from Bio.Alphabet import IUPAC
@@ -124,18 +125,18 @@ def add_options(parser):
          'by sequence content, keep the first instance seen')
     seq_select.add_argument('--deduplicated-sequences-file', action='store',
         metavar='FILE', dest='deduplicate_sequences', default=False,
-        type=common.FileType('w'),
+        type=common.FileType('wt'),
         help='Write all of the deduplicated sequences to a file')
     seq_select.add_argument('--deduplicate-taxa',
             action=partial_action(transform.deduplicate_taxa),
             dest='transforms', help="""Remove any duplicate sequences by ID,
             keep the first instance seen""")
     seq_select.add_argument('--exclude-from-file', metavar='FILE',
-            type=common.FileType('r'), help="""Filter sequences, removing
+            type=common.FileType('rt'), help="""Filter sequences, removing
             those sequence IDs in the specified file""", dest='transforms',
             action=partial_action(transform.exclude_from_file, 'handle'))
     seq_select.add_argument('--include-from-file', metavar='FILE',
-            type=common.FileType('r'), help="""Filter sequences, keeping only
+            type=common.FileType('rt'), help="""Filter sequences, keeping only
             those sequence IDs in the specified file""", dest='transforms',
             action=partial_action(transform.include_from_file, 'handle'))
     seq_select.add_argument('--head', metavar='N', dest='transforms',
@@ -170,6 +171,8 @@ def add_options(parser):
     seq_select.add_argument('--sample', metavar='N', dest='transforms', type=int,
             action=partial_action(transform.sample, 'k'),
             help = """ Select a random sampling of sequences """)
+    seq_select.add_argument('--sample-seed', metavar='N', type=int,
+            help = """Set random seed for sampling of sequences""")
     seq_select.add_argument('--seq-pattern-include', metavar='REGEX',
             action=partial_action(transform.seq_include, 'filter_regex'),
             dest='transforms', help="""Filter the sequences by regular
@@ -221,7 +224,7 @@ def build_parser(parser):
     Add shared arguments to the convert or mogrify parser.
     """
     add_options(parser)
-    parser.add_argument('source_file', type=common.FileType('r'),
+    parser.add_argument('source_file', type=common.FileType('rt'),
                         help="Input sequence file")
     parser.add_argument('dest_file', help="Output file")
 
@@ -256,6 +259,10 @@ def transform_file(source_file, destination_file, arguments):
 
     # Apply all the transform functions in transforms
     if arguments.transforms:
+
+        # TODO: might be nice to somehow pass this directly into sample action
+        if arguments.sample_seed is not None:
+            random.seed(arguments.sample_seed)
 
         # Special case handling for --cut and --relative-to
         if arguments.cut_relative:
@@ -325,7 +332,7 @@ def module_function(string):
 
     # Import the module
     module_vars = {}
-    execfile(module_path, module_vars)
+    exec(compile(open(module_path).read(), module_path, 'exec'), module_vars)
 
     try:
         function = module_vars[function_name]
@@ -342,6 +349,6 @@ def module_function(string):
 
 def action(arguments):
     with arguments.source_file as src, \
-            common.atomic_write(arguments.dest_file,
-                    file_factory=common.FileType('w')) as dest:
+            common.atomic_write(
+                arguments.dest_file, file_factory=common.FileType('wt')) as dest:
         transform_file(src, dest, arguments)

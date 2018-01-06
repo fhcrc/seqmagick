@@ -24,7 +24,7 @@ def main(argv=sys.argv[1:]):
         logformat = '%(message)s'
 
     # set up logging
-    logging.basicConfig(file=sys.stdout, format=logformat, level=loglevel)
+    logging.basicConfig(stream=sys.stdout, format=logformat, level=loglevel)
 
     return action(arguments)
 

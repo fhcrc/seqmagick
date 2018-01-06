@@ -27,19 +27,26 @@ TRANSLATION_TABLES = {
     'vertebrate-mito': CodonTable.unambiguous_dna_by_name["Vertebrate Mitochondrial"]
 }
 
+
 def build_parser(parser):
-    parser.add_argument('protein_align', help="""Protein Alignment""", type=common.FileType('r'))
-    parser.add_argument('nucl_align', help="""FASTA Alignment""", type=common.FileType('r'))
-    parser.add_argument('-o', '--out-file', type=common.FileType('w'),
-                        default=sys.stdout, metavar='destination_file',
-                        help="""Output destination. Default: STDOUT""")
-    parser.add_argument('-t', '--translation-table',
-                        choices=TRANSLATION_TABLES, default='standard-ambiguous', help="""Translation
-                        table to use. [Default: %(default)s]""")
-    parser.add_argument('-a', '--fail-action', choices=('fail', 'warn', 'none'), default='fail',
-                        help="""Action to take on an ambiguous codon [default: %(default)s]""")
+    parser.add_argument(
+        'protein_align', type=common.FileType('r'), help='Protein Alignment')
+    parser.add_argument(
+        'nucl_align', type=common.FileType('r'), help='FASTA Alignment')
+    parser.add_argument(
+        '-o', '--out-file', type=common.FileType('w'),
+        default=sys.stdout, metavar='destination_file',
+        help='Output destination. Default: STDOUT')
+    parser.add_argument(
+        '-t', '--translation-table', choices=TRANSLATION_TABLES,
+        default='standard-ambiguous',
+        help='Translation table to use. [Default: %(default)s]')
+    parser.add_argument(
+        '-a', '--fail-action', choices=('fail', 'warn', 'none'), default='fail',
+        help='Action to take on an ambiguous codon [default: %(default)s]')
 
     return parser
+
 
 def batch(iterable, chunk_size):
     """
@@ -51,8 +58,9 @@ def batch(iterable, chunk_size):
     while True:
         r = list(itertools.islice(i, chunk_size))
         if not r:
-            raise StopIteration()
+            break
         yield r
+
 
 class AlignmentMapper(object):
     def __init__(self, translation_table, unknown_action='fail'):
@@ -89,16 +97,16 @@ class AlignmentMapper(object):
         Use aligned prot_seq to align nucl_seq
         """
         if prot_seq.id != nucl_seq.id:
-            logging.warn(
+            logging.warning(
                 'ID mismatch: %s != %s. Are the sequences in the same order?',
-                 prot_seq.id, nucl_seq.id)
+                prot_seq.id, nucl_seq.id)
 
         # Ungap nucleotides
         codons = batch(str(nucl_seq.seq.ungap('-')), 3)
         codons = [''.join(i) for i in codons]
         codon_iter = iter(codons)
 
-        ungapped_prot = str(prot_seq.seq).translate(None, '-')
+        ungapped_prot = str(prot_seq.seq).replace('-', '')
 
         if len(ungapped_prot) != len(codons):
             table = self.translation_table.forward_table
@@ -131,7 +139,7 @@ Trans. Codons: {5}""".format(len(codons), len(ungapped_prot), nucl_seq.id, prot_
         """
         Convert protein sequences to nucleotide alignment
         """
-        zipped = itertools.izip_longest(prot_alignment, nucl_sequences)
+        zipped = itertools.zip_longest(prot_alignment, nucl_sequences)
         for p, n in zipped:
             if p is None:
                 raise ValueError("Exhausted protein sequences")

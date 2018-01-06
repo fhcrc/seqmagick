@@ -9,12 +9,12 @@ from Bio.SeqRecord import SeqRecord
 
 from seqmagick.subcommands import primer_trim
 
-class PrimerAlignerTestCase(unittest.TestCase):
 
+class PrimerAlignerTestCase(unittest.TestCase):
     def setUp(self):
         self.primer = 'AACTGCATTTGAATGG'
-        self.instance = primer_trim.PrimerAligner(self.primer, match=5.0,
-                gap_open=-10.0)
+        self.instance = primer_trim.PrimerAligner(
+            self.primer, match=5.0, gap_open=-10.0)
 
     def test_max_score(self):
         self.assertEqual(len(self.primer) * 5.0, self.instance.max_score)
@@ -36,8 +36,8 @@ class PrimerAlignerTestCase(unittest.TestCase):
         self.assertEqual(16, start)
         self.assertEqual(30, end)
 
-class HammingDistanceTestCase(unittest.TestCase):
 
+class HammingDistanceTestCase(unittest.TestCase):
     def test_unequal_length(self):
         s1 = 'test'
         s2 = 'te'
@@ -60,15 +60,19 @@ class HammingDistanceTestCase(unittest.TestCase):
     def test_ambiguous(self):
         s1 = 'ACYT'
         s2 = 'ACCT'
-        self.assertEqual(0, primer_trim.hamming_distance(s1, s2,
-            primer_trim._iupac_ambiguous_equal))
+        self.assertEqual(0,
+                         primer_trim.hamming_distance(
+                             s1, s2, primer_trim._iupac_ambiguous_equal))
         s2 = 'ACTT'
-        self.assertEqual(0, primer_trim.hamming_distance(s1, s2,
-            primer_trim._iupac_ambiguous_equal))
+        self.assertEqual(0,
+                         primer_trim.hamming_distance(
+                             s1, s2, primer_trim._iupac_ambiguous_equal))
+
 
 def _alignment_record(sequence):
-    return SeqRecord(Seq(sequence,
-        alphabet=Alphabet.Gapped(Alphabet.generic_dna)))
+    return SeqRecord(
+        Seq(sequence, alphabet=Alphabet.Gapped(Alphabet.generic_dna)))
+
 
 class LocatePrimersTestCase(unittest.TestCase):
     """
@@ -82,25 +86,25 @@ class LocatePrimersTestCase(unittest.TestCase):
         forward = 'TGG'
         reverse = 'TTC'
 
-        forward_idx, reverse_idx = primer_trim.locate_primers(self.sequences,
-                forward, reverse, False, 1)
+        forward_idx, reverse_idx = primer_trim.locate_primers(
+            self.sequences, forward, reverse, False, 1)
 
         self.assertEqual((7, 9), forward_idx)
         self.assertEqual((15, 17), reverse_idx)
 
     def test_no_forward(self):
-        forward='GGGGGG'
+        forward = 'GGGGGG'
         reverse = 'TTC'
         self.assertRaises(primer_trim.PrimerNotFound,
-                primer_trim.locate_primers, self.sequences, forward, reverse,
-                False, 1)
+                          primer_trim.locate_primers, self.sequences, forward,
+                          reverse, False, 1)
 
     def test_no_reverse(self):
-        forward='TGG'
+        forward = 'TGG'
         reverse = 'GGGG'
         self.assertRaises(primer_trim.PrimerNotFound,
-                primer_trim.locate_primers, self.sequences, forward, reverse,
-                False, 1)
+                          primer_trim.locate_primers, self.sequences, forward,
+                          reverse, False, 1)
 
     def test_bad_order(self):
         """
@@ -110,5 +114,5 @@ class LocatePrimersTestCase(unittest.TestCase):
         forward = 'TTC'
 
         self.assertRaises(primer_trim.PrimerOrderError,
-                primer_trim.locate_primers, self.sequences,
-                forward, reverse, False, 1)
+                          primer_trim.locate_primers, self.sequences, forward,
+                          reverse, False, 1)

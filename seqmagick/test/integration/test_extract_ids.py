@@ -1,9 +1,11 @@
+import sys
 import unittest
 import tempfile
 
 from seqmagick.scripts import cli
 
 from seqmagick.test.integration import data_path
+
 
 class ExtractIdsMixin(object):
     expected = """test1
@@ -16,7 +18,7 @@ test3 sequence 3
 """
 
     def setUp(self):
-        self.tempfile = tempfile.NamedTemporaryFile()
+        self.tempfile = tempfile.NamedTemporaryFile('r+t')
 
     def tearDown(self):
         self.tempfile.close()
@@ -24,19 +26,22 @@ test3 sequence 3
     def test_ids(self):
         args = ['extract-ids', self.seq_file, '-o', self.tempfile.name]
         cli.main(args)
-        self.assertEquals(self.expected, self.tempfile.read())
+        self.assertEqual(self.expected, self.tempfile.read())
 
     def test_descriptions(self):
         args = ['extract-ids', self.seq_file, '-o', self.tempfile.name, '-d']
         cli.main(args)
-        self.assertEquals(self.expected_desc, self.tempfile.read())
+        self.assertEqual(self.expected_desc, self.tempfile.read())
 
 
 class SimpleExtractIdsTestCase(ExtractIdsMixin, unittest.TestCase):
     seq_file = data_path('input2.fasta')
 
+
+@unittest.skipIf(sys.version_info.major == 3, 'bzip2 not supported')
 class Bz2ExtractIdsTestCase(ExtractIdsMixin, unittest.TestCase):
     seq_file = data_path('input2.fasta.bz2')
+
 
 class GzipExtractIdsTestCase(ExtractIdsMixin, unittest.TestCase):
     seq_file = data_path('input2.fasta.gz')

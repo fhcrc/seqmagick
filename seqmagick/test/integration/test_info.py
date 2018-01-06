@@ -1,9 +1,11 @@
+import sys
 import unittest
 import tempfile
 
 from seqmagick.scripts import cli
 
 from seqmagick.test.integration import data_path
+
 
 class InfoMixin(object):
     expected = """name\talignment\tmin_len\tmax_len\tavg_len\tnum_seqs
@@ -13,7 +15,7 @@ class InfoMixin(object):
 
     def setUp(self):
         self.infile = tempfile.NamedTemporaryFile()
-        self.tempfile = tempfile.NamedTemporaryFile()
+        self.tempfile = tempfile.NamedTemporaryFile('w+t')
 
     def tearDown(self):
         self.infile.close()
@@ -25,17 +27,22 @@ class InfoMixin(object):
                 '--threads', str(self.threads)]
 
         cli.main(args)
-        self.assertEquals(self.expected.format(self.seq_file), self.tempfile.read())
+        self.assertEqual(self.expected.format(self.seq_file), self.tempfile.read())
+
 
 class SimpleInfoTestCase(InfoMixin, unittest.TestCase):
     seq_file = data_path('input2.fasta')
+
 
 class MultithreadedInfoTestCase(InfoMixin, unittest.TestCase):
     seq_file = data_path('input2.fasta')
     threads = 2
 
+
 class SimpleGzipInfoTestCase(InfoMixin, unittest.TestCase):
     seq_file = data_path('input2.fasta.gz')
 
+
+@unittest.skipIf(sys.version_info.major == 3, 'bzip2 not supported')
 class SimpleBzip2InfoTestCase(InfoMixin, unittest.TestCase):
     seq_file = data_path('input2.fasta.bz2')

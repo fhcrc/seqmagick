@@ -3,8 +3,7 @@ Functions to transform / filter sequences
 """
 import collections
 import contextlib
-import copy
-import cPickle as pickle
+import pickle as pickle
 import gzip
 import itertools
 import logging
@@ -19,9 +18,11 @@ from Bio.Data import CodonTable
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 from Bio.SeqUtils.CheckSum import seguid
+from functools import reduce
 
 # Characters to be treated as gaps
 GAP_CHARS = "-."
+GAP_TABLE = {ord(c): None for c in GAP_CHARS}
 
 # Size of temporary file buffer: default to 256MB
 DEFAULT_BUFFER_SIZE = 268435456  # 256 * 2**20
@@ -57,8 +58,9 @@ def dashes_cleanup(records, prune_chars='.:?~'):
     Take an alignment and convert any undesirable characters such as ? or ~ to
     -.
     """
-    logging.info("Applying _dashes_cleanup: converting any . or : to -.")
-    translation_table = string.maketrans(prune_chars, '-' * len(prune_chars))
+    logging.info(
+        "Applying _dashes_cleanup: converting any of '{}' to '-'.".format(prune_chars))
+    translation_table = {ord(c): '-' for c in prune_chars}
     for record in records:
         record.seq = Seq(str(record.seq).translate(translation_table),
                          record.seq.alphabet)
@@ -83,7 +85,7 @@ def deduplicate_sequences(records, out_file):
 
     if out_file is not None:
         with out_file:
-            for sequences in checksum_sequences.itervalues():
+            for sequences in checksum_sequences.values():
                 out_file.write('%s\n' % (' '.join(sequences),))
 
 
@@ -187,7 +189,7 @@ def drop_columns(records, slices):
         # Generate a set of indices to remove
         drop = set(i for slice in slices
                    for i in range(*slice.indices(len(record))))
-        keep = [i not in drop for i in xrange(len(record))]
+        keep = [i not in drop for i in range(len(record))]
         record.seq = Seq(''.join(itertools.compress(record.seq, keep)), record.seq.alphabet)
         yield record
 
@@ -205,7 +207,7 @@ def multi_cut_sequences(records, slices):
             yield reduce(lambda x, y: x + y, pieces)
 
 def _update_slices(record, slices):
-    n = itertools.count().next
+    n = itertools.count().__next__
     # Generate a map from indexes in the specified sequence to those in the
     # alignment
     ungap_map = dict((n(), i) for i, base in enumerate(str(record.seq))
@@ -256,7 +258,7 @@ def multi_mask_sequences(records, slices):
     Replace characters sliced by slices with gap characters.
     """
     for record in records:
-        record_indices = range(len(record))
+        record_indices = list(range(len(record)))
         keep_indices = reduce(lambda i, s: i - frozenset(record_indices[s]),
                               slices, frozenset(record_indices))
         seq = ''.join(b if i in keep_indices else '-'
@@ -311,7 +313,7 @@ def _reverse_annotations(old_record, new_record):
     lists / tuples / strings.
     """
     # Copy the annotations over
-    for k, v in old_record.annotations.items():
+    for k, v in list(old_record.annotations.items()):
         # Trim if appropriate
         if isinstance(v, (tuple, list)) and len(v) == len(old_record):
             assert len(v) == len(old_record)
@@ -320,7 +322,7 @@ def _reverse_annotations(old_record, new_record):
 
     # Letter annotations must be lists / tuples / strings of the same
     # length as the sequence
-    for k, v in old_record.letter_annotations.items():
+    for k, v in list(old_record.letter_annotations.items()):
         assert len(v) == len(old_record)
         new_record.letter_annotations[k] = v[::-1]
 
@@ -357,19 +359,23 @@ def reverse_complement_sequences(records):
         yield rev_record
 
 
-def ungap_sequences(records, gap_chars=GAP_CHARS):
+def ungap_sequences(records, gap_chars=GAP_TABLE):
     """
     Remove gaps from sequences, given an alignment.
     """
-    logging.info('Applying _ungap_sequences generator: '
-                 'removing gaps from the alignment.')
+    logging.info('Applying _ungap_sequences generator: removing all gap characters')
     for record in records:
         yield ungap_all(record, gap_chars)
 
-def ungap_all(record, gap_chars=GAP_CHARS):
-    record = SeqRecord(Seq(str(record.seq).translate(None, gap_chars)),
-            id=record.id, description=record.description)
+
+def ungap_all(record, gap_chars=GAP_TABLE):
+
+    record = SeqRecord(
+        Seq(str(record.seq).translate(gap_chars)),
+        id=record.id, description=record.description
+    )
     return record
+
 
 def _update_id(record, new_id):
     """
@@ -379,8 +385,7 @@ def _update_id(record, new_id):
     record.id = new_id
 
     # At least for FASTA, record ID starts the description
-    record.description = re.sub('^' + re.escape(old_id), new_id,
-            record.description)
+    record.description = re.sub('^' + re.escape(old_id), new_id, record.description)
     return record
 
 
@@ -473,18 +478,24 @@ def seq_include(records, filter_regex):
 
 def seq_exclude(records, filter_regex):
     """
-    Filter any sequences who's seq matches the filter. Ignore case.
+    Filter any sequences whose seq matches the filter. Ignore case.
     """
     regex = re.compile(filter_regex)
     for record in records:
         if not regex.search(str(record.seq)):
             yield record
 
-def sample(records, k):
+
+def sample(records, k, random_seed=None):
+    """Choose a length-``k`` subset of ``records``, retaining the input
+    order.  If k > len(records), all are returned. If an integer
+    ``random_seed`` is provided, sets ``random.seed()``
+
     """
-    Choose a length-``k`` subset of ``records`` using reservoir sampling.  if k < len(records),
-    all are returned.
-    """
+
+    if random_seed is not None:
+        random.seed(random_seed)
+
     result = []
     for i, record in enumerate(records):
         if len(result) < k:
@@ -494,6 +505,7 @@ def sample(records, k):
             if r < k:
                 result[r] = record
     return result
+
 
 def head(records, head):
     """
@@ -650,7 +662,7 @@ class CodonWarningTable(object):
             return '-'
         elif '-' in codon:
             if codon not in self.seen:
-                logging.warn("Unknown Codon: %s", codon)
+                logging.warning("Unknown Codon: %s", codon)
                 self.seen.add(codon)
             return self.missing_char
         else:
@@ -680,7 +692,9 @@ def translate(records, translate):
              'rna': CodonTable.ambiguous_rna_by_name["Standard"]}[source_type]
 
     # Handle ambiguities by replacing ambiguous codons with 'X'
-    table = copy.deepcopy(table)
+    # TODO: this copy operation causes infinite recursion with python3.6 -
+    # not sure why it was here to begin with.
+    # table = copy.deepcopy(table)
     table.forward_table = CodonWarningTable(table.forward_table)
 
     for record in records:

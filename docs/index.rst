@@ -47,15 +47,17 @@ And more.
 Installation
 ============
 
-First, you'll need to install `BioPython`_. NumPy (which parts of BioPython
-depend on) is not required for ``seqmagick`` to function. Once done, install
-the latest release with::
+Install the latest release with::
 
     pip install seqmagick
 
-Or install the bleeding edge version::
+This should also install `BioPython`_. NumPy (which parts of BioPython
+depend on) is not required for ``seqmagick`` to function, but may be
+installed as a dependency of ``BioPython``.
 
-    pip install git+git://github.com/fhcrc/seqmagick.git@master#egg-info=seqmagick
+To install the bleeding edge version::
+
+    pip install git+https://github.com/fhcrc/seqmagick.git@master#egg-info=seqmagick
 
 Use
 ===

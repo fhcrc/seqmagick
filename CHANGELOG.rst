@@ -1,5 +1,14 @@
-Changelog
-=========
+Changes for seqmagick
+=====================
+
+0.7.0
+-----
+
+* Supports Python 3.4+
+* Drops support for python 2.7
+* requires biopython >= 1.70
+* Drops support for bz2 compression [see GH-66]
+* New option ``convert --sample-seed`` to make ``--sample`` deterministic.
 
 0.6.2
 -----

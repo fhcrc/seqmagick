@@ -13,19 +13,19 @@ class BatchTestCase(unittest.TestCase):
         self.assertRaises(StopIteration, next, b)
 
     def test_singletons(self):
-        i = range(3)
+        i = list(range(3))
         b = backtrans_align.batch(i, 1)
-        self.assertEquals([[0], [1], [2]], list(b))
+        self.assertEqual([[0], [1], [2]], list(b))
 
     def test_doubles(self):
-        i = range(6)
+        i = list(range(6))
         b = backtrans_align.batch(i, 2)
-        self.assertEquals([[0, 1], [2, 3], [4, 5]], list(b))
+        self.assertEqual([[0, 1], [2, 3], [4, 5]], list(b))
 
     def test_partial(self):
-        i = range(5)
+        i = list(range(5))
         b = backtrans_align.batch(i, 2)
-        self.assertEquals([[0, 1], [2, 3], [4]], list(b))
+        self.assertEqual([[0, 1], [2, 3], [4]], list(b))
 
 
 class AlignmentMapperTestCase(unittest.TestCase):
@@ -41,7 +41,7 @@ class AlignmentMapperTestCase(unittest.TestCase):
     def test_validate_invalid(self):
         nucl = 'AAGTTT'
         prot = 'KK'
-        self.assertRaisesRegexp(ValueError, r'Codon TTT translates to F, not K',
+        self.assertRaisesRegex(ValueError, r'Codon TTT translates to F, not K',
                 self.instance._validate_translation, prot, nucl)
 
     def test_map_alignment(self):
