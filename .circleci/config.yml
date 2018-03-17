@@ -1,0 +1,63 @@
+---
+version: 2
+
+workflows:
+  version: 2
+  on_commit:
+    jobs:
+      - build:
+          context: docker-hub
+  on_tag:
+    jobs:
+      - build:
+          context: docker-hub
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v.*/
+
+jobs:
+  build:
+    docker:
+      - image: circleci/buildpack-deps:stretch-scm
+    environment:
+      LOCAL_NAME: hybsearch/seqmagick
+      DEST_NAME: docker.io/hybsearch/seqmagick
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: 'Build docker image'
+          command: |
+            docker build -t "$LOCAL_NAME:$CIRCLE_SHA1" .
+      - run:
+          name: 'Print debugging branch/tag information'
+          command: |
+            echo "CIRCLE_BRANCH: $CIRCLE_BRANCH" "CIRCLE_TAG: $CIRCLE_TAG"
+      - run:
+          name: 'Log in to docker'
+          command: |
+            docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
+      - run:
+          name: 'Push to Docker Hub'
+          command: |
+            image_id="$(docker images -q "$LOCAL_NAME:$CIRCLE_SHA1")"
+            echo "image_id: $image_id"
+
+            if [[ $CIRCLE_BRANCH = master ]]; then
+              docker_tag="$DEST_NAME:HEAD"
+            elif [[ $CIRCLE_TAG ]]; then
+              docker_tag="$DEST_NAME:$CIRCLE_TAG"
+            elif [[ $CIRCLE_BRANCH ]]; then
+              docker_tag="$DEST_NAME:$CIRCLE_BRANCH"
+            fi
+            echo "docker_tag: $docker_tag"
+
+            docker tag "$image_id" "$docker_tag"
+            docker push "$docker_tag"
+
+            if [[ $CIRCLE_TAG ]]; then
+              docker tag "$image_id" "$DEST_NAME:latest"
+              docker push "$DEST_NAME:latest"
+            fi
