@@ -1,0 +1,8 @@
+.git/
+*.rst
+INSTALL
+LICENSE
+docs/
+examples/
+logo/
+requirements-rtd.txt
