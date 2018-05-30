@@ -668,6 +668,10 @@ class CodonWarningTable(object):
         else:
             return self.wrapped.__getitem__(codon)
 
+    def __contains__(self, value):
+        return value in self.wrapped
+
+
 def translate(records, translate):
     """
     Perform translation from generic DNA/RNA to proteins.  Bio.Seq
