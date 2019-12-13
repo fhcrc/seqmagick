@@ -65,6 +65,8 @@ def parse_arguments(argv):
     arguments.argv = argv
     action = arguments.subparser_name
 
+    if action is None:
+        parse_arguments(['-h'])
     if action == 'help':
         return parse_arguments([str(arguments.action), '-h'])
 

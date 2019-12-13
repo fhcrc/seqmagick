@@ -43,7 +43,8 @@ def _record_buffer(records, buffer_size=DEFAULT_BUFFER_SIZE):
 
         def record_iter():
             tf.seek(0)
-            unpickler = pickle.Unpickler(tf)
+            # _file is used below because it implements the necessary methods for pickle.Unpickler(), namely 'readinto' which is newly required in 3.8. See https://docs.python.org/3/library/tempfile.html#tempfile.SpooledTemporaryFile for details on the _file attribute of tempfile.SpooledTemporaryFile.
+            unpickler = pickle.Unpickler(tf._file)
             while True:
                 try:
                     yield unpickler.load()
