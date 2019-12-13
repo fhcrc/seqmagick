@@ -1,32 +1,22 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>convert and mogrify &#8212; seqmagick 0.7.0 documentation</title>
+    <meta charset="utf-8" />
+    <title>convert and mogrify &#8212; seqmagick 0.8.0 documentation</title>
     <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    './',
-        VERSION:     '0.7.0',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="backtrans-align" href="backtrans_align.html" />
     <link rel="prev" title="Changes for seqmagick" href="changelog.html" /> 
-  </head>
-  <body>
+  </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -39,7 +29,7 @@
         <li class="right" >
           <a href="changelog.html" title="Changes for seqmagick"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">seqmagick 0.7.0 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">seqmagick 0.8.0 documentation</a> &#187;</li> 
       </ul>
     </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -47,9 +37,9 @@
             <p class="logo"><a href="index.html">
               <img class="logo" src="_static/seqmagick_logo_small.png" alt="Logo"/>
             </a></p>
-  <h3><a href="index.html">Table Of Contents</a></h3>
+  <h3><a href="index.html">Table of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#"><code class="docutils literal"><span class="pre">convert</span></code> and <code class="docutils literal"><span class="pre">mogrify</span></code></a><ul>
+<li><a class="reference internal" href="#"><code class="docutils literal notranslate"><span class="pre">convert</span></code> and <code class="docutils literal notranslate"><span class="pre">mogrify</span></code></a><ul>
 <li><a class="reference internal" href="#examples">Examples</a><ul>
 <li><a class="reference internal" href="#basic-conversion">Basic Conversion</a></li>
 <li><a class="reference internal" href="#sequence-modification">Sequence Modification</a><ul>
@@ -67,7 +57,7 @@
                         title="previous chapter">Changes for seqmagick</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="backtrans_align.html"
-                        title="next chapter"><code class="docutils literal"><span class="pre">backtrans-align</span></code></a></p>
+                        title="next chapter"><code class="docutils literal notranslate"><span class="pre">backtrans-align</span></code></a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -76,13 +66,13 @@
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
     </form>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -94,17 +84,17 @@
           <div class="body" role="main">
             
   <div class="section" id="convert-and-mogrify">
-<h1><code class="docutils literal"><span class="pre">convert</span></code> and <code class="docutils literal"><span class="pre">mogrify</span></code><a class="headerlink" href="#convert-and-mogrify" title="Permalink to this headline">¶</a></h1>
-<p>Convert and mogrify achieve similar goals. <code class="docutils literal"><span class="pre">convert</span></code> performs some operation
+<h1><code class="docutils literal notranslate"><span class="pre">convert</span></code> and <code class="docutils literal notranslate"><span class="pre">mogrify</span></code><a class="headerlink" href="#convert-and-mogrify" title="Permalink to this headline">¶</a></h1>
+<p>Convert and mogrify achieve similar goals. <code class="docutils literal notranslate"><span class="pre">convert</span></code> performs some operation
 on a file (from changing format to something more complicated) and writes to a
-new file. <code class="docutils literal"><span class="pre">mogrify</span></code> modifies a file in place, and would not normally be used
+new file. <code class="docutils literal notranslate"><span class="pre">mogrify</span></code> modifies a file in place, and would not normally be used
 to convert formats.</p>
 <p>The two have similar signatures:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">seqmagick</span> <span class="n">convert</span> <span class="p">[</span><span class="n">options</span><span class="p">]</span> <span class="n">infile</span> <span class="n">outfile</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">seqmagick</span> <span class="n">convert</span> <span class="p">[</span><span class="n">options</span><span class="p">]</span> <span class="n">infile</span> <span class="n">outfile</span>
 </pre></div>
 </div>
 <p>vs:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">seqmagick</span> <span class="n">mogrify</span> <span class="p">[</span><span class="n">options</span><span class="p">]</span> <span class="n">infile</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">seqmagick</span> <span class="n">mogrify</span> <span class="p">[</span><span class="n">options</span><span class="p">]</span> <span class="n">infile</span>
 </pre></div>
 </div>
 <p>Options are shared between convert and mogrify.</p>
@@ -112,14 +102,14 @@ to convert formats.</p>
 <h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="basic-conversion">
 <h3>Basic Conversion<a class="headerlink" href="#basic-conversion" title="Permalink to this headline">¶</a></h3>
-<p><code class="docutils literal"><span class="pre">convert</span></code> can be used to convert between any file types BioPython supports
+<p><code class="docutils literal notranslate"><span class="pre">convert</span></code> can be used to convert between any file types BioPython supports
 (which is many). For a full list of supported types, see the <a class="reference external" href="http://www.biopython.org/wiki/SeqIO#File_Formats">BioPython SeqIO
 wiki page</a>.</p>
 <p>By default, file type is inferred from file extension, so:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">seqmagick</span> <span class="n">convert</span> <span class="n">a</span><span class="o">.</span><span class="n">fasta</span> <span class="n">a</span><span class="o">.</span><span class="n">sto</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">seqmagick</span> <span class="n">convert</span> <span class="n">a</span><span class="o">.</span><span class="n">fasta</span> <span class="n">a</span><span class="o">.</span><span class="n">sto</span>
 </pre></div>
 </div>
-<p>converts an existing file <code class="docutils literal"><span class="pre">a.fasta</span></code> from FASTA to Stockholm format. <strong>Neat!</strong>
+<p>converts an existing file <code class="docutils literal notranslate"><span class="pre">a.fasta</span></code> from FASTA to Stockholm format. <strong>Neat!</strong>
 But there’s more.</p>
 </div>
 <div class="section" id="sequence-modification">
@@ -127,7 +117,7 @@ But there’s more.</p>
 <p>A wealth of options await you when you’re ready to do something slightly more
 complicated with your sequences.</p>
 <p>Let’s say I just want a few of my sequences:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>$ seqmagick convert --head 5 examples/test.fasta examples/test.head.fasta
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ seqmagick convert --head 5 examples/test.fasta examples/test.head.fasta
 $ seqmagick info examples/test*.fasta
 name                      alignment  min_len  max_len  avg_len  num_seqs
 examples/test.fasta       FALSE      972      9719     1573.67  15
@@ -136,28 +126,28 @@ examples/test.head.fasta  FALSE      978      990      984.00   5
 </div>
 <p>Or I want to remove any gaps, reverse complement, select the last 5 sequences,
 and remove any duplicates from an alignment in place:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">seqmagick</span> <span class="n">mogrify</span> <span class="o">--</span><span class="n">tail</span> <span class="mi">5</span> <span class="o">--</span><span class="n">reverse</span><span class="o">-</span><span class="n">complement</span> <span class="o">--</span><span class="n">ungap</span> <span class="o">--</span><span class="n">deduplicate</span><span class="o">-</span><span class="n">sequences</span> <span class="n">examples</span><span class="o">/</span><span class="n">test</span><span class="o">.</span><span class="n">fasta</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">seqmagick</span> <span class="n">mogrify</span> <span class="o">--</span><span class="n">tail</span> <span class="mi">5</span> <span class="o">--</span><span class="n">reverse</span><span class="o">-</span><span class="n">complement</span> <span class="o">--</span><span class="n">ungap</span> <span class="o">--</span><span class="n">deduplicate</span><span class="o">-</span><span class="n">sequences</span> <span class="n">examples</span><span class="o">/</span><span class="n">test</span><span class="o">.</span><span class="n">fasta</span>
 </pre></div>
 </div>
 <p>You can even define your own functions in python and use them via
-<code class="docutils literal"><span class="pre">--apply-function</span></code>.</p>
+<code class="docutils literal notranslate"><span class="pre">--apply-function</span></code>.</p>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
+<p class="admonition-title">Note</p>
 <p>To maximize flexibility, most transformations passed as options to
-<code class="docutils literal"><span class="pre">mogrify</span></code> and <code class="docutils literal"><span class="pre">convert</span></code> are processed <em>in order</em>, so:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">seqmagick</span> <span class="n">convert</span> <span class="o">--</span><span class="nb">min</span><span class="o">-</span><span class="n">length</span> <span class="mi">50</span> <span class="o">--</span><span class="n">cut</span> <span class="mi">1</span><span class="p">:</span><span class="mi">5</span> <span class="n">a</span><span class="o">.</span><span class="n">fasta</span> <span class="n">b</span><span class="o">.</span><span class="n">fasta</span>
+<code class="docutils literal notranslate"><span class="pre">mogrify</span></code> and <code class="docutils literal notranslate"><span class="pre">convert</span></code> are processed <em>in order</em>, so:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">seqmagick</span> <span class="n">convert</span> <span class="o">--</span><span class="nb">min</span><span class="o">-</span><span class="n">length</span> <span class="mi">50</span> <span class="o">--</span><span class="n">cut</span> <span class="mi">1</span><span class="p">:</span><span class="mi">5</span> <span class="n">a</span><span class="o">.</span><span class="n">fasta</span> <span class="n">b</span><span class="o">.</span><span class="n">fasta</span>
 </pre></div>
 </div>
 <p>will work fine, but:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">seqmagick</span> <span class="n">convert</span> <span class="o">--</span><span class="n">cut</span> <span class="mi">1</span><span class="p">:</span><span class="mi">5</span> <span class="o">--</span><span class="nb">min</span><span class="o">-</span><span class="n">length</span> <span class="mi">50</span> <span class="n">a</span><span class="o">.</span><span class="n">fasta</span> <span class="n">b</span><span class="o">.</span><span class="n">fasta</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">seqmagick</span> <span class="n">convert</span> <span class="o">--</span><span class="n">cut</span> <span class="mi">1</span><span class="p">:</span><span class="mi">5</span> <span class="o">--</span><span class="nb">min</span><span class="o">-</span><span class="n">length</span> <span class="mi">50</span> <span class="n">a</span><span class="o">.</span><span class="n">fasta</span> <span class="n">b</span><span class="o">.</span><span class="n">fasta</span>
 </pre></div>
 </div>
-<p class="last">will never return records, since the cutting transformation happens before
+<p>will never return records, since the cutting transformation happens before
 the minimum length predicate is applied.</p>
 </div>
 <div class="section" id="command-line-arguments">
 <h4>Command-line Arguments<a class="headerlink" href="#command-line-arguments" title="Permalink to this headline">¶</a></h4>
-<div class="highlight-default"><div class="highlight"><pre><span></span>usage: seqmagick convert [-h] [--line-wrap N]
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>usage: seqmagick convert [-h] [--line-wrap N]
                          [--sort {length-asc,length-desc,name-asc,name-desc}]
                          [--apply-function /path/to/module.py:function_name[:parameter]]
                          [--cut start:end[,start2:end2]] [--relative-to ID]
@@ -340,12 +330,12 @@ to a pattern to make it case-insensitive.
         <li class="right" >
           <a href="changelog.html" title="Changes for seqmagick"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">seqmagick 0.7.0 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">seqmagick 0.8.0 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2011-2018, The Matsen Group.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.5.
+        &#169; Copyright 2011-2019, The Matsen Group.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.2.
     </div>
   </body>
 </html>

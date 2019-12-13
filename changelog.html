@@ -1,32 +1,22 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Changes for seqmagick &#8212; seqmagick 0.7.0 documentation</title>
+    <meta charset="utf-8" />
+    <title>Changes for seqmagick &#8212; seqmagick 0.8.0 documentation</title>
     <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    './',
-        VERSION:     '0.7.0',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="convert and mogrify" href="convert_mogrify.html" />
     <link rel="prev" title="seqmagick" href="index.html" /> 
-  </head>
-  <body>
+  </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -39,7 +29,7 @@
         <li class="right" >
           <a href="index.html" title="seqmagick"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">seqmagick 0.7.0 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">seqmagick 0.8.0 documentation</a> &#187;</li> 
       </ul>
     </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -47,7 +37,7 @@
             <p class="logo"><a href="index.html">
               <img class="logo" src="_static/seqmagick_logo_small.png" alt="Logo"/>
             </a></p>
-  <h3><a href="index.html">Table Of Contents</a></h3>
+  <h3><a href="index.html">Table of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Changes for seqmagick</a><ul>
 <li><a class="reference internal" href="#id1">0.7.0</a></li>
@@ -69,7 +59,7 @@
                         title="previous chapter">seqmagick</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="convert_mogrify.html"
-                        title="next chapter"><code class="docutils literal"><span class="pre">convert</span></code> and <code class="docutils literal"><span class="pre">mogrify</span></code></a></p>
+                        title="next chapter"><code class="docutils literal notranslate"><span class="pre">convert</span></code> and <code class="docutils literal notranslate"><span class="pre">mogrify</span></code></a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -78,13 +68,13 @@
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
     </form>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -100,122 +90,122 @@
 <div class="section" id="id1">
 <h2>0.7.0<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li>Supports Python 3.4+</li>
-<li>Drops support for python 2.7</li>
-<li>requires biopython &gt;= 1.70</li>
-<li>Drops support for bz2 compression [see GH-66]</li>
-<li>New option <code class="docutils literal"><span class="pre">convert</span> <span class="pre">--sample-seed</span></code> to make <code class="docutils literal"><span class="pre">--sample</span></code> deterministic.</li>
+<li><p>Supports Python 3.4+</p></li>
+<li><p>Drops support for python 2.7</p></li>
+<li><p>requires biopython &gt;= 1.70</p></li>
+<li><p>Drops support for bz2 compression [see GH-66]</p></li>
+<li><p>New option <code class="docutils literal notranslate"><span class="pre">convert</span> <span class="pre">--sample-seed</span></code> to make <code class="docutils literal notranslate"><span class="pre">--sample</span></code> deterministic.</p></li>
 </ul>
 </div>
 <div class="section" id="id2">
 <h2>0.6.2<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li>New <code class="docutils literal"><span class="pre">quality-filter</span> <span class="pre">--pct-ambiguous</span></code> switch [GH-53]</li>
-<li>setup.py enforces biopython&gt;=1.58,&lt;=1.66 (1.67 is not compatible) [GH-59]</li>
-<li>This is the last release that will support Python 2!</li>
+<li><p>New <code class="docutils literal notranslate"><span class="pre">quality-filter</span> <span class="pre">--pct-ambiguous</span></code> switch [GH-53]</p></li>
+<li><p>setup.py enforces biopython&gt;=1.58,&lt;=1.66 (1.67 is not compatible) [GH-59]</p></li>
+<li><p>This is the last release that will support Python 2!</p></li>
 </ul>
 </div>
 <div class="section" id="id3">
 <h2>0.6.1<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li>Allow string wrapping when input isn’t FASTA. [GH-45]</li>
-<li>Fix <code class="docutils literal"><span class="pre">--pattern-include</span></code>, <code class="docutils literal"><span class="pre">--pattern-exclude</span></code>, and <code class="docutils literal"><span class="pre">--pattern-replace</span></code>
-for sequences without descriptions (e.g., from NEXUS files). [GH-47]</li>
-<li>Fix mogrify example. [GH-52]</li>
+<li><p>Allow string wrapping when input isn’t FASTA. [GH-45]</p></li>
+<li><p>Fix <code class="docutils literal notranslate"><span class="pre">--pattern-include</span></code>, <code class="docutils literal notranslate"><span class="pre">--pattern-exclude</span></code>, and <code class="docutils literal notranslate"><span class="pre">--pattern-replace</span></code>
+for sequences without descriptions (e.g., from NEXUS files). [GH-47]</p></li>
+<li><p>Fix mogrify example. [GH-52]</p></li>
 </ul>
 </div>
 <div class="section" id="id4">
 <h2>0.6.0<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li>Map <code class="docutils literal"><span class="pre">.nex</span></code> extension to NEXUS-format (–alphabet must be specified if writing)</li>
-<li>Use reservoir sampling in <code class="docutils literal"><span class="pre">--sample</span></code> selector (lower memory use)</li>
-<li>Support specifying negative indices to <code class="docutils literal"><span class="pre">--cut</span></code> [GH-33]</li>
-<li>Optionally allow invalid codons in <code class="docutils literal"><span class="pre">backtrans-align</span></code> [GH-34]</li>
-<li>Map <code class="docutils literal"><span class="pre">.fq</span></code> extension to FASTQ format</li>
-<li>Optional multithreaded I/O in <code class="docutils literal"><span class="pre">info</span></code> [GH-36]</li>
-<li>Print sequence name on length mismatch in <code class="docutils literal"><span class="pre">backtrans-align</span></code> [GH-37]</li>
-<li>Support for <code class="docutils literal"><span class="pre">+</span></code> and <code class="docutils literal"><span class="pre">-</span></code> in head and tail to mimick Linux head and tail commands.</li>
-<li>Fix scoring for mixed-case sequences in <code class="docutils literal"><span class="pre">primer-trim</span></code>.</li>
-<li>Fix bug in <code class="docutils literal"><span class="pre">primer-trim</span></code> - failed when sequence had multiple 5’ gaps compared to the primer.</li>
-<li>Clarify documentation and fix bug in convert/mogrify <code class="docutils literal"><span class="pre">--pattern-replace</span></code> [GH-39]</li>
-<li>Support for gzip files in <code class="docutils literal"><span class="pre">seqmagick</span> <span class="pre">convert</span> <span class="pre">--sort</span></code></li>
+<li><p>Map <code class="docutils literal notranslate"><span class="pre">.nex</span></code> extension to NEXUS-format (–alphabet must be specified if writing)</p></li>
+<li><p>Use reservoir sampling in <code class="docutils literal notranslate"><span class="pre">--sample</span></code> selector (lower memory use)</p></li>
+<li><p>Support specifying negative indices to <code class="docutils literal notranslate"><span class="pre">--cut</span></code> [GH-33]</p></li>
+<li><p>Optionally allow invalid codons in <code class="docutils literal notranslate"><span class="pre">backtrans-align</span></code> [GH-34]</p></li>
+<li><p>Map <code class="docutils literal notranslate"><span class="pre">.fq</span></code> extension to FASTQ format</p></li>
+<li><p>Optional multithreaded I/O in <code class="docutils literal notranslate"><span class="pre">info</span></code> [GH-36]</p></li>
+<li><p>Print sequence name on length mismatch in <code class="docutils literal notranslate"><span class="pre">backtrans-align</span></code> [GH-37]</p></li>
+<li><p>Support for <code class="docutils literal notranslate"><span class="pre">+</span></code> and <code class="docutils literal notranslate"><span class="pre">-</span></code> in head and tail to mimick Linux head and tail commands.</p></li>
+<li><p>Fix scoring for mixed-case sequences in <code class="docutils literal notranslate"><span class="pre">primer-trim</span></code>.</p></li>
+<li><p>Fix bug in <code class="docutils literal notranslate"><span class="pre">primer-trim</span></code> - failed when sequence had multiple 5’ gaps compared to the primer.</p></li>
+<li><p>Clarify documentation and fix bug in convert/mogrify <code class="docutils literal notranslate"><span class="pre">--pattern-replace</span></code> [GH-39]</p></li>
+<li><p>Support for gzip files in <code class="docutils literal notranslate"><span class="pre">seqmagick</span> <span class="pre">convert</span> <span class="pre">--sort</span></code></p></li>
 </ul>
 </div>
 <div class="section" id="id5">
 <h2>0.5.0<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li>Change <code class="docutils literal"><span class="pre">seqmagick</span> <span class="pre">extract-ids</span> <span class="pre">--source-format</span></code> to <code class="docutils literal"><span class="pre">--input-format</span></code> to match
-other commands (GH-29)</li>
-<li>Support gzip- and bzip2-compressed inputs and outputs for most commands (GH-30)</li>
-<li>Change default input format for <code class="docutils literal"><span class="pre">sff</span></code> to <code class="docutils literal"><span class="pre">sff-trim</span></code>, which respects the
-clipping locations embedded in each sequence record.</li>
-<li>Add <code class="docutils literal"><span class="pre">--details-out</span></code> option to <code class="docutils literal"><span class="pre">seqmagick</span> <span class="pre">quality-filter</span></code>, which writes
-details on each read processed.</li>
-<li>Match barcode/primer <code class="docutils literal"><span class="pre">seqmagick</span> <span class="pre">quality-filter</span></code> against a trie; allows
-per-specimen barcodes.</li>
-<li>Remove <code class="docutils literal"><span class="pre">--failure-out</span></code> option from <code class="docutils literal"><span class="pre">seqmagick</span> <span class="pre">quality-filter</span></code>. See <code class="docutils literal"><span class="pre">--details-out</span></code></li>
-<li>Raise an error if number of codons does not match number of amino acids in
-<code class="docutils literal"><span class="pre">seqmagick</span> <span class="pre">backtrans-align</span></code></li>
-<li>Add <code class="docutils literal"><span class="pre">--sample</span></code> subcommand (GH-31)</li>
+<li><p>Change <code class="docutils literal notranslate"><span class="pre">seqmagick</span> <span class="pre">extract-ids</span> <span class="pre">--source-format</span></code> to <code class="docutils literal notranslate"><span class="pre">--input-format</span></code> to match
+other commands (GH-29)</p></li>
+<li><p>Support gzip- and bzip2-compressed inputs and outputs for most commands (GH-30)</p></li>
+<li><p>Change default input format for <code class="docutils literal notranslate"><span class="pre">sff</span></code> to <code class="docutils literal notranslate"><span class="pre">sff-trim</span></code>, which respects the
+clipping locations embedded in each sequence record.</p></li>
+<li><p>Add <code class="docutils literal notranslate"><span class="pre">--details-out</span></code> option to <code class="docutils literal notranslate"><span class="pre">seqmagick</span> <span class="pre">quality-filter</span></code>, which writes
+details on each read processed.</p></li>
+<li><p>Match barcode/primer <code class="docutils literal notranslate"><span class="pre">seqmagick</span> <span class="pre">quality-filter</span></code> against a trie; allows
+per-specimen barcodes.</p></li>
+<li><p>Remove <code class="docutils literal notranslate"><span class="pre">--failure-out</span></code> option from <code class="docutils literal notranslate"><span class="pre">seqmagick</span> <span class="pre">quality-filter</span></code>. See <code class="docutils literal notranslate"><span class="pre">--details-out</span></code></p></li>
+<li><p>Raise an error if number of codons does not match number of amino acids in
+<code class="docutils literal notranslate"><span class="pre">seqmagick</span> <span class="pre">backtrans-align</span></code></p></li>
+<li><p>Add <code class="docutils literal notranslate"><span class="pre">--sample</span></code> subcommand (GH-31)</p></li>
 </ul>
 </div>
 <div class="section" id="id6">
 <h2>0.4.0<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li>Fix bug in <code class="docutils literal"><span class="pre">--squeeze</span></code></li>
-<li>More informative messages in <code class="docutils literal"><span class="pre">seqmagick</span> <span class="pre">primer-trim</span></code></li>
-<li>Added <code class="docutils literal"><span class="pre">--alphabet</span></code> flag to allow writing NEXUS (GH-23)</li>
-<li>Exiting without error on SIGPIPE in extract-ids, info (GH-17)</li>
-<li>Ambiguities are translated as ‘X’ in –translate (GH-16)</li>
-<li>Allowing ‘.’ or ‘-‘ as gap character (GH-18)</li>
-<li><code class="docutils literal"><span class="pre">--name-prefix</span></code> and <code class="docutils literal"><span class="pre">--name-suffix</span></code> no longer create a mangled description (GH-19)</li>
-<li>Files owned by another user can be mogrified, as long as they are group writeable (GH-14)</li>
-<li>Add <code class="docutils literal"><span class="pre">backtrans-align</span></code> subcommand, which maps unaligned nucleotides onto a
-protein alignment (GH-20)</li>
-<li>Allow FASTQ as input to quality-filter</li>
-<li>Significantly expand functionality of quality-filter: identify and trim
-barcodes/primers; report detailed failure information.</li>
-<li>Cleanup, additional tests</li>
-<li>Add <code class="docutils literal"><span class="pre">--drop</span></code> filter to convert and mogrify (GH-24)</li>
-<li>Apply current umask when creating files (GH-26)</li>
-<li>Support stdin in <code class="docutils literal"><span class="pre">seqmagick</span> <span class="pre">info</span></code> (GH-27)</li>
-<li>Support translating ambiguous nucleotides, if codon translation is unambiguous</li>
+<li><p>Fix bug in <code class="docutils literal notranslate"><span class="pre">--squeeze</span></code></p></li>
+<li><p>More informative messages in <code class="docutils literal notranslate"><span class="pre">seqmagick</span> <span class="pre">primer-trim</span></code></p></li>
+<li><p>Added <code class="docutils literal notranslate"><span class="pre">--alphabet</span></code> flag to allow writing NEXUS (GH-23)</p></li>
+<li><p>Exiting without error on SIGPIPE in extract-ids, info (GH-17)</p></li>
+<li><p>Ambiguities are translated as ‘X’ in –translate (GH-16)</p></li>
+<li><p>Allowing ‘.’ or ‘-‘ as gap character (GH-18)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--name-prefix</span></code> and <code class="docutils literal notranslate"><span class="pre">--name-suffix</span></code> no longer create a mangled description (GH-19)</p></li>
+<li><p>Files owned by another user can be mogrified, as long as they are group writeable (GH-14)</p></li>
+<li><p>Add <code class="docutils literal notranslate"><span class="pre">backtrans-align</span></code> subcommand, which maps unaligned nucleotides onto a
+protein alignment (GH-20)</p></li>
+<li><p>Allow FASTQ as input to quality-filter</p></li>
+<li><p>Significantly expand functionality of quality-filter: identify and trim
+barcodes/primers; report detailed failure information.</p></li>
+<li><p>Cleanup, additional tests</p></li>
+<li><p>Add <code class="docutils literal notranslate"><span class="pre">--drop</span></code> filter to convert and mogrify (GH-24)</p></li>
+<li><p>Apply current umask when creating files (GH-26)</p></li>
+<li><p>Support stdin in <code class="docutils literal notranslate"><span class="pre">seqmagick</span> <span class="pre">info</span></code> (GH-27)</p></li>
+<li><p>Support translating ambiguous nucleotides, if codon translation is unambiguous</p></li>
 </ul>
 </div>
 <div class="section" id="id7">
 <h2>0.3.1<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li>Fix bug in <code class="docutils literal"><span class="pre">quality-filter</span></code> MinLengthFilter</li>
-<li>Case consistency in seqmagick</li>
+<li><p>Fix bug in <code class="docutils literal notranslate"><span class="pre">quality-filter</span></code> MinLengthFilter</p></li>
+<li><p>Case consistency in seqmagick</p></li>
 </ul>
 </div>
 <div class="section" id="id8">
 <h2>0.3.0<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li>Internal reorganization - transformations are converted to partial functions,
-then applied.</li>
-<li>Argument order now affects order of tranformation application.</li>
-<li>Change default output format to ‘align’ for TTYs in seqmagick info</li>
-<li>Add BioPython as dependency (closes GH-7)</li>
-<li>Add <code class="docutils literal"><span class="pre">primer-trim</span></code> subcommand</li>
-<li>Add option to apply custom function(s) to sequences</li>
-<li>Add new filtering options: <code class="docutils literal"><span class="pre">--squeeze-threshold</span></code>, <code class="docutils literal"><span class="pre">--min-ungapped-length</span></code>
-<code class="docutils literal"><span class="pre">--include-from-file</span></code> <code class="docutils literal"><span class="pre">--exclude-from-file</span></code></li>
-<li>Removed seqmagick muscle</li>
-<li>Added new subcommand <code class="docutils literal"><span class="pre">quality-filter</span></code></li>
-<li>Added new subcommand <code class="docutils literal"><span class="pre">extract-ids</span></code> (closes GH-13)</li>
-<li>Allow use of ‘-‘ to indicate stdin / stdout (closes GH-11)</li>
-<li>Add mapping from .phyx to <code class="docutils literal"><span class="pre">phylip-relaxed</span></code> (targeted for BioPython 1.58)</li>
+<li><p>Internal reorganization - transformations are converted to partial functions,
+then applied.</p></li>
+<li><p>Argument order now affects order of tranformation application.</p></li>
+<li><p>Change default output format to ‘align’ for TTYs in seqmagick info</p></li>
+<li><p>Add BioPython as dependency (closes GH-7)</p></li>
+<li><p>Add <code class="docutils literal notranslate"><span class="pre">primer-trim</span></code> subcommand</p></li>
+<li><p>Add option to apply custom function(s) to sequences</p></li>
+<li><p>Add new filtering options: <code class="docutils literal notranslate"><span class="pre">--squeeze-threshold</span></code>, <code class="docutils literal notranslate"><span class="pre">--min-ungapped-length</span></code>
+<code class="docutils literal notranslate"><span class="pre">--include-from-file</span></code> <code class="docutils literal notranslate"><span class="pre">--exclude-from-file</span></code></p></li>
+<li><p>Removed seqmagick muscle</p></li>
+<li><p>Added new subcommand <code class="docutils literal notranslate"><span class="pre">quality-filter</span></code></p></li>
+<li><p>Added new subcommand <code class="docutils literal notranslate"><span class="pre">extract-ids</span></code> (closes GH-13)</p></li>
+<li><p>Allow use of ‘-‘ to indicate stdin / stdout (closes GH-11)</p></li>
+<li><p>Add mapping from .phyx to <code class="docutils literal notranslate"><span class="pre">phylip-relaxed</span></code> (targeted for BioPython 1.58)</p></li>
 </ul>
 </div>
 <div class="section" id="id9">
 <h2>0.2.0<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li>Refactoring</li>
-<li>Added hyphenation to multi-word command line options (e.g.
-<code class="docutils literal"><span class="pre">--deduplicatetaxa</span></code> -&gt; <code class="docutils literal"><span class="pre">--deduplicate-taxa</span></code>)</li>
-<li>Add support for <code class="docutils literal"><span class="pre">.needle</span></code>, <code class="docutils literal"><span class="pre">.sff</span></code> formats</li>
-<li>Close GH-4</li>
+<li><p>Refactoring</p></li>
+<li><p>Added hyphenation to multi-word command line options (e.g.
+<code class="docutils literal notranslate"><span class="pre">--deduplicatetaxa</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">--deduplicate-taxa</span></code>)</p></li>
+<li><p>Add support for <code class="docutils literal notranslate"><span class="pre">.needle</span></code>, <code class="docutils literal notranslate"><span class="pre">.sff</span></code> formats</p></li>
+<li><p>Close GH-4</p></li>
 </ul>
 </div>
 <div class="section" id="id10">
@@ -242,12 +232,12 @@ then applied.</li>
         <li class="right" >
           <a href="index.html" title="seqmagick"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">seqmagick 0.7.0 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">seqmagick 0.8.0 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2011-2018, The Matsen Group.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.5.
+        &#169; Copyright 2011-2019, The Matsen Group.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.2.
     </div>
   </body>
 </html>
