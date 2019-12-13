@@ -1,6 +1,15 @@
 Changes for seqmagick
 =====================
 
+0.8.0
+-----
+
+* Supports Python 3.5+
+* Drops support for Python 3.4
+* Fix issue: "seqmagick with no params gives KeyError:None" [GH-77]
+* Fix for Biopython 1.71 dual coding support [GH-76]; also fixes issue: "Translation error with new BioPython" [GH-79]
+* Send logging to stderr, not stdout [GH-75]
+
 0.7.0
 -----
 

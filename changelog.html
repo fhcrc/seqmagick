@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>Changes for seqmagick &#8212; seqmagick 0.8.0 documentation</title>
+    <title>Changes for seqmagick &#8212; seqmagick 0.7.0+9.g48191ba.dirty documentation</title>
     <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -29,7 +29,7 @@
         <li class="right" >
           <a href="index.html" title="seqmagick"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">seqmagick 0.8.0 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">seqmagick 0.7.0+9.g48191ba.dirty documentation</a> &#187;</li> 
       </ul>
     </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -40,16 +40,17 @@
   <h3><a href="index.html">Table of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Changes for seqmagick</a><ul>
-<li><a class="reference internal" href="#id1">0.7.0</a></li>
-<li><a class="reference internal" href="#id2">0.6.2</a></li>
-<li><a class="reference internal" href="#id3">0.6.1</a></li>
-<li><a class="reference internal" href="#id4">0.6.0</a></li>
-<li><a class="reference internal" href="#id5">0.5.0</a></li>
-<li><a class="reference internal" href="#id6">0.4.0</a></li>
-<li><a class="reference internal" href="#id7">0.3.1</a></li>
-<li><a class="reference internal" href="#id8">0.3.0</a></li>
-<li><a class="reference internal" href="#id9">0.2.0</a></li>
-<li><a class="reference internal" href="#id10">0.1.0</a></li>
+<li><a class="reference internal" href="#id1">0.8.0</a></li>
+<li><a class="reference internal" href="#id2">0.7.0</a></li>
+<li><a class="reference internal" href="#id3">0.6.2</a></li>
+<li><a class="reference internal" href="#id4">0.6.1</a></li>
+<li><a class="reference internal" href="#id5">0.6.0</a></li>
+<li><a class="reference internal" href="#id6">0.5.0</a></li>
+<li><a class="reference internal" href="#id7">0.4.0</a></li>
+<li><a class="reference internal" href="#id8">0.3.1</a></li>
+<li><a class="reference internal" href="#id9">0.3.0</a></li>
+<li><a class="reference internal" href="#id10">0.2.0</a></li>
+<li><a class="reference internal" href="#id11">0.1.0</a></li>
 </ul>
 </li>
 </ul>
@@ -88,7 +89,17 @@
   <div class="section" id="changes-for-seqmagick">
 <h1>Changes for seqmagick<a class="headerlink" href="#changes-for-seqmagick" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="id1">
-<h2>0.7.0<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<h2>0.8.0<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Supports Python 3.5+</p></li>
+<li><p>Drops support for Python 3.4</p></li>
+<li><p>Fix issue: “seqmagick with no params gives KeyError:None” [GH-77]</p></li>
+<li><p>Fix for Biopython 1.71 dual coding support [GH-76]; also fixes issue: “Translation error with new BioPython” [GH-79]</p></li>
+<li><p>Send logging to stderr, not stdout [GH-75]</p></li>
+</ul>
+</div>
+<div class="section" id="id2">
+<h2>0.7.0<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><p>Supports Python 3.4+</p></li>
 <li><p>Drops support for python 2.7</p></li>
@@ -97,16 +108,16 @@
 <li><p>New option <code class="docutils literal notranslate"><span class="pre">convert</span> <span class="pre">--sample-seed</span></code> to make <code class="docutils literal notranslate"><span class="pre">--sample</span></code> deterministic.</p></li>
 </ul>
 </div>
-<div class="section" id="id2">
-<h2>0.6.2<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id3">
+<h2>0.6.2<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><p>New <code class="docutils literal notranslate"><span class="pre">quality-filter</span> <span class="pre">--pct-ambiguous</span></code> switch [GH-53]</p></li>
 <li><p>setup.py enforces biopython&gt;=1.58,&lt;=1.66 (1.67 is not compatible) [GH-59]</p></li>
 <li><p>This is the last release that will support Python 2!</p></li>
 </ul>
 </div>
-<div class="section" id="id3">
-<h2>0.6.1<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id4">
+<h2>0.6.1<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><p>Allow string wrapping when input isn’t FASTA. [GH-45]</p></li>
 <li><p>Fix <code class="docutils literal notranslate"><span class="pre">--pattern-include</span></code>, <code class="docutils literal notranslate"><span class="pre">--pattern-exclude</span></code>, and <code class="docutils literal notranslate"><span class="pre">--pattern-replace</span></code>
@@ -114,8 +125,8 @@ for sequences without descriptions (e.g., from NEXUS files). [GH-47]</p></li>
 <li><p>Fix mogrify example. [GH-52]</p></li>
 </ul>
 </div>
-<div class="section" id="id4">
-<h2>0.6.0<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id5">
+<h2>0.6.0<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><p>Map <code class="docutils literal notranslate"><span class="pre">.nex</span></code> extension to NEXUS-format (–alphabet must be specified if writing)</p></li>
 <li><p>Use reservoir sampling in <code class="docutils literal notranslate"><span class="pre">--sample</span></code> selector (lower memory use)</p></li>
@@ -131,8 +142,8 @@ for sequences without descriptions (e.g., from NEXUS files). [GH-47]</p></li>
 <li><p>Support for gzip files in <code class="docutils literal notranslate"><span class="pre">seqmagick</span> <span class="pre">convert</span> <span class="pre">--sort</span></code></p></li>
 </ul>
 </div>
-<div class="section" id="id5">
-<h2>0.5.0<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id6">
+<h2>0.5.0<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><p>Change <code class="docutils literal notranslate"><span class="pre">seqmagick</span> <span class="pre">extract-ids</span> <span class="pre">--source-format</span></code> to <code class="docutils literal notranslate"><span class="pre">--input-format</span></code> to match
 other commands (GH-29)</p></li>
@@ -149,8 +160,8 @@ per-specimen barcodes.</p></li>
 <li><p>Add <code class="docutils literal notranslate"><span class="pre">--sample</span></code> subcommand (GH-31)</p></li>
 </ul>
 </div>
-<div class="section" id="id6">
-<h2>0.4.0<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id7">
+<h2>0.4.0<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><p>Fix bug in <code class="docutils literal notranslate"><span class="pre">--squeeze</span></code></p></li>
 <li><p>More informative messages in <code class="docutils literal notranslate"><span class="pre">seqmagick</span> <span class="pre">primer-trim</span></code></p></li>
@@ -172,15 +183,15 @@ barcodes/primers; report detailed failure information.</p></li>
 <li><p>Support translating ambiguous nucleotides, if codon translation is unambiguous</p></li>
 </ul>
 </div>
-<div class="section" id="id7">
-<h2>0.3.1<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id8">
+<h2>0.3.1<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><p>Fix bug in <code class="docutils literal notranslate"><span class="pre">quality-filter</span></code> MinLengthFilter</p></li>
 <li><p>Case consistency in seqmagick</p></li>
 </ul>
 </div>
-<div class="section" id="id8">
-<h2>0.3.0<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id9">
+<h2>0.3.0<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><p>Internal reorganization - transformations are converted to partial functions,
 then applied.</p></li>
@@ -198,8 +209,8 @@ then applied.</p></li>
 <li><p>Add mapping from .phyx to <code class="docutils literal notranslate"><span class="pre">phylip-relaxed</span></code> (targeted for BioPython 1.58)</p></li>
 </ul>
 </div>
-<div class="section" id="id9">
-<h2>0.2.0<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id10">
+<h2>0.2.0<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><p>Refactoring</p></li>
 <li><p>Added hyphenation to multi-word command line options (e.g.
@@ -208,8 +219,8 @@ then applied.</p></li>
 <li><p>Close GH-4</p></li>
 </ul>
 </div>
-<div class="section" id="id10">
-<h2>0.1.0<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id11">
+<h2>0.1.0<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h2>
 <p>Initial release</p>
 </div>
 </div>
@@ -232,7 +243,7 @@ then applied.</p></li>
         <li class="right" >
           <a href="index.html" title="seqmagick"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">seqmagick 0.8.0 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">seqmagick 0.7.0+9.g48191ba.dirty documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">

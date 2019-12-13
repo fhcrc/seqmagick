@@ -59,10 +59,10 @@ To install the bleeding edge version::
 
     pip install git+https://github.com/fhcrc/seqmagick.git@master#egg-info=seqmagick
 
-Note that as of version 0.7.0, this package requires Python 3.4+. If
+Note that as of version 0.8.0, this package requires Python 3.5+. If
 you want to use the most recent version compatible with Python 2.7::
 
-  pip install seqmagick==1.6.2
+  pip install seqmagick==0.6.2
 
 Use
 ===
