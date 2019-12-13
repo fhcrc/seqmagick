@@ -33,15 +33,16 @@ setup(name='seqmagick',
           'seqmagick.test.integration': ['data/*']
       },
       setup_requires=['nose>=1.0'],
-      python_requires='>=3.4',
+      python_requires='>=3.5',
       test_suite='nose.collector',
       install_requires=['biopython>=1.70'],
       classifiers=[
           'License :: OSI Approved :: GNU General Public License (GPL)',
           'Development Status :: 4 - Beta',
-          'Programming Language :: Python :: 3.4',
           'Programming Language :: Python :: 3.5',
           'Programming Language :: Python :: 3.6',
+          'Programming Language :: Python :: 3.7',
+          'Programming Language :: Python :: 3.8',
           'Topic :: Scientific/Engineering :: Bio-Informatics',
       ],
       license="GPL V3")
