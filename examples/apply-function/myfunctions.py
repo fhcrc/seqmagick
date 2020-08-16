@@ -14,6 +14,6 @@ def hash_starts_numeric(records):
     their sha-1 hash.
     """
     for record in records:
-        seq_hash = hashlib.sha1(str(record.seq)).hexdigest()
+        seq_hash = hashlib.sha1(str(record.seq).encode('utf-8')).hexdigest()
         if seq_hash[0].isdigit():
             yield record
