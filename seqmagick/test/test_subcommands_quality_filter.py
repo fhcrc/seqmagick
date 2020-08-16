@@ -7,8 +7,6 @@ from Bio.SeqRecord import SeqRecord
 
 from seqmagick.subcommands import quality_filter
 
-from Bio import triefind
-
 IS_PYPY = hasattr(sys, 'pypy_version_info')
 
 
@@ -194,7 +192,6 @@ class MaxLengthFilterTestCase(unittest.TestCase):
                          [i.id for i in actual])
 
 
-@unittest.skipIf(IS_PYPY, "Bio.trie not available on pypy.")
 class PrimerBarcodeFilterTestCase(unittest.TestCase):
     def setUp(self):
         self.sequences = [
@@ -240,7 +237,6 @@ class RecordEventListenerTestCase(unittest.TestCase):
         self.assertEqual(events, [1, 5])
 
 
-@unittest.skipIf(IS_PYPY, "Bio.trie not available on pypy.")
 class BarcodePrimerTrieTestCase(unittest.TestCase):
     def setUp(self):
         self.barcode_str = """p1d1bc205,TACTAGCG,CATTGCCTATG
@@ -258,9 +254,9 @@ p1d1bc213,TACGAGAC,CAYGGCTA"""
         res = quality_filter.parse_barcode_file(self.fp, primer='CATTGCCTATG')
         self.assertEqual(9, len(list(res.keys())))
         self.assertEqual('p1d1bc210', res['TACAGTCGCATTGCCTATG'])
-        self.assertEqual(None, triefind.match('TACAGTCGCATTGCCTAT', res))
+        self.assertEqual(None, quality_filter.trie_match('TACAGTCGCATTGCCTAT', res))
         self.assertEqual('TACAGTCGCATTGCCTATG',
-                         triefind.match('TACAGTCGCATTGCCTATGCTACCTA', res))
+                         quality_filter.trie_match('TACAGTCGCATTGCCTATGCTACCTA', res))
 
     def test_primer_in_file(self):
         res = quality_filter.parse_barcode_file(self.fp, primer=None)

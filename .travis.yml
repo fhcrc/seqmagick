@@ -12,7 +12,7 @@ python:
 # BioPython doesn't always play well with pip install.
 install:
   - "if [[ $TRAVIS_PYTHON_VERSION != 'pypy' ]]; then pip install -q numpy; fi"
-  - "pip install -q biopython nose"
+  - "pip install -q biopython nose pygtrie"
   - "pip install ."
 
 script:
