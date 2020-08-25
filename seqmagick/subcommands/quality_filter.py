@@ -11,15 +11,28 @@ import sys
 import time
 
 from Bio import SeqIO
-try:
-    from Bio import trie, triefind
-except ImportError:
-    trie = None
-    triefind = None
+import pygtrie as trie
 from Bio.SeqIO import QualityIO
 
 from seqmagick import fileformat, __version__
 from .common import typed_range, FileType
+
+
+def trie_match(string, trie):
+    def has_prefix(teststring, trie):
+        for key in trie.keys():
+            if key.startswith(teststring):
+                return True
+        return False
+    longest = None
+    for i in range(len(string)):
+        substr = string[:i + 1]
+        if not has_prefix(substr, trie):
+            break
+        if trie.has_key(substr):
+            longest = substr
+    return longest
+
 
 # Default minimummean quality score
 DEFAULT_MEAN_SCORE = 25.0
@@ -626,7 +639,7 @@ class PrimerBarcodeFilter(BaseFilter):
         self.trie = trie
 
     def filter_record(self, record):
-        m = triefind.match(str(record.seq), self.trie)
+        m = trie_match(str(record.seq), self.trie)
         if m:
             if self.listener:
                 self.listener(
@@ -646,7 +659,7 @@ def parse_barcode_file(fp, primer=None, header=False):
 
     Any additional columns are ignored
     """
-    tr = trie.trie()
+    tr = trie.StringTrie()
     reader = csv.reader(fp)
 
     if header:
@@ -679,10 +692,6 @@ def action(arguments):
     if arguments.quality_window_mean_qual and not arguments.quality_window:
         raise ValueError("--quality-window-mean-qual specified without "
                          "--quality-window")
-
-    if trie is None or triefind is None:
-        raise ValueError(
-            'Missing Bio.trie and/or Bio.triefind modules. Cannot continue')
 
     filters = []
     input_type = fileformat.from_handle(arguments.sequence_file)

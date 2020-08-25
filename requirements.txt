@@ -1,4 +1,5 @@
 biopython>=1.70
+pygtrie
 
 # for development
 wheel
