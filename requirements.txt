@@ -1,4 +1,4 @@
-biopython>=1.70
+biopython==1.77
 pygtrie
 
 # for development
