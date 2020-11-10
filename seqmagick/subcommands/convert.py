@@ -6,8 +6,7 @@ import functools
 import logging
 import random
 
-from Bio import Alphabet, SeqIO
-from Bio.Alphabet import IUPAC
+from Bio import SeqIO
 from Bio.SeqIO import FastaIO
 from seqmagick import transform
 from seqmagick.fileformat import from_handle
@@ -15,11 +14,11 @@ from seqmagick.fileformat import from_handle
 from . import common
 
 ALPHABETS = {
-        'dna': Alphabet.generic_dna,
-        'dna-ambiguous': IUPAC.ambiguous_dna,
-        'protein': Alphabet.generic_protein,
-        'rna': Alphabet.generic_rna,
-        'rna-ambiguous': IUPAC.ambiguous_rna,
+        'dna': 'DNA',
+        'dna-ambiguous': 'DNA-ambiguous',
+        'protein': 'protein',
+        'rna': 'RNA',
+        'rna-ambiguous': 'RNA-ambiguous',
 }
 
 def add_options(parser):
@@ -249,8 +248,7 @@ def transform_file(source_file, destination_file, arguments):
                 direction=directions[direction])
     else:
         # Unsorted iterator.
-        records = SeqIO.parse(source_file, source_file_type,
-                alphabet=ALPHABETS.get(arguments.alphabet))
+        records = SeqIO.parse(source_file, source_file_type)
 
 
     #########################################
@@ -315,7 +313,13 @@ def transform_file(source_file, destination_file, arguments):
         # loading the entire sequence file up into memory.
         logging.info("Applying transformations, writing to %s",
                 destination_file)
-        SeqIO.write(records, destination_file, destination_file_type)
+        # FIXME: to put annotations, all records are loaded in memory, which
+        #        beats the purpose of the previous comment.
+        newrecords = list()
+        for record in records:
+            record.annotations["molecule_type"] = "DNA"
+            newrecords += [record]
+        SeqIO.write(newrecords, destination_file, destination_file_type)
 
 
 def module_function(string):
