@@ -3,7 +3,6 @@ Tests for primer trim
 """
 import unittest
 
-from Bio import Alphabet
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 
@@ -70,8 +69,7 @@ class HammingDistanceTestCase(unittest.TestCase):
 
 
 def _alignment_record(sequence):
-    return SeqRecord(
-        Seq(sequence, alphabet=Alphabet.Gapped(Alphabet.generic_dna)))
+    return SeqRecord(Seq(sequence))
 
 
 class LocatePrimersTestCase(unittest.TestCase):
