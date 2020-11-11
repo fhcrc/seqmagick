@@ -223,6 +223,11 @@ def build_parser(parser):
 
     return parser
 
+def append_annotation_iterator(records_iterator):
+    for record in records_iterator:
+        record.annotations["molecule_type"] = "DNA"
+        yield record
+
 def transform_file(source_file, destination_file, arguments):
     # Get just the file name, useful for naming the temporary file.
     source_file_type = (arguments.input_format or from_handle(source_file))
@@ -307,13 +312,8 @@ def transform_file(source_file, destination_file, arguments):
         # loading the entire sequence file up into memory.
         logging.info("Applying transformations, writing to %s",
                 destination_file)
-        # FIXME: to put annotations, all records are loaded in memory, which
-        #        beats the purpose of the previous comment.
-        newrecords = list()
-        for record in records:
-            record.annotations["molecule_type"] = "DNA"
-            newrecords += [record]
-        SeqIO.write(newrecords, destination_file, destination_file_type)
+        records = append_annotation_iterator(records)
+        SeqIO.write(records, destination_file, destination_file_type)
 
 
 def module_function(string):
