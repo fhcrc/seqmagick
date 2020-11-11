@@ -13,14 +13,6 @@ from seqmagick.fileformat import from_handle
 
 from . import common
 
-ALPHABETS = {
-        'dna': 'DNA',
-        'dna-ambiguous': 'DNA-ambiguous',
-        'protein': 'protein',
-        'rna': 'RNA',
-        'rna-ambiguous': 'RNA-ambiguous',
-}
-
 def add_options(parser):
     """
     Add optional arguments to the parser
@@ -212,8 +204,10 @@ def add_options(parser):
     format_group.add_argument('--output-format', metavar='FORMAT',
             help="Output file format (default: determine from extension)")
 
-    parser.add_argument('--alphabet', choices=ALPHABETS,
-            help="""Input alphabet. Required for writing NEXUS.""")
+    parser.add_argument('--alphabet', help="""Input alphabet. Formerly required
+            for writing NEXUS, this option is now ignored for compatibility with
+            Biopython 1.78 and greater, and provided for compatibility with
+            existing scripts.""")
 
     return parser
 
