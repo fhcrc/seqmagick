@@ -6,8 +6,7 @@ import functools
 import logging
 import random
 
-from Bio import Alphabet, SeqIO
-from Bio.Alphabet import IUPAC
+from Bio import SeqIO
 from Bio.SeqIO import FastaIO
 from seqmagick import transform
 from seqmagick.fileformat import from_handle
@@ -15,11 +14,11 @@ from seqmagick.fileformat import from_handle
 from . import common
 
 ALPHABETS = {
-        'dna': Alphabet.generic_dna,
-        'dna-ambiguous': IUPAC.ambiguous_dna,
-        'protein': Alphabet.generic_protein,
-        'rna': Alphabet.generic_rna,
-        'rna-ambiguous': IUPAC.ambiguous_rna,
+    "dna": "DNA",
+    "dna-ambiguous": "DNA",
+    "rna": "RNA",
+    "rna-ambiguous": "RNA",
+    "protein": "protein",
 }
 
 def add_options(parser):
@@ -230,6 +229,11 @@ def build_parser(parser):
 
     return parser
 
+def append_annotation_iterator(records_iterator, alphabet):
+    for record in records_iterator:
+        record.annotations["molecule_type"] = ALPHABETS[alphabet]
+        yield record
+
 def transform_file(source_file, destination_file, arguments):
     # Get just the file name, useful for naming the temporary file.
     source_file_type = (arguments.input_format or from_handle(source_file))
@@ -249,8 +253,7 @@ def transform_file(source_file, destination_file, arguments):
                 direction=directions[direction])
     else:
         # Unsorted iterator.
-        records = SeqIO.parse(source_file, source_file_type,
-                alphabet=ALPHABETS.get(arguments.alphabet))
+        records = SeqIO.parse(source_file, source_file_type)
 
 
     #########################################
@@ -315,6 +318,9 @@ def transform_file(source_file, destination_file, arguments):
         # loading the entire sequence file up into memory.
         logging.info("Applying transformations, writing to %s",
                 destination_file)
+        # Append datatype annotation, mandatory for Nexus files conversion.
+        if arguments.alphabet != None:
+            records = append_annotation_iterator(records, arguments.alphabet)
         SeqIO.write(records, destination_file, destination_file_type)
 
 

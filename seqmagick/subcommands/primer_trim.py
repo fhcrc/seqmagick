@@ -7,8 +7,7 @@ import logging
 import operator
 import sys
 
-from Bio import Alphabet, SeqIO, pairwise2
-from Bio.Alphabet import IUPAC
+from Bio import SeqIO, pairwise2
 from Bio.Seq import Seq
 
 from seqmagick import transform, fileformat
@@ -298,8 +297,7 @@ def action(arguments):
     with arguments.source_file:
         sequences = SeqIO.parse(
             arguments.source_file,
-            source_format,
-            alphabet=Alphabet.Gapped(Alphabet.single_letter_alphabet))
+            source_format)
 
         # Locate primers
         (forward_start, forward_end), (reverse_start, reverse_end) = locate_primers(
@@ -319,8 +317,7 @@ def action(arguments):
         arguments.source_file.seek(0)
         sequences = SeqIO.parse(
             arguments.source_file,
-            source_format,
-            alphabet=Alphabet.Gapped(Alphabet.single_letter_alphabet))
+            source_format)
 
         # Apply the transformation
         prune_action = _ACTIONS[arguments.prune_action]

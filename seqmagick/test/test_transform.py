@@ -7,7 +7,7 @@ import functools
 import logging
 import unittest
 
-from Bio import Alphabet, SeqIO
+from Bio import SeqIO
 from Bio.SeqRecord import SeqRecord
 from Bio.Seq import Seq
 
@@ -16,16 +16,13 @@ from seqmagick import transform
 logging.basicConfig(level=logging.FATAL)
 
 def _alignment_record(sequence):
-    return SeqRecord(Seq(sequence,
-        alphabet=Alphabet.Gapped(Alphabet.generic_dna)))
+    return SeqRecord(Seq(sequence))
 
-def seqrecord(sequence_id, sequence_text, alphabet=Alphabet.generic_dna,
-              description=None):
+def seqrecord(sequence_id, sequence_text, description=None):
     """
     Quick shortcut to make a SeqRecord
     """
-    record = SeqRecord(Seq(sequence_text, alphabet),
-                       id=sequence_id)
+    record = SeqRecord(Seq(sequence_text), id=sequence_id)
     if description:
         record.description = description
     return record

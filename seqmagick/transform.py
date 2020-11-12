@@ -13,7 +13,6 @@ import tempfile
 import random
 
 from Bio import SeqIO
-from Bio.Alphabet import IUPAC
 from Bio.Data import CodonTable
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
@@ -63,8 +62,7 @@ def dashes_cleanup(records, prune_chars='.:?~'):
         "Applying _dashes_cleanup: converting any of '{}' to '-'.".format(prune_chars))
     translation_table = {ord(c): '-' for c in prune_chars}
     for record in records:
-        record.seq = Seq(str(record.seq).translate(translation_table),
-                         record.seq.alphabet)
+        record.seq = Seq(str(record.seq).translate(translation_table))
         yield record
 
 
@@ -169,8 +167,7 @@ def isolate_region(sequences, start, end, gap_char='-'):
         seq = sequence.seq
         start_gap = gap_char * start
         end_gap = gap_char * (len(seq) - end)
-        seq = Seq(start_gap + str(seq[start:end]) + end_gap,
-                alphabet=seq.alphabet)
+        seq = Seq(start_gap + str(seq[start:end]) + end_gap)
         sequence.seq = seq
         yield sequence
 
@@ -191,7 +188,7 @@ def drop_columns(records, slices):
         drop = set(i for slice in slices
                    for i in range(*slice.indices(len(record))))
         keep = [i not in drop for i in range(len(record))]
-        record.seq = Seq(''.join(itertools.compress(record.seq, keep)), record.seq.alphabet)
+        record.seq = Seq(''.join(itertools.compress(record.seq, keep)))
         yield record
 
 def multi_cut_sequences(records, slices):
@@ -690,7 +687,6 @@ def translate(records, translate):
     to_stop = translate.endswith('stop')
 
     source_type = translate[:3]
-    alphabet = {'dna': IUPAC.ambiguous_dna, 'rna': IUPAC.ambiguous_rna}[source_type]
 
     # Get a translation table
     table = {'dna': CodonTable.ambiguous_dna_by_name["Standard"],
@@ -704,7 +700,7 @@ def translate(records, translate):
 
     for record in records:
         sequence = str(record.seq)
-        seq = Seq(sequence, alphabet)
+        seq = Seq(sequence)
         protein = seq.translate(table, to_stop=to_stop)
         yield SeqRecord(protein, id=record.id, description=record.description)
 
