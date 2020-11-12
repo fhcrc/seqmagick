@@ -97,6 +97,20 @@ class ConvertToNexusTestCase(CommandLineTestMixIn, unittest.TestCase):
     command = 'convert {input} {output} --output-format nexus --alphabet dna-ambiguous'
 
 
+class ConvertToNexusRNATestCase(CommandLineTestMixIn, unittest.TestCase):
+    in_suffix = '.fasta'
+    input_path = p('input6.fasta')
+    expected_path = p('output3.nex')
+    command = 'convert {input} {output} --output-format nexus --alphabet rna'
+
+
+class ConvertToNexusProteinTestCase(CommandLineTestMixIn, unittest.TestCase):
+    in_suffix = '.fasta'
+    input_path = p('input2.fasta')
+    expected_path = p('output4.nex')
+    command = 'convert {input} {output} --output-format nexus --alphabet protein'
+
+
 class ConvertUngapCutTestCase(CommandLineTestMixIn, unittest.TestCase):
     in_suffix = '.fasta'
     out_suffix = '.fasta'
