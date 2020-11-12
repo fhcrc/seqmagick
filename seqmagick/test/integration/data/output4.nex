@@ -1,0 +1,10 @@
+#NEXUS
+begin data;
+dimensions ntax=3 nchar=5;
+format datatype=protein missing=? gap=-;
+matrix
+test1 AC-GT
+test2 A-AAA
+test3 A---A
+;
+end;
