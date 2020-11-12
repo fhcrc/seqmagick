@@ -13,6 +13,14 @@ from seqmagick.fileformat import from_handle
 
 from . import common
 
+ALPHABETS = {
+    "dna": "DNA",
+    "dna-ambiguous": "DNA",
+    "rna": "RNA",
+    "rna-ambiguous": "RNA",
+    "protein": "protein",
+}
+
 def add_options(parser):
     """
     Add optional arguments to the parser
@@ -204,10 +212,8 @@ def add_options(parser):
     format_group.add_argument('--output-format', metavar='FORMAT',
             help="Output file format (default: determine from extension)")
 
-    parser.add_argument('--alphabet', help="""Input alphabet. Formerly required
-            for writing NEXUS, this option is now ignored for compatibility with
-            Biopython 1.78 and greater, and provided for compatibility with
-            existing scripts.""")
+    parser.add_argument('--alphabet', choices=ALPHABETS,
+            help="""Input alphabet. Required for writing NEXUS.""")
 
     return parser
 
@@ -223,9 +229,9 @@ def build_parser(parser):
 
     return parser
 
-def append_annotation_iterator(records_iterator):
+def append_annotation_iterator(records_iterator, alphabet):
     for record in records_iterator:
-        record.annotations["molecule_type"] = "DNA"
+        record.annotations["molecule_type"] = ALPHABETS[alphabet]
         yield record
 
 def transform_file(source_file, destination_file, arguments):
@@ -312,7 +318,9 @@ def transform_file(source_file, destination_file, arguments):
         # loading the entire sequence file up into memory.
         logging.info("Applying transformations, writing to %s",
                 destination_file)
-        records = append_annotation_iterator(records)
+        # Append datatype annotation, mandatory for Nexus files conversion.
+        if arguments.alphabet != None:
+            records = append_annotation_iterator(records, arguments.alphabet)
         SeqIO.write(records, destination_file, destination_file_type)
 
 
