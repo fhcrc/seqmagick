@@ -1,0 +1,10 @@
+#NEXUS
+begin data;
+dimensions ntax=3 nchar=5;
+format datatype=rna missing=? gap=-;
+matrix
+test1 AC-GU
+test2 A-AAA
+test3 A---A
+;
+end;
