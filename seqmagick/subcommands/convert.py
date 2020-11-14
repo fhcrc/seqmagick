@@ -229,10 +229,12 @@ def build_parser(parser):
 
     return parser
 
+
 def append_annotation_iterator(records_iterator, alphabet):
     for record in records_iterator:
         record.annotations["molecule_type"] = ALPHABETS[alphabet]
         yield record
+
 
 def transform_file(source_file, destination_file, arguments):
     # Get just the file name, useful for naming the temporary file.
