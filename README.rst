@@ -20,7 +20,7 @@ Requirements
 ============
 
 * Python >= 3.5
-* biopython >= 1.70
+* biopython >= 1.78
 
 Installation
 ============
