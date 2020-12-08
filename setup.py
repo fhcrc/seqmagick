@@ -35,7 +35,7 @@ setup(name='seqmagick',
       setup_requires=['nose>=1.0'],
       python_requires='>=3.5',
       test_suite='nose.collector',
-      install_requires=['biopython>=1.78', 'pygtrie>=2.4.1'],
+      install_requires=['biopython>=1.78', 'pygtrie>=2.1'],
       classifiers=[
           'License :: OSI Approved :: GNU General Public License (GPL)',
           'Development Status :: 4 - Beta',
