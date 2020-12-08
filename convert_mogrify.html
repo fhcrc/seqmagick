@@ -1,17 +1,18 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
-    <title>convert and mogrify &#8212; seqmagick 0.7.0+9.g48191ba.dirty documentation</title>
-    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>convert and mogrify &#8212; seqmagick 0.8.3 documentation</title>
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="backtrans-align" href="backtrans_align.html" />
@@ -29,54 +30,10 @@
         <li class="right" >
           <a href="changelog.html" title="Changes for seqmagick"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">seqmagick 0.7.0+9.g48191ba.dirty documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">seqmagick 0.8.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">convert</span></code> and <code class="docutils literal notranslate"><span class="pre">mogrify</span></code></a></li> 
       </ul>
-    </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-            <p class="logo"><a href="index.html">
-              <img class="logo" src="_static/seqmagick_logo_small.png" alt="Logo"/>
-            </a></p>
-  <h3><a href="index.html">Table of Contents</a></h3>
-  <ul>
-<li><a class="reference internal" href="#"><code class="docutils literal notranslate"><span class="pre">convert</span></code> and <code class="docutils literal notranslate"><span class="pre">mogrify</span></code></a><ul>
-<li><a class="reference internal" href="#examples">Examples</a><ul>
-<li><a class="reference internal" href="#basic-conversion">Basic Conversion</a></li>
-<li><a class="reference internal" href="#sequence-modification">Sequence Modification</a><ul>
-<li><a class="reference internal" href="#command-line-arguments">Command-line Arguments</a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="changelog.html"
-                        title="previous chapter">Changes for seqmagick</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="backtrans_align.html"
-                        title="next chapter"><code class="docutils literal notranslate"><span class="pre">backtrans-align</span></code></a></p>
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="_sources/convert_mogrify.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div>
-<div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
-      <input type="submit" value="Go" />
-    </form>
-    </div>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
-        </div>
-      </div>
+    </div>  
 
     <div class="document">
       <div class="documentwrapper">
@@ -172,7 +129,7 @@ the minimum length predicate is applied.</p>
                          [--pattern-replace search_pattern replace_pattern]
                          [--strip-range] [--input-format FORMAT]
                          [--output-format FORMAT]
-                         [--alphabet {dna,dna-ambiguous,protein,rna,rna-ambiguous}]
+                         [--alphabet {dna,dna-ambiguous,rna,rna-ambiguous,protein}]
                          source_file dest_file
 
 Convert between sequence formats
@@ -183,7 +140,7 @@ positional arguments:
 
 optional arguments:
   -h, --help            show this help message and exit
-  --alphabet {dna,dna-ambiguous,protein,rna,rna-ambiguous}
+  --alphabet {dna,dna-ambiguous,rna,rna-ambiguous,protein}
                         Input alphabet. Required for writing NEXUS.
 
 Sequence File Modification:
@@ -313,7 +270,53 @@ to a pattern to make it case-insensitive.
 </div>
 
 
+            <div class="clearer"></div>
           </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/seqmagick_logo_small.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#"><code class="docutils literal notranslate"><span class="pre">convert</span></code> and <code class="docutils literal notranslate"><span class="pre">mogrify</span></code></a><ul>
+<li><a class="reference internal" href="#examples">Examples</a><ul>
+<li><a class="reference internal" href="#basic-conversion">Basic Conversion</a></li>
+<li><a class="reference internal" href="#sequence-modification">Sequence Modification</a><ul>
+<li><a class="reference internal" href="#command-line-arguments">Command-line Arguments</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="changelog.html"
+                        title="previous chapter">Changes for seqmagick</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="backtrans_align.html"
+                        title="next chapter"><code class="docutils literal notranslate"><span class="pre">backtrans-align</span></code></a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/convert_mogrify.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -330,12 +333,13 @@ to a pattern to make it case-insensitive.
         <li class="right" >
           <a href="changelog.html" title="Changes for seqmagick"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">seqmagick 0.7.0+9.g48191ba.dirty documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">seqmagick 0.8.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">convert</span></code> and <code class="docutils literal notranslate"><span class="pre">mogrify</span></code></a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2011-2019, The Matsen Group.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.2.
+        &#169; Copyright 2011-2020, The Matsen Group.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.3.1.
     </div>
   </body>
 </html>
