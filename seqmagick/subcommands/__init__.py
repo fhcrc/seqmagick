@@ -1,4 +1,4 @@
-commands = 'convert', 'info', 'mogrify', 'primer_trim', 'quality_filter', \
+commands = 'convert', 'info', 'mogrify', 'quality_filter', \
         'extract_ids', 'backtrans_align'
 
 
