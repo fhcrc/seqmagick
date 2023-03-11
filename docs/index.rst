@@ -84,7 +84,6 @@ List of Subcommands
    extract_ids
    info
    quality_filter
-   primer_trim
 
 Supported File Extensions
 =========================

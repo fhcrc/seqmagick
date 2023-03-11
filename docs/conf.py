@@ -64,7 +64,6 @@ subcommands = [
     'convert',
     'extract-ids',
     'info',
-    'primer-trim',
     'quality-filter',
 ]
 
