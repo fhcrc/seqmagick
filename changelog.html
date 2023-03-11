@@ -1,18 +1,17 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Changes for seqmagick &#8212; seqmagick 0.8.3+1.g952e3c4 documentation</title>
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
-    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>Changes for seqmagick &#8212; seqmagick 0.8.4+dirty documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinxdoc.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/doctools.js"></script>
-    <script src="_static/language_data.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="convert and mogrify" href="convert_mogrify.html" />
@@ -30,7 +29,7 @@
         <li class="right" >
           <a href="index.html" title="seqmagick"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">seqmagick 0.8.3+1.g952e3c4 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">seqmagick 0.8.4+dirty documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Changes for seqmagick</a></li> 
       </ul>
     </div>  
@@ -40,10 +39,10 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="changes-for-seqmagick">
-<h1>Changes for seqmagick<a class="headerlink" href="#changes-for-seqmagick" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="id1">
-<h2>0.8.0<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+  <section id="changes-for-seqmagick">
+<h1>Changes for seqmagick<a class="headerlink" href="#changes-for-seqmagick" title="Permalink to this heading">¶</a></h1>
+<section id="id1">
+<h2>0.8.0<a class="headerlink" href="#id1" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Supports Python 3.5+</p></li>
 <li><p>Drops support for Python 3.4</p></li>
@@ -51,9 +50,9 @@
 <li><p>Fix for Biopython 1.71 dual coding support [GH-76]; also fixes issue: “Translation error with new BioPython” [GH-79]</p></li>
 <li><p>Send logging to stderr, not stdout [GH-75]</p></li>
 </ul>
-</div>
-<div class="section" id="id2">
-<h2>0.7.0<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="id2">
+<h2>0.7.0<a class="headerlink" href="#id2" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Supports Python 3.4+</p></li>
 <li><p>Drops support for python 2.7</p></li>
@@ -61,26 +60,26 @@
 <li><p>Drops support for bz2 compression [see GH-66]</p></li>
 <li><p>New option <code class="docutils literal notranslate"><span class="pre">convert</span> <span class="pre">--sample-seed</span></code> to make <code class="docutils literal notranslate"><span class="pre">--sample</span></code> deterministic.</p></li>
 </ul>
-</div>
-<div class="section" id="id3">
-<h2>0.6.2<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="id3">
+<h2>0.6.2<a class="headerlink" href="#id3" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>New <code class="docutils literal notranslate"><span class="pre">quality-filter</span> <span class="pre">--pct-ambiguous</span></code> switch [GH-53]</p></li>
 <li><p>setup.py enforces biopython&gt;=1.58,&lt;=1.66 (1.67 is not compatible) [GH-59]</p></li>
 <li><p>This is the last release that will support Python 2!</p></li>
 </ul>
-</div>
-<div class="section" id="id4">
-<h2>0.6.1<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="id4">
+<h2>0.6.1<a class="headerlink" href="#id4" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Allow string wrapping when input isn’t FASTA. [GH-45]</p></li>
 <li><p>Fix <code class="docutils literal notranslate"><span class="pre">--pattern-include</span></code>, <code class="docutils literal notranslate"><span class="pre">--pattern-exclude</span></code>, and <code class="docutils literal notranslate"><span class="pre">--pattern-replace</span></code>
 for sequences without descriptions (e.g., from NEXUS files). [GH-47]</p></li>
 <li><p>Fix mogrify example. [GH-52]</p></li>
 </ul>
-</div>
-<div class="section" id="id5">
-<h2>0.6.0<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="id5">
+<h2>0.6.0<a class="headerlink" href="#id5" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Map <code class="docutils literal notranslate"><span class="pre">.nex</span></code> extension to NEXUS-format (–alphabet must be specified if writing)</p></li>
 <li><p>Use reservoir sampling in <code class="docutils literal notranslate"><span class="pre">--sample</span></code> selector (lower memory use)</p></li>
@@ -95,9 +94,9 @@ for sequences without descriptions (e.g., from NEXUS files). [GH-47]</p></li>
 <li><p>Clarify documentation and fix bug in convert/mogrify <code class="docutils literal notranslate"><span class="pre">--pattern-replace</span></code> [GH-39]</p></li>
 <li><p>Support for gzip files in <code class="docutils literal notranslate"><span class="pre">seqmagick</span> <span class="pre">convert</span> <span class="pre">--sort</span></code></p></li>
 </ul>
-</div>
-<div class="section" id="id6">
-<h2>0.5.0<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="id6">
+<h2>0.5.0<a class="headerlink" href="#id6" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Change <code class="docutils literal notranslate"><span class="pre">seqmagick</span> <span class="pre">extract-ids</span> <span class="pre">--source-format</span></code> to <code class="docutils literal notranslate"><span class="pre">--input-format</span></code> to match
 other commands (GH-29)</p></li>
@@ -113,16 +112,16 @@ per-specimen barcodes.</p></li>
 <code class="docutils literal notranslate"><span class="pre">seqmagick</span> <span class="pre">backtrans-align</span></code></p></li>
 <li><p>Add <code class="docutils literal notranslate"><span class="pre">--sample</span></code> subcommand (GH-31)</p></li>
 </ul>
-</div>
-<div class="section" id="id7">
-<h2>0.4.0<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="id7">
+<h2>0.4.0<a class="headerlink" href="#id7" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Fix bug in <code class="docutils literal notranslate"><span class="pre">--squeeze</span></code></p></li>
 <li><p>More informative messages in <code class="docutils literal notranslate"><span class="pre">seqmagick</span> <span class="pre">primer-trim</span></code></p></li>
 <li><p>Added <code class="docutils literal notranslate"><span class="pre">--alphabet</span></code> flag to allow writing NEXUS (GH-23)</p></li>
 <li><p>Exiting without error on SIGPIPE in extract-ids, info (GH-17)</p></li>
 <li><p>Ambiguities are translated as ‘X’ in –translate (GH-16)</p></li>
-<li><p>Allowing ‘.’ or ‘-‘ as gap character (GH-18)</p></li>
+<li><p>Allowing ‘.’ or ‘-’ as gap character (GH-18)</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">--name-prefix</span></code> and <code class="docutils literal notranslate"><span class="pre">--name-suffix</span></code> no longer create a mangled description (GH-19)</p></li>
 <li><p>Files owned by another user can be mogrified, as long as they are group writeable (GH-14)</p></li>
 <li><p>Add <code class="docutils literal notranslate"><span class="pre">backtrans-align</span></code> subcommand, which maps unaligned nucleotides onto a
@@ -136,16 +135,16 @@ barcodes/primers; report detailed failure information.</p></li>
 <li><p>Support stdin in <code class="docutils literal notranslate"><span class="pre">seqmagick</span> <span class="pre">info</span></code> (GH-27)</p></li>
 <li><p>Support translating ambiguous nucleotides, if codon translation is unambiguous</p></li>
 </ul>
-</div>
-<div class="section" id="id8">
-<h2>0.3.1<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="id8">
+<h2>0.3.1<a class="headerlink" href="#id8" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Fix bug in <code class="docutils literal notranslate"><span class="pre">quality-filter</span></code> MinLengthFilter</p></li>
 <li><p>Case consistency in seqmagick</p></li>
 </ul>
-</div>
-<div class="section" id="id9">
-<h2>0.3.0<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="id9">
+<h2>0.3.0<a class="headerlink" href="#id9" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Internal reorganization - transformations are converted to partial functions,
 then applied.</p></li>
@@ -159,12 +158,12 @@ then applied.</p></li>
 <li><p>Removed seqmagick muscle</p></li>
 <li><p>Added new subcommand <code class="docutils literal notranslate"><span class="pre">quality-filter</span></code></p></li>
 <li><p>Added new subcommand <code class="docutils literal notranslate"><span class="pre">extract-ids</span></code> (closes GH-13)</p></li>
-<li><p>Allow use of ‘-‘ to indicate stdin / stdout (closes GH-11)</p></li>
+<li><p>Allow use of ‘-’ to indicate stdin / stdout (closes GH-11)</p></li>
 <li><p>Add mapping from .phyx to <code class="docutils literal notranslate"><span class="pre">phylip-relaxed</span></code> (targeted for BioPython 1.58)</p></li>
 </ul>
-</div>
-<div class="section" id="id10">
-<h2>0.2.0<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="id10">
+<h2>0.2.0<a class="headerlink" href="#id10" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Refactoring</p></li>
 <li><p>Added hyphenation to multi-word command line options (e.g.
@@ -172,12 +171,12 @@ then applied.</p></li>
 <li><p>Add support for <code class="docutils literal notranslate"><span class="pre">.needle</span></code>, <code class="docutils literal notranslate"><span class="pre">.sff</span></code> formats</p></li>
 <li><p>Close GH-4</p></li>
 </ul>
-</div>
-<div class="section" id="id11">
-<h2>0.1.0<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="id11">
+<h2>0.1.0<a class="headerlink" href="#id11" title="Permalink to this heading">¶</a></h2>
 <p>Initial release</p>
-</div>
-</div>
+</section>
+</section>
 
 
             <div class="clearer"></div>
@@ -189,8 +188,9 @@ then applied.</p></li>
             <p class="logo"><a href="index.html">
               <img class="logo" src="_static/seqmagick_logo_small.png" alt="Logo"/>
             </a></p>
-  <h3><a href="index.html">Table of Contents</a></h3>
-  <ul>
+  <div>
+    <h3><a href="index.html">Table of Contents</a></h3>
+    <ul>
 <li><a class="reference internal" href="#">Changes for seqmagick</a><ul>
 <li><a class="reference internal" href="#id1">0.8.0</a></li>
 <li><a class="reference internal" href="#id2">0.7.0</a></li>
@@ -207,12 +207,17 @@ then applied.</p></li>
 </li>
 </ul>
 
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="index.html"
-                        title="previous chapter">seqmagick</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="convert_mogrify.html"
-                        title="next chapter"><code class="docutils literal notranslate"><span class="pre">convert</span></code> and <code class="docutils literal notranslate"><span class="pre">mogrify</span></code></a></p>
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="index.html"
+                          title="previous chapter">seqmagick</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="convert_mogrify.html"
+                          title="next chapter"><code class="docutils literal notranslate"><span class="pre">convert</span></code> and <code class="docutils literal notranslate"><span class="pre">mogrify</span></code></a></p>
+  </div>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -224,12 +229,12 @@ then applied.</p></li>
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -246,13 +251,13 @@ then applied.</p></li>
         <li class="right" >
           <a href="index.html" title="seqmagick"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">seqmagick 0.8.3+1.g952e3c4 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">seqmagick 0.8.4+dirty documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Changes for seqmagick</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2011-2020, The Matsen Group.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.3.1.
+        &#169; Copyright 2011-2023, The Matsen Group.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
     </div>
   </body>
 </html>
