@@ -102,7 +102,7 @@ class AlignmentMapper(object):
                 prot_seq.id, nucl_seq.id)
 
         # Ungap nucleotides
-        codons = batch(str(nucl_seq.seq.ungap('-')), 3)
+        codons = batch(str(nucl_seq.seq.replace('-', '')), 3)
         codons = [''.join(i) for i in codons]
         codon_iter = iter(codons)
 
